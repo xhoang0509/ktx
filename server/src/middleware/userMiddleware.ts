@@ -15,10 +15,11 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
 
     try {
         const decoded: any = jwt.verify(token, process.env.USER_SECRET_KEY as string);
-        console.log("Decoded Token:", decoded); // 👀 Kiểm tra giá trị sub
+        console.log("Decoded Token:", decoded);
         req.user = decoded;
-        return next(); // ✅ Đảm bảo tất cả code paths return
+        return next();
     } catch (error) {
+        console.log(error)
         return res.status(401).json({ error: "Unauthorized - Invalid token" });
     }
 };

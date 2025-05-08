@@ -1,9 +1,9 @@
 import { SITE_MENU } from "@config/site";
-import { Button, Image } from "@heroui/react";
-import React from "react";
-import MenuItem from "./MenuItem";
-import { useNavigate } from "react-router";
 import { PowerIcon } from "@heroicons/react/24/solid";
+import { Image } from "@heroui/react";
+import React from "react";
+import { useNavigate } from "react-router";
+import MenuItem from "./MenuItem";
 
 const SideBar: React.FC = () => {
   const navigate = useNavigate();

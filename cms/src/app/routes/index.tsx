@@ -1,18 +1,22 @@
-import { lazy, Suspense } from "react";
-import { RouteObject, BrowserRouter as Router, useRoutes } from "react-router";
+import GlobalLoading from "@components/GlobalLoading";
 import { ROUTE_PATHS } from "@constants/route.const";
+import { useAuth } from "@hooks/useAuth";
 import AuthLayout from "@layouts/AuthLayout";
 import MainLayout from "@layouts/MainLayout";
-import { useAuth } from "@hooks/useAuth";
+import { lazy, Suspense } from "react";
+import { RouteObject, BrowserRouter as Router, useRoutes } from "react-router";
 import { RouteWrapper } from "./RouteWrapper";
-import GlobalLoading from "@components/GlobalLoading";
 
 const DashboardPage = lazy(() => import("@features/Dashboard/pages/Dashboard"));
 const LoginPage = lazy(() => import("@features/Auth/pages/Login"));
 const NotFoundPage = lazy(() => import("@features/NotFound"));
 const PermissionDeniedPage = lazy(() => import("@features/PermissionDenied"));
 const UserPage = lazy(() => import("@features/User/pages/User"));
+const AddUserPage = lazy(() => import("@features/User/pages/AddUser"));
+const EditUserPage = lazy(() => import("@features/User/pages/EditUser"));
+const ViewUserPage =  lazy(() => import("@features/User/pages/ViewUser"));
 
+const Devicepage = lazy(() => import("@features/Device/pages/Device"));
 const CategoryPage = lazy(() => import("@features/Category/pages/Category"));
 const AddCategoryPage = lazy(
   () => import("@features/Category/pages/AddCategory")
@@ -39,7 +43,7 @@ const EditBlogPage = lazy(() => import("@features/Blog/pages/EditBlog"));
 
 const OrderPage = lazy(() => import("@features/Order/pages/Order"));
 const EditOrderPage = lazy(() => import("@features/Order/pages/EditOrder"));
-
+const EditDevicePage = lazy(() => import("@features/Device/pages/EditDevice"))
 const BannerPage = lazy(() => import("@features/Banner/pages/Banner"));
 const LogoutPage = lazy(() => import("@features/Logout"));
 
@@ -92,16 +96,31 @@ function AppRouter() {
             {
               path: ROUTE_PATHS.USER,
               element: <UserPage />,
-              title: "Học sinh",
+              title: "Sinh viên",
             },
             {
-              path: ROUTE_PATHS.ORDER,
-              element: <OrderPage />,
+              path: ROUTE_PATHS.ADD_USER,
+              element: <AddUserPage />,
+              title: "Thêm sinh viên",
+            },
+            {
+              path: ROUTE_PATHS.EDIT_USER,
+              element: <EditUserPage />,
+              title: "Sửa sinh viên",
+            },
+            {
+              path: ROUTE_PATHS.VIEW_USER,
+              element: <ViewUserPage />,
+              title: "Xem sinh vien",
+            },
+            {
+              path: ROUTE_PATHS.DEVICE,
+              element: <Devicepage />,
               title: "Thiết bị",
             },
             {
-              path: ROUTE_PATHS.EDIT_ORDER,
-              element: <EditOrderPage />,
+              path: ROUTE_PATHS.EDIT_DEVICE,
+              element: <EditDevicePage />,
               title: "Chi tiết thiết bị",
             },
             {
@@ -186,6 +205,8 @@ function AppRouter() {
     //   element: <PermissionDeniedPage />,
     // },
   ];
+
+
 
   return (
     <Router>

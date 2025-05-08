@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../services/userService";
-import jwt from 'jsonwebtoken';
 import { AuthRequest } from "src/middleware/userMiddleware";
+import { UserService } from "../services/userService";
 
 export class UserController {
     private readonly userService: UserService;
@@ -35,22 +34,36 @@ export class UserController {
             const search = req.query.search as string || "";
 
             const response = await this.userService.list(page, limit, search);
-            res.status(200).send({ status: 201, message: 'Lấy danh sách thành công', data: response });
+            res.status(200).send({ statusCode: 200, message: 'Lấy danh sách thành công', data: response });
         } catch (error) {
-            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+            res.status(500).send({ statusCode: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
     }
 
     async detail(req: AuthRequest, res: Response) {
         try {
             const userId = req.user?.sub;
-    
+
             const response = await this.userService.detail(userId);
             return res.status(200).send({ status: 201, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {
+            console.log(error)
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
-    }    
+    }
+
+    async findById(req: AuthRequest, res: Response) {
+        console.log('object');
+        try {
+            const id = req.params.id;
+
+            const response = await this.userService.detail(id);
+            return res.status(200).send({ status: 201, message: 'Lấy thông tin người dùng thành công', data: response });
+        } catch (error) {
+            console.log(error)
+            return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        }
+    }
 
     async remove(req: Request, res: Response) {
         try {
@@ -65,7 +78,7 @@ export class UserController {
         try {
             console.log("User in Request:", req.user);
             const userId = req.user?.sub;
-    
+
             const response = await this.userService.modify(userId, req.body);
             return res.status(200).send({ status: 201, message: 'Sửa thông tin thành công', data: response });
         } catch (error) {

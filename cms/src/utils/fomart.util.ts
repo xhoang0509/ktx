@@ -20,3 +20,33 @@ export function formatCompactNumber(num: number, locale = "en-US") {
   });
   return formatter.format(num);
 }
+
+export function formatUserStatus(status: string) {
+  switch (status) {
+    case "active":
+      return "Đang hoạt động";
+    case "inactive":
+      return "Ngừng hoạt động";
+    case "graduated":
+      return "Đã tốt nghiệp";
+    case "deleted":
+      return "Đã xóa";
+    default:
+      return status;
+  }
+}
+
+export function getColorUserStatus(status: string): "success" | "warning" | "default" | "danger" | "primary" | "secondary" | undefined {
+  switch (status) {
+    case "active":
+      return "success";
+    case "inactive":
+      return "warning";
+    case "graduated":
+      return "default";
+    case "deleted":
+      return "danger";
+    default:
+      return "default";
+  }
+}

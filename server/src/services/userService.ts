@@ -1,10 +1,10 @@
-import { AppDataSource } from "../models/db";
-import { CreateUserDto, LoginUserDto, UpdateUserDto } from "src/models/dto/user.dto";
-import { User } from "../models/entities/user";
 import argon2 from "argon2";
-import jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
+import { CreateUserDto, LoginUserDto, UpdateUserDto } from "src/models/dto/user.dto";
 import { Like } from "typeorm";
+import { AppDataSource } from "../models/db";
+import { User } from "../models/entities/user";
 
 dotenv.config();
 
@@ -29,9 +29,11 @@ export class UserService {
     }
 
     async login(loginDto: LoginUserDto): Promise<any> {
-        const user = await this.userRepository.findOne({ where: {
-            username: loginDto.username
-        } });
+        const user = await this.userRepository.findOne({
+            where: {
+                username: loginDto.username
+            }
+        });
         if (!user || !(await argon2.verify(loginDto.password, user.password))) {
             throw 'Tài khoản hoặc mật khẩu không đúng';
         }
@@ -49,8 +51,8 @@ export class UserService {
         if (!process.env.USER_SECRET_KEY) {
             throw new Error('USER_SECRET_KEY is not defined');
         }
-        const token = jwt.sign(payload, process.env.USER_SECRET_KEY, { 
-             expiresIn: '1h'
+        const token = jwt.sign(payload, process.env.USER_SECRET_KEY, {
+            expiresIn: '1h'
         });
         return token;
     }
@@ -82,7 +84,7 @@ export class UserService {
         return 'Xoá tài khoản thành công';
     }
 
-    async list(page: number, limit: number, search?: string): Promise<{ total: number, page: number, limit: number, users: User[] }> {
+    async list(page: number, limit: number, search?: string): Promise<{ total: number, totalItems: number, totalPages: number, page: number, limit: number, users: User[] }> {
         const skip = (page - 1) * limit;
 
         const filterUser = search ? [
@@ -98,7 +100,11 @@ export class UserService {
             skip: skip,
             order: { id: "DESC" },
         });
-        return { total, page, limit, users };
+        // i want to return the total number of items and pages in the response
+        const totalItems = total;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        return { total, totalItems, totalPages, page, limit, users };
     }
 
     async detail(userId: string): Promise<User> {

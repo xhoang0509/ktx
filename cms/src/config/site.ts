@@ -27,13 +27,13 @@ export const SITE_MENU = [
     icon: HomeIcon,
   },
   {
-    label: "Học sinh",
+    label: "Sinh viên",
     path: "/user",
     icon: UserIcon,
   },
   {
     label: "Thiết bị",
-    path: "/order",
+    path: "/device",
     icon: ClipboardDocumentListIcon,
   },
   {

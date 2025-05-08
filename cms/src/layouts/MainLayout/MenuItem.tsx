@@ -9,11 +9,16 @@ function MenuItem({ item }: any) {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const Icon = item.icon;
+
+  const handleClick = (item: any) => {
+    navigate(item.path)
+  }
+
   return (
     <div className="mb-4">
       <button
         className="w-full flex gap-2 items-center p-1 hover:scale-105 transition-transform transform"
-        onClick={() => navigate(item.path)}
+        onClick={()=> handleClick(item)}
       >
         <div>
           <Icon className="text-primary size-6" />

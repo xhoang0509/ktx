@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { AdminService } from "../services/adminService";
-import { error } from "src/logger";
+import { error } from "@/logger";
+import { AdminService } from "@/services/adminService";
 
 export class AdminCtroller {
     private readonly adminService: AdminService;
@@ -19,6 +19,7 @@ export class AdminCtroller {
     }
 
     async login(req: Request, res: Response) {
+        console.log('login admin');
         try {
             const token = await this.adminService.login(req.body);
             res.status(200).send({ status: 200, message: 'Đăng nhập thành công', data: token });

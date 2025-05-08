@@ -31,7 +31,7 @@ const DashboardLayout: FC<Props> = ({
         }
       />
       <div className="grid grid-cols-4 gap-4 p-4">
-        <Container col={6} label="Thống kê học sinh">
+        <Container col={6} label="Thống kê sinh viên">
           <UserStatistic data={UserStatisticData} />
         </Container>
         <Container col={6} label="Thống kê nhập">
@@ -46,7 +46,7 @@ const DashboardLayout: FC<Props> = ({
         <Container col={6} label="Thống kê doanh thu">
           <RevenueStatistic data={RevenueStatisticData} />
         </Container>
-        <Container col={2} label="Thống kê phòng bán chạy">
+        <Container col={6} label="Thống kê phòng bán chạy">
           <ProductTable products={BestSellerData} />
         </Container>
       </div>

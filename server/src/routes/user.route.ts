@@ -10,6 +10,7 @@ router.post("/login", userController.login.bind(userController));
 router.put("/modify", authMiddleware, userController.modify.bind(userController));
 router.get("/", userController.list.bind(userController));
 router.get("/detail", authMiddleware, userController.detail.bind(userController));
+router.get("/:id", (req, res ) => userController.findById(req, res));
 router.delete("/:id", userController.remove.bind(userController));
 
 export default router;
