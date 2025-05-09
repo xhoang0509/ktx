@@ -6,7 +6,7 @@ import MainLayout from "@layouts/MainLayout";
 import { lazy, Suspense } from "react";
 import { RouteObject, BrowserRouter as Router, useRoutes } from "react-router";
 import { RouteWrapper } from "./RouteWrapper";
-import { BookingRequestsPage } from "@features/BookingRequests";
+import { BookingRequestDetailPage, BookingRequestsPage } from "@features/BookingRequests";
 
 const DashboardPage = lazy(() => import("@features/Dashboard/pages/Dashboard"));
 const LoginPage = lazy(() => import("@features/Auth/pages/Login"));
@@ -178,6 +178,11 @@ function AppRouter() {
               path: ROUTE_PATHS.REQUEST,
               element: <RequestPage />,
               title: "Yêu cầu",
+            },
+            {
+              path: ROUTE_PATHS.REQUEST_DETAIL,
+              element: <BookingRequestDetailPage />,
+              title: "Chi tiết yêu cầu",
             },
             {
               path: ROUTE_PATHS.EDIT_BLOG,

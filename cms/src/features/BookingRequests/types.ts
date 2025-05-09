@@ -21,4 +21,30 @@ export interface BookingRequestPagination {
   limit: number;
   totalPages: number;
   totalItems: number;
+}
+
+export interface BookingRequestDetail {
+  id: string;
+  requestCode: string;
+  studentId: string;
+  studentName: string;
+  studentClass: string;
+  email: string;
+  phone: string;
+  requestDate: string;
+  requestType: string;
+  semester: string;
+  buildingName: string;
+  roomType: string;
+  peopleCount: number;
+  notes: string;
+  status: BookingRequestStatus;
+  attachments: {
+    id: string;
+    name: string;
+    url: string;
+  }[];
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt: string;
 } 

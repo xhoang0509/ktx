@@ -32,6 +32,7 @@ export const ROUTE_PATHS = {
   EDIT_ORDER: "order/edit/:id",
   EDIT_DEVICE: "device/edit/:id",
   REQUEST: "request",
+  REQUEST_DETAIL: "request/detail/:id",
   EDIT_REQUEST_BASE: "request/edit",
   EDIT_REQUEST: "request/edit/:id",
   ROOM: "room",
