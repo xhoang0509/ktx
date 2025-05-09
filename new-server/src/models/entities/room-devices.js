@@ -14,6 +14,14 @@ const RoomDevice = new EntitySchema({
         condition: {
             type: "enum",
             enum: ["good", "broken", "under_maintenance"]
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

@@ -15,6 +15,14 @@ const Device = new EntitySchema({
             type: "enum",
             enum: ["good", "broken", "deleted"],
             default: "good"
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     }
 });

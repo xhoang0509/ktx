@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const { authMiddleware } = require("../middleware/userMiddleware");
-const { ContractController } = require("../controller/contractController");
+const { ContractController } = require("../controller/contract.controller");
 
 const router = Router();
 const contractController = new ContractController();

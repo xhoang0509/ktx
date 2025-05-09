@@ -14,6 +14,14 @@ const Violation = new EntitySchema({
         },
         description: {
             type: "text"
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

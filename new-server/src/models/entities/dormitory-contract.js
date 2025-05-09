@@ -15,7 +15,11 @@ const DormitoryContract = new EntitySchema({
         },
         createdAt: {
             type: "datetime",
-            createDate: true
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

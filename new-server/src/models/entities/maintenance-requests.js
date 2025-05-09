@@ -16,14 +16,13 @@ const MaintenanceRequest = new EntitySchema({
             enum: ["pending", "in_progress", "completed"],
             default: "pending"
         },
-        created_at: {
-            type: "timestamp",
+        createdAt: {
+            type: "datetime",
             default: () => "CURRENT_TIMESTAMP"
         },
-        updated_at: {
-            type: "timestamp",
-            default: () => "CURRENT_TIMESTAMP",
-            onUpdate: "CURRENT_TIMESTAMP"
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

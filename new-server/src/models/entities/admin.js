@@ -18,8 +18,15 @@ const Admin = new EntitySchema({
             type: "enum",
             enum: ["superadmin", "staff"],
             default: "staff"
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     }
 });
-
 module.exports = { Admin }; 

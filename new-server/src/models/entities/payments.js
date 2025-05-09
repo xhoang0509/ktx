@@ -47,6 +47,14 @@ const Payment = new EntitySchema({
         is_settled: {
             type: "boolean",
             default: false
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

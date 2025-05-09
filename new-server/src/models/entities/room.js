@@ -26,6 +26,14 @@ const Room = new EntitySchema({
             type: "decimal",
             precision: 10,
             scale: 2
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

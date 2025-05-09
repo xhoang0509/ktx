@@ -19,6 +19,14 @@ const Request = new EntitySchema({
             type: "enum",
             enum: ["pending", "in_progress", "resolved", "approved", "rejected"],
             default: "pending"
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

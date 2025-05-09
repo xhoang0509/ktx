@@ -1,10 +1,10 @@
 import { ROUTE_PATHS } from "@constants/route.const";
 import { ProductActions } from "@features/Product/services/slice";
 import { IUser } from "@features/User/services/slice";
-import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, PencilIcon } from "@heroicons/react/24/solid";
 import { Chip, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
 import { useAppDispatch } from "@services/store";
-import { formatDateTime, formatUserStatus, getColorUserStatus } from "@utils/fomart.util";
+import { formatDateTimeDetail, formatUserStatus, getColorUserStatus } from "@utils/fomart.util";
 import { convertGenderToVietnamese } from "@utils/gender.util";
 import React, { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
@@ -55,11 +55,11 @@ export default function UserTable({
                 );
             case "createdAt":
                 return (
-                    <div className="line-clamp-2">{formatDateTime(item.createdAt)}</div>
+                    <div className="line-clamp-2">{formatDateTimeDetail(item.createdAt)}</div>
                 );
             case "updatedAt":
                 return (
-                    <div className="line-clamp-2">{formatDateTime(item.updatedAt)}</div>
+                    <div className="line-clamp-2">{formatDateTimeDetail(item.updatedAt)}</div>
                 );
 
             case "isActive":

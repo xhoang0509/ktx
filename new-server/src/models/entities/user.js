@@ -38,6 +38,14 @@ const User = new EntitySchema({
             type: "enum",
             enum: ["active", "inactive", "graduated", "deleted"],
             default: "active"
+        },
+        createdAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "datetime",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

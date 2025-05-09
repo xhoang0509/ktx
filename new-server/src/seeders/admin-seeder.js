@@ -10,8 +10,8 @@ const seedAdmin = async () => {
 
         const adminData = [
             {
-                username: "admin1",
-                password: "password1",
+                username: "admin",
+                password: "123456",
                 role: "superadmin",
             },
         ];

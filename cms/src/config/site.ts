@@ -43,12 +43,12 @@ export const SITE_MENU = [
   },
   {
     label: "Phòng",
-    path: "/product",
+    path: "/room",
     icon: CubeIcon,
   },
   {
     label: "Yêu cầu",
-    path: "/voucher",
+    path: "/request",
     icon: ReceiptPercentIcon,
   },
   {

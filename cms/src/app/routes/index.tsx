@@ -6,6 +6,7 @@ import MainLayout from "@layouts/MainLayout";
 import { lazy, Suspense } from "react";
 import { RouteObject, BrowserRouter as Router, useRoutes } from "react-router";
 import { RouteWrapper } from "./RouteWrapper";
+import { BookingRequestsPage } from "@features/BookingRequests";
 
 const DashboardPage = lazy(() => import("@features/Dashboard/pages/Dashboard"));
 const LoginPage = lazy(() => import("@features/Auth/pages/Login"));
@@ -26,7 +27,7 @@ const EditCategoryPage = lazy(
 );
 
 const ProductPage = lazy(() => import("@features/Product/pages/Product"));
-const AddProductPage = lazy(() => import("@features/Product/pages/AddProduct"));
+const RoomPage = lazy(() => import("@features/Room/pages/RoomPage"));
 const EditProductPage = lazy(
   () => import("@features/Product/pages/EditProduct")
 );
@@ -46,7 +47,7 @@ const EditOrderPage = lazy(() => import("@features/Order/pages/EditOrder"));
 const EditDevicePage = lazy(() => import("@features/Device/pages/EditDevice"))
 const BannerPage = lazy(() => import("@features/Banner/pages/Banner"));
 const LogoutPage = lazy(() => import("@features/Logout"));
-
+const RequestPage = lazy(() => import("@features/BookingRequests/pages/BookingRequestsPage"));
 export interface RoutesRendererProps {
   routes: RouteObject[];
 }
@@ -139,17 +140,17 @@ function AppRouter() {
               title: "Sửa danh mục phòng",
             },
             {
-              path: ROUTE_PATHS.PRODUCT,
-              element: <ProductPage />,
+              path: ROUTE_PATHS.ROOM,
+              element: <RoomPage />,
               title: "Phòng",
             },
             {
-              path: ROUTE_PATHS.ADD_PRODUCT,
-              element: <AddProductPage />,
+              path: ROUTE_PATHS.ADD_ROOM,
+              element: <RoomPage />,
               title: "Thêm phòng",
             },
             {
-              path: ROUTE_PATHS.EDIT_PRODUCT,
+              path: ROUTE_PATHS.EDIT_ROOM,
               element: <EditProductPage />,
               title: "Sửa phòng",
             },
@@ -174,9 +175,9 @@ function AppRouter() {
               title: "Blog",
             },
             {
-              path: ROUTE_PATHS.ADD_BLOG,
-              element: <AddBlogPage />,
-              title: "Thêm voucher",
+              path: ROUTE_PATHS.REQUEST,
+              element: <RequestPage />,
+              title: "Yêu cầu",
             },
             {
               path: ROUTE_PATHS.EDIT_BLOG,
