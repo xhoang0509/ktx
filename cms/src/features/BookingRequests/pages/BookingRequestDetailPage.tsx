@@ -70,7 +70,7 @@ const BookingRequestDetailPage = () => {
   }, [id]);
 
   const handleBack = () => {
-    navigate("/booking-requests");
+    navigate("/request");
   };
 
   const handleApprove = async (notes: string) => {

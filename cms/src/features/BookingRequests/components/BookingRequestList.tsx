@@ -19,6 +19,7 @@ import {
 import { convertGenderToVietnamese } from "@utils/gender.util";
 import React, { useCallback, useMemo } from "react";
 import { BookingRequest, BookingRequestPagination, BookingRequestStatus } from "../types";
+import { useNavigate } from "react-router";
 
 interface BookingRequestListProps {
     bookingRequests: BookingRequest[];
@@ -56,6 +57,7 @@ export default function BookingRequestList({
     pagination,
     onChangePagination,
 }: BookingRequestListProps) {
+    const navigate = useNavigate();
     const columns = [
         { name: "STT", uid: "indexNumber", align: "center", width: "60px" },
         { name: "Tên sinh viên", uid: "studentName" },
@@ -118,7 +120,9 @@ export default function BookingRequestList({
                     <div className="relative flex items-center gap-2 justify-center">
                         <Tooltip content="Xem hồ sơ">
                             <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon className="size-4 text-success" />
+                                <EyeIcon className="size-4 text-success" onClick={() => {
+                                    navigate(`/request/detail/${item.id}`);
+                                }}/>
                             </span>
                         </Tooltip>
                         <Tooltip content="Sửa">
