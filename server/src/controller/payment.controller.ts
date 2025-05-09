@@ -15,7 +15,7 @@ export class PaymentController {
             const { roomId, utilityAmount, month, year } = req.body;
             const response = await this.paymentSer.addUtilityCost(roomId, utilityAmount, month, year);
 
-            return res.status(201).json({ message: "Đã cập nhật tiền điện nước", response });
+            return res.status(200).json({ message: "Đã cập nhật tiền điện nước", response });
         } catch (error) {
             return res.status(500).json({ message: "Lỗi khi nhập tiền điện nước", error: error.message });
         }

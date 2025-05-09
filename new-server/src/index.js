@@ -2,6 +2,7 @@ const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const path = require('path');
 const router = require('./routes/Route');
 const { AppDataSource } = require('./models/db');
 
@@ -13,6 +14,9 @@ const PORT = process.env.PORT || 5001;
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
+
+// Phục vụ các file tĩnh từ thư mục public
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/v1', router);
 app.get('/', (req, res) => {

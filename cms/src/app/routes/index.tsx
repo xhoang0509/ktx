@@ -7,6 +7,7 @@ import { lazy, Suspense } from "react";
 import { RouteObject, BrowserRouter as Router, useRoutes } from "react-router";
 import { RouteWrapper } from "./RouteWrapper";
 import { BookingRequestDetailPage, BookingRequestsPage } from "@features/BookingRequests";
+import EditRoomPage from "@features/Room/pages/EditRoomPage";
 
 const DashboardPage = lazy(() => import("@features/Dashboard/pages/Dashboard"));
 const LoginPage = lazy(() => import("@features/Auth/pages/Login"));
@@ -28,6 +29,7 @@ const EditCategoryPage = lazy(
 
 const ProductPage = lazy(() => import("@features/Product/pages/Product"));
 const RoomPage = lazy(() => import("@features/Room/pages/RoomPage"));
+const AddRoomPage = lazy(() => import("@features/Room/pages/AddRoom"))
 const EditProductPage = lazy(
   () => import("@features/Product/pages/EditProduct")
 );
@@ -146,12 +148,12 @@ function AppRouter() {
             },
             {
               path: ROUTE_PATHS.ADD_ROOM,
-              element: <RoomPage />,
+              element: <AddRoomPage />,
               title: "Thêm phòng",
             },
             {
               path: ROUTE_PATHS.EDIT_ROOM,
-              element: <EditProductPage />,
+              element: <EditRoomPage />,
               title: "Sửa phòng",
             },
             {

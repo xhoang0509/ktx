@@ -1,24 +1,29 @@
-import { EyeIcon, PencilIcon } from "@heroicons/react/24/solid";
+import DeleteConfirmationModal from "@components/DeleteConfirmationModal";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
-  Chip,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Tooltip,
+    Chip,
+    Image,
+    Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Tooltip,
 } from "@heroui/react";
 import {
-  formatDateTime,
-  formatDateTimeDetail,
-  formatUserStatus,
-  formatVND,
-  getColorUserStatus,
+    formatDateTime,
+    formatDateTimeDetail,
+    formatUserStatus,
+    formatVND,
+    getColorUserStatus,
 } from "@utils/fomart.util";
 import { convertGenderToVietnamese } from "@utils/gender.util";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router";
+import { RoomActions } from "../services/slice";
 import { Room, RoomPagination } from "../types";
 
 interface RoomTableProps {
@@ -28,15 +33,41 @@ interface RoomTableProps {
 }
 
 export default function RoomTable({ rooms, pagination, onChangePagination }: RoomTableProps) {
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const [roomToDelete, setRoomToDelete] = useState<string | null>(null);
+
     const columns = [
         { name: "STT", uid: "indexNumber", align: "center", width: "60px" },
         { name: "Tên phòng", uid: "name" },
         { name: "Giới tính", uid: "gender" },
         { name: "Sức chứa", uid: "capacity", align: "center" },
         { name: "Giá cơ bản", uid: "price", align: "right" },
+        { name: "Hình ảnh", uid: "images", align: "center" },
         { name: "Cập nhật lần cuối", uid: "updatedAt" },
         { name: "Thao tác", uid: "actions", align: "center" },
     ];
+
+    const handleDeleteRoom = (id: string) => {
+        setRoomToDelete(id);
+    };
+
+    const confirmDelete = () => {
+        if (roomToDelete) {
+            dispatch(
+                RoomActions.deleteRoom({
+                    id: roomToDelete,
+                    onSuccess: () => {
+                        setRoomToDelete(null);
+                    },
+                })
+            );
+        }
+    };
+
+    const cancelDelete = () => {
+        setRoomToDelete(null);
+    };
 
     const renderPagination = useMemo(() => {
         return (
@@ -55,97 +86,143 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
         );
     }, [pagination, onChangePagination]);
 
-    const renderCell = useCallback((item: any, columnKey: React.Key) => {
-        const cellValue = item[columnKey as keyof any];
-        const capacityColor =
-            item.current_capacity >= item.max_capacity
-                ? "text-red-500"
-                : item.current_capacity >= item.max_capacity * 0.75
-                ? "text-orange-400"
-                : "text-green-500";
+    const renderCell = useCallback(
+        (item: any, columnKey: React.Key) => {
+            const cellValue = item[columnKey as keyof any];
+            const capacityColor =
+                item.current_capacity >= item.max_capacity
+                    ? "text-red-500"
+                    : item.current_capacity >= item.max_capacity * 0.75
+                    ? "text-orange-400"
+                    : "text-green-500";
 
-        switch (columnKey) {
-            case "gender":
-                return <div className="line-clamp-2">{convertGenderToVietnamese(item.gender)}</div>;
-            case "capacity":
-                return (
-                    <div className={capacityColor}>
-                        {item.current_capacity}/{item.max_capacity}
-                    </div>
-                );
-            case "price":
-                return <div className="line-clamp-2">{formatVND(item.base_price)}</div>;
-            case "createdAt":
-                return <div className="line-clamp-2">{formatDateTime(item.createdAt)}</div>;
-            case "updatedAt":
-                return <div className="line-clamp-2">{formatDateTimeDetail(item.updatedAt)}</div>;
+            switch (columnKey) {
+                case "gender":
+                    return (
+                        <div className="line-clamp-2">{convertGenderToVietnamese(item.gender)}</div>
+                    );
+                case "capacity":
+                    return (
+                        <div className={capacityColor}>
+                            {item.current_capacity}/{item.max_capacity}
+                        </div>
+                    );
+                case "price":
+                    return <div className="line-clamp-2">{formatVND(item.base_price)}</div>;
+                case "images":
+                    return (
+                        <div className="flex gap-1 justify-center">
+                            {item.images && item.images.length > 0 ? (
+                                item.images.slice(0, 3).map((image: string, index: number) => {
+                                    const imageUrl = image.startsWith("http")
+                                        ? image
+                                        : `${import.meta.env.VITE_BASE_SERVER}/${image}`;
+                                    return (
+                                        <Image
+                                            key={index}
+                                            src={imageUrl}
+                                            alt={`${item.name}-${index}`}
+                                            className="object-cover rounded-md"
+                                            width={40}
+                                            height={40}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <span className="text-gray-400">Không có ảnh</span>
+                            )}
+                            {item.images && item.images.length > 3 && (
+                                <div className="flex items-center justify-center">
+                                    <span className="text-xs">+{item.images.length - 3}</span>
+                                </div>
+                            )}
+                        </div>
+                    );
+                case "createdAt":
+                    return <div className="line-clamp-2">{formatDateTime(item.createdAt)}</div>;
+                case "updatedAt":
+                    return (
+                        <div className="line-clamp-2">{formatDateTimeDetail(item.updatedAt)}</div>
+                    );
 
-            case "isActive":
-                return (
-                    <Chip color={getColorUserStatus(item.status)} size="sm" variant="bordered">
-                        {formatUserStatus(item.status)}
-                    </Chip>
-                );
-            case "actions":
-                return (
-                    <div className="relative flex items-center gap-2 justify-center">
-                        <Tooltip content="Xem hồ sơ">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <EyeIcon className="size-4 text-success" />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content="Sửa">
-                            <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                <PencilIcon className="size-4 text-success" />
-                            </span>
-                        </Tooltip>
-                        {/* <Tooltip content="Xoá">
-                          <span
-                              onClick={() => deleteProduct(item.id)}
-                              className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                          >
-                              <TrashIcon className="size-4 text-danger" />
-                          </span>
-                      </Tooltip> */}
-                    </div>
-                );
-            default:
-                return cellValue;
-        }
-    }, []);
+                case "isActive":
+                    return (
+                        <Chip color={getColorUserStatus(item.status)} size="sm" variant="bordered">
+                            {formatUserStatus(item.status)}
+                        </Chip>
+                    );
+                case "actions":
+                    return (
+                        <div className="relative flex items-center gap-2 justify-center">
+                            <Tooltip content="Sửa">
+                                <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+                                    <PencilIcon
+                                        className="size-4 text-success"
+                                        onClick={() => {
+                                            navigate(`/room/edit/${item.id}`);
+                                        }}
+                                    />
+                                </span>
+                            </Tooltip>
+                            <Tooltip content="Xoá">
+                                <span
+                                    onClick={() => handleDeleteRoom(item.id)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <TrashIcon className="size-4 text-danger" />
+                                </span>
+                            </Tooltip>
+                        </div>
+                    );
+                default:
+                    return cellValue;
+            }
+        },
+        [navigate]
+    );
 
     return (
-        <Table
-            classNames={{
-                wrapper: "shadow-none",
-            }}
-            isStriped
-            aria-label="room table"
-            bottomContent={renderPagination}
-        >
-            <TableHeader>
-                {columns.map((column) => (
-                    <TableColumn
-                        key={column.uid}
-                        align={column.align as any}
-                        width={column.width as any}
-                    >
-                        {column.name}
-                    </TableColumn>
-                ))}
-            </TableHeader>
-            <TableBody
-                items={rooms.map((item: any, index: number) => ({
-                    ...item,
-                    indexNumber: index + 1,
-                }))}
+        <>
+            <Table
+                classNames={{
+                    wrapper: "shadow-none",
+                }}
+                isStriped
+                aria-label="room table"
+                bottomContent={renderPagination}
             >
-                {(item: any) => (
-                    <TableRow key={item?._id}>
-                        {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
-                    </TableRow>
-                )}
-            </TableBody>
-        </Table>
+                <TableHeader>
+                    {columns.map((column) => (
+                        <TableColumn
+                            key={column.uid}
+                            align={column.align as any}
+                            width={column.width as any}
+                        >
+                            {column.name}
+                        </TableColumn>
+                    ))}
+                </TableHeader>
+                <TableBody
+                    items={rooms.map((item: any, index: number) => ({
+                        ...item,
+                        indexNumber: index + 1,
+                    }))}
+                >
+                    {(item: any) => (
+                        <TableRow key={item?._id}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+
+            <DeleteConfirmationModal
+                isOpen={!!roomToDelete}
+                onClose={cancelDelete}
+                onConfirm={confirmDelete}
+                title="Xác nhận xoá phòng"
+                message="Bạn có chắc chắn muốn xoá phòng này? Hành động này không thể hoàn tác."
+            />
+        </>
     );
 }

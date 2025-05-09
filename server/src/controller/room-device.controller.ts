@@ -11,7 +11,7 @@ export class RoomDeviceController {
     async create(req: Request, res: Response) {
         try {
             const response = await this.rdService.create(req.body);
-            res.status(201).send({ status: 201, message: 'Thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

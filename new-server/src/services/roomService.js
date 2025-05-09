@@ -3,6 +3,7 @@ const { Room } = require("../models/entities/room");
 const { Like, Not } = require("typeorm");
 const { User } = require("../models/entities/user");
 const { Contract } = require("../models/entities/contracts");
+const { saveBase64Images } = require("../utils/fileUpload");
 
 class RoomService {
     constructor() {
@@ -12,6 +13,13 @@ class RoomService {
     }
 
     async create(data) {
+        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+            const imagePaths = await saveBase64Images(data.images);
+            data.images = imagePaths;
+        } else {
+            data.images = [];
+        }
+
         const room = this.roomRepository.create(data);
         await this.roomRepository.save(room);
 
@@ -24,6 +32,19 @@ class RoomService {
             throw 'Không thấy phòng';
         }
 
+        if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+            const newBase64Images = data.images.filter(img => typeof img === 'string' && img.includes('base64'));
+
+            const existingImages = data.images.filter(img => typeof img === 'string' && !img.includes('base64'));
+
+            if (newBase64Images.length > 0) {
+                const newImagePaths = await saveBase64Images(newBase64Images);
+                data.images = [...existingImages, ...newImagePaths];
+            } else {
+                data.images = existingImages;
+            }
+        }
+
         Object.assign(room, data);
         const updateRoom = await this.roomRepository.save(room);
         if (!updateRoom) {
@@ -34,20 +55,24 @@ class RoomService {
     }
 
     async detail(roomId) {
-        const room = await this.roomRepository.findOneById(roomId);
+        let room = await this.roomRepository.findOneById(roomId);
         if (!room) {
             throw 'Không thấy phòng';
         }
 
+        if (!room.images) {
+            room.images = [];
+        }
         return room;
     }
-    
+
     async list(page, limit, search) {
         const skip = (page - 1) * limit;
 
         const filterRoom = search ? [
             { name: Like(`%${search}%`) }
         ] : {};
+
 
         const [rooms, total] = await this.roomRepository.findAndCount({
             where: filterRoom,
@@ -56,6 +81,14 @@ class RoomService {
             order: { id: "DESC" },
         });
         return { total, page, limit, rooms };
+    }
+
+    async delete(roomId) {
+        const room = await this.roomRepository.findOneById(roomId);
+        if (!room) {
+            throw 'Không thấy phòng';
+        }
+        await this.roomRepository.delete(roomId);
     }
 
     async getRoommates(userId) {
@@ -69,7 +102,7 @@ class RoomService {
 
         return this.userRepository.find({
             where: {
-                room: user.room, 
+                room: user.room,
                 id: Not(userId),
             },
             select: ["id", "full_name", "phone"]

@@ -14,7 +14,7 @@ export class RoomController {
         try {
             const response = await this.roomService.create(req.body);
 
-            res.status(201).send({ status: 201, message: 'Tạo phòng thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Tạo phòng thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
@@ -25,7 +25,7 @@ export class RoomController {
             const roomId = req.params.roomId;
             const response = await this.roomService.modify(Number(roomId), req.body);
 
-            res.status(201).send({ status: 200, message: 'Sửa phòng thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Sửa phòng thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
@@ -38,7 +38,7 @@ export class RoomController {
             const search = req.query.search as string || "";
             const response = await this.roomService.list(page, limit, search);
 
-            res.status(200).send({ status: 201, message: 'Lấy danh sách phòng thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Lấy danh sách phòng thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

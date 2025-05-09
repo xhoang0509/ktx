@@ -10,7 +10,7 @@ class NotificationController {
         try {
             const { title, message } = req.body;
             await this.notificationSer.sendNotificationToAll(title, message);
-            return res.status(201).json({ message: "Gửi thông báo toàn KTX thành công!" });
+            return res.status(200).json({ message: "Gửi thông báo toàn KTX thành công!" });
         } catch (error) {
             return res.status(500).json({ message: "Lỗi khi gửi thông báo", error: error.message });
         }
@@ -21,7 +21,7 @@ class NotificationController {
         try {
             const { userId, title, message } = req.body;
             await this.notificationSer.sendNotificationToUser(userId, title, message);
-            return res.status(201).json({ message: "Gửi thông báo cá nhân thành công!" });
+            return res.status(200).json({ message: "Gửi thông báo cá nhân thành công!" });
         } catch (error) {
             return res.status(500).json({ message: "Lỗi khi gửi thông báo", error: error.message });
         }

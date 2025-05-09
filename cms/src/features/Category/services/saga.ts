@@ -19,7 +19,7 @@ export function* getCategories({ payload: { onSuccess } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/category`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(CategoryActions.setCategories(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -37,7 +37,7 @@ export function* addCategory({ payload: { onSuccess, body } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.post(`/category`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 201) {
+    if (rs.status === 200) {
       addToast({
         title: "Thông báo",
         description: "Thêm mới danh mục thành công",
@@ -62,7 +62,7 @@ export function* editCategory({ payload: { onSuccess, body, id } }: any) {
       body
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Sửa danh mục thành công",
         description: "Danh mục đã được cập nhật",
@@ -85,7 +85,7 @@ export function* deleteCategory({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.delete(`/category/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Xoá danh mục thành công",
         description: "Danh mục đã được xoá",
@@ -108,7 +108,7 @@ export function* getDetailCategory({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/category/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     } else {
       throw new Error(rs.message);

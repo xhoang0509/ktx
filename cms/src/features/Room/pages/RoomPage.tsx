@@ -1,93 +1,85 @@
-import { useEffect, useState, useCallback } from "react";
 import AppHeader from "@components/AppHeader";
 import { SearchForm } from "@components/SearchInput";
 import { Button } from "@heroui/react";
+import { useAppDispatch } from "@services/store";
+import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 import RoomTable from "../components/RoomTable";
 import { mockRooms } from "../services/mock";
-import { useAppDispatch } from "@services/store";
-import { RoomActions } from "../services/slice";
-import { Room } from "../types";
+import { RoomActions, RoomSelectors } from "../services/slice";
 
 const defaultPagination = {
-  page: 1,
-  limit: 10,
-  totalPages: 1,
-  totalItems: mockRooms.length,
+    page: 1,
+    limit: 10,
+    totalPages: 1,
+    totalItems: mockRooms.length,
 };
 
 export default function RoomPage() {
-  const dispatch = useAppDispatch();
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
-  // In a real application, this would come from the Redux store
-  // but for this mock example, we'll use local state
-  const [rooms, setRooms] = useState<Room[]>(mockRooms);
-  const [search, setSearch] = useState<string>("");
-  const [pagination, setPagination] = useState(defaultPagination);
+    const rooms = useSelector(RoomSelectors.rooms);
+    const [search, setSearch] = useState<string>("");
+    const [pagination, setPagination] = useState(defaultPagination);
 
-  // Initialize the mock data when the component mounts
-  useEffect(() => {
-    // In a real app, we would dispatch an action to fetch data from API
-    dispatch(RoomActions.setRooms(mockRooms));
-  }, [dispatch]);
+    const getRooms = (pagination?: any, search?: string) => {
+        dispatch(
+            RoomActions.getRooms({
+                pagination,
+                search,
+                onSuccess: (data: any) =>
+                    setPagination((prev) => ({
+                        ...prev,
+                        page: Number(data.page),
+                        limit: Number(data.limit),
+                        totalItems: Number(data.totalItems),
+                        totalPages: Number(data.totalPages),
+                    })),
+            })
+        );
+    };
+    useEffect(() => {
+        getRooms(pagination, search);
+    }, [pagination.page]);
 
-  // Filter rooms based on search term
-  const getRooms = useCallback((searchTerm: string = "") => {
-    if (!searchTerm) {
-      setRooms(mockRooms);
-      setPagination({
-        ...pagination,
-        totalItems: mockRooms.length,
-        totalPages: Math.ceil(mockRooms.length / pagination.limit),
-      });
-      return;
-    }
+    const onSearch = useCallback(() => {
+        getRooms(pagination, search);
+    }, [pagination, search, getRooms]);
 
-    const filteredRooms = mockRooms.filter((room) =>
-      room.name.toLowerCase().includes(searchTerm.toLowerCase())
+    const onChangePagination = useCallback((page: number) => {
+        setPagination((prev) => ({ ...prev, page }));
+    }, []);
+
+    return (
+        <div>
+            <AppHeader
+                pageTitle="Danh sách phòng"
+                rightMenu={
+                    <Button
+                        color="primary"
+                        onClick={() => {
+                            navigate("/room/add");
+                        }}
+                    >
+                        Thêm phòng
+                    </Button>
+                }
+            />
+            <SearchForm
+                onSearch={onSearch}
+                onChangeInput={setSearch}
+                valueInput={search}
+                placeholder="Tìm kiếm theo tên phòng"
+            />
+            <div className="bg-white rounded-2xl p-4 shadow-md m-4">
+                <RoomTable
+                    rooms={rooms}
+                    pagination={pagination}
+                    onChangePagination={onChangePagination}
+                />
+            </div>
+        </div>
     );
-
-    setRooms(filteredRooms);
-    setPagination({
-      ...pagination,
-      totalItems: filteredRooms.length,
-      totalPages: Math.ceil(filteredRooms.length / pagination.limit),
-    });
-  }, [pagination.limit]);
-
-  const onSearch = useCallback(() => {
-    getRooms(search);
-  }, [search, getRooms]);
-
-  const onChangePagination = useCallback((page: number) => {
-    setPagination((prev) => ({ ...prev, page }));
-  }, []);
-
-  return (
-    <div>
-      <AppHeader
-        pageTitle="Danh sách phòng"
-        rightMenu={
-          <Button 
-            color="primary" 
-            onClick={() => console.log("Add new room")}
-          >
-            Thêm phòng
-          </Button>
-        }
-      />
-      <SearchForm
-        onSearch={onSearch}
-        onChangeInput={setSearch}
-        valueInput={search}
-        placeholder="Tìm kiếm theo tên phòng"
-      />
-      <div className="bg-white rounded-2xl p-4 shadow-md m-4">
-        <RoomTable
-          rooms={rooms}
-          pagination={pagination}
-          onChangePagination={onChangePagination}
-        />
-      </div>
-    </div>
-  );
-} 
+}

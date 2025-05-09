@@ -26,7 +26,7 @@ export function* getVouchers({
       `/voucher/?${qs.stringify(body)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(VoucherActions.setVouchers(rs.data.data));
       onSuccess?.(rs.data);
     } else {
@@ -44,7 +44,7 @@ export function* addVoucher({ payload: { onSuccess, body } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.post(`/voucher`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 201) {
+    if (rs.status === 200) {
       addToast({
         title: "Thông báo",
         description: "Thêm mới sản phẩm thành công",
@@ -66,7 +66,7 @@ export function* editVoucher({ payload: { onSuccess, body, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.put(`/voucher/${id}`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Sửa sản phẩm thành công",
         description: "Sản phẩm đã được cập nhật",
@@ -88,7 +88,7 @@ export function* deleteVoucher({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.delete(`/voucher/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Xoá sản phẩm thành công",
         description: "Sản phẩm đã được xoá",
@@ -111,7 +111,7 @@ export function* getDetailVoucher({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/voucher/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     } else {
       throw new Error(rs.message);

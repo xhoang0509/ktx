@@ -23,7 +23,7 @@ export function* getImportStatistic({ payload: { onSuccess, query } }: any) {
       `/statistical/product-statistics?${qs.stringify(query)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setImportStatistic(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -44,7 +44,7 @@ export function* getOrderStatistic({ payload: { onSuccess, query } }: any) {
       `/statistical/status-order-statistics?${qs.stringify(query)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setOrderStatistic(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -65,7 +65,7 @@ export function* getProductStatistic({ payload: { onSuccess, query } }: any) {
       `/statistical/total-product-statistics?${qs.stringify(query)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setProductStatistic(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -86,7 +86,7 @@ export function* getRevenueStatistic({ payload: { onSuccess, query } }: any) {
       `/statistical/revenue-statistics?${qs.stringify(query)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setRevenueStatistic(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -107,7 +107,7 @@ export function* getUserStatistic({ payload: { onSuccess, query } }: any) {
       `/statistical/user-statistics?${qs.stringify(query)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setUserStatistic(rs.data));
       // onSuccess?.(rs.data);
     } else {
@@ -128,7 +128,7 @@ export function* getBestSeller({ payload: { onSuccess } }: any) {
       `/product/best-sellers?${qs.stringify({ limit: 10 })}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(StatisticActions.setBestSeller(rs.data));
       onSuccess?.(rs.data);
     } else {

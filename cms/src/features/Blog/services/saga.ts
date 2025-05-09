@@ -24,7 +24,7 @@ export function* getBlogs({ payload: { onSuccess, pagination, search } }: any) {
       `/blog/?${qs.stringify(body)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(BlogActions.setBlogs(rs.data.data));
       onSuccess?.(rs.data);
     } else {
@@ -42,7 +42,7 @@ export function* addBlog({ payload: { onSuccess, body } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.post(`/blog`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 201) {
+    if (rs.status === 200) {
       addToast({
         title: "Thông báo",
         description: "Thêm mới bài viết thành công",
@@ -64,7 +64,7 @@ export function* editBlog({ payload: { onSuccess, body, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.patch(`/blog/${id}`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Sửa bài viết thành công",
         description: "Bài viết đã được cập nhật",
@@ -86,7 +86,7 @@ export function* deleteBlog({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.delete(`/blog/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Xoá bài viết thành công",
         description: "Bài viết đã được xoá",
@@ -109,7 +109,7 @@ export function* getDetailBlog({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/blog/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     } else {
       throw new Error(rs.message);

@@ -21,7 +21,7 @@ export function* getOrders({ payload: { onSuccess, pagination } }: any) {
       `/order/admin?${qs.stringify(pagination)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(OrderActions.setOrders(rs.data.data));
       onSuccess?.(rs.data);
     }
@@ -43,7 +43,7 @@ export function* updateStatusOrder({
     );
 
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Cập nhật trạng thái thiết bị thành công",
         description: `Thiết bị đã được chuyển sang trạng thái ${status}`,
@@ -64,7 +64,7 @@ export function* getDetailOrder({ payload: { onSuccess, orderId } }: any) {
     const rs: { [x: string]: any } = yield SysFetch.get(`/order/${orderId}`);
 
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     }
   } catch (error) {

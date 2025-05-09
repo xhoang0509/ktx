@@ -16,7 +16,7 @@ export function* getUsers({ payload: { onSuccess, pagination, search } }: any) {
     yield delay(50);
     const rs: { [x: string]: any } = yield SysFetch.get(`/user?${qs.stringify(body)}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200&& rs.data) {
+    if (rs.status === 200&& rs.data) {
       const {users, page, total, limit} = rs.data;
       yield put(UserActions.setData({users, page, total, limit}));
       onSuccess?.(rs.data);
@@ -34,7 +34,7 @@ export function* getDetailUser({ payload: { id, onSuccess } }: any) {
     yield delay(50);
     const rs: { [x: string]: any } = yield SysFetch.get(`/user/detail?id=${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     }
   } catch (error) {

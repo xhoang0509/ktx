@@ -8,7 +8,7 @@ class DeviceController {
     async create(req, res) {
         try {
             const response = await this.deviceService.create(req.body);
-            res.status(201).send({ status: 201, message: 'Tạo thiết bị thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
@@ -50,7 +50,7 @@ class DeviceController {
         try {
             const deviceId = req.params.deviceId;
             const response = await this.deviceService.remove(deviceId);
-            res.status(201).send({ status: 201, message: 'Tạo thiết bị thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

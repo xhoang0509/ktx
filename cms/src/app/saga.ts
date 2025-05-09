@@ -20,7 +20,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
   //   yield delay(50);
   //   const rs: { [x: string]: any } = yield SysFetch.get(`/admin/user-info`);
   //   yield put(AppActions.setIsLoading(false));
-  //   if (rs.statusCode === 200) {
+  //   if (rs.status === 200) {
   //     onSuccess?.(rs.data);
   //   }
   // } catch (error) {
@@ -83,7 +83,7 @@ export function* logout({ payload: { onSuccess } }: any) {
       accessToken,
     });
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Đăng xuất thành công",
         description: "Hẹn gặp lại bạn sau",

@@ -14,7 +14,7 @@ export class ContractController {
             const userId = req.user?.sub;
 
             const response = await this.contractService.create(userId, req.body);
-            res.status(200).send({ status: 201, message: 'Tạo hợp đồng thành công', data: response });
+            res.status(200).send({ status: 200, message: 'Tạo hợp đồng thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

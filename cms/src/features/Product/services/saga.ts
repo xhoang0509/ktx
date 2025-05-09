@@ -21,7 +21,7 @@ export function* getCategories({ payload: { onSuccess } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/category`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(ProductActions.setCategories(rs.data));
       onSuccess?.(rs.data);
     } else {
@@ -45,7 +45,7 @@ export function* getProducts({
       `/product/?${qs.stringify(body)}`
     );
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       yield put(ProductActions.setProducts(rs.data.data));
       onSuccess?.(rs.data);
     } else {
@@ -63,7 +63,7 @@ export function* addProduct({ payload: { onSuccess, body } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.post(`/product`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 201) {
+    if (rs.status === 200) {
       addToast({
         title: "Thông báo",
         description: "Thêm mới sản phẩm thành công",
@@ -85,7 +85,7 @@ export function* editProduct({ payload: { onSuccess, body, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.put(`/product/${id}`, body);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Sửa sản phẩm thành công",
         description: "Sản phẩm đã được cập nhật",
@@ -107,7 +107,7 @@ export function* deleteProduct({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.delete(`/product/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       addToast({
         title: "Xoá sản phẩm thành công",
         description: "Sản phẩm đã được xoá",
@@ -130,7 +130,7 @@ export function* getDetailProduct({ payload: { onSuccess, id } }: any) {
 
     const rs: { [x: string]: any } = yield SysFetch.get(`/product/${id}`);
     yield put(AppActions.setIsLoading(false));
-    if (rs.statusCode === 200) {
+    if (rs.status === 200) {
       onSuccess?.(rs.data);
     } else {
       throw new Error(rs.message);

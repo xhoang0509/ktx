@@ -6,6 +6,7 @@ interface RoomState {
   page: number;
   total: number;
   limit: number;
+  currentRoom: Room | null;
 }
 
 const initialState: RoomState = {
@@ -13,6 +14,7 @@ const initialState: RoomState = {
   page: 1,
   total: 0,
   limit: 10,
+  currentRoom: null,
 };
 
 export const RoomSlice = createSlice({
@@ -21,6 +23,8 @@ export const RoomSlice = createSlice({
   reducers: {
     getRooms: (state, { payload }) => {},
     getDetailRoom: (state, { payload }) => {},
+    editRoom: (state, { payload }) => {},
+    deleteRoom: (state, { payload }) => {},
     addRoom: (state, { payload }) => {},
     setRooms: (state, { payload }) => {
       state.rooms = payload;
@@ -41,7 +45,7 @@ export const RoomActions = RoomSlice.actions;
 // Note: The Room reducer needs to be added to the store.
 // For this example, we'll use mock selectors
 export const RoomSelectors = {
-  rooms: (state: any) => state.room?.rooms || [],
+  rooms: (state: any) => state?.room?.rooms || [],
   page: (state: any) => state.room?.page || 1,
   total: (state: any) => state.room?.total || 0,
   limit: (state: any) => state.room?.limit || 10,

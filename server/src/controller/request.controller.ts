@@ -20,7 +20,7 @@ export class RequestController {
             }
     
             const response = await this.requestSer.createRequest(userId, category, description);
-            return res.status(201).json({ message: "Gửi yêu cầu thành công", response });
+            return res.status(200).json({ message: "Gửi yêu cầu thành công", response });
         } catch (error) {
             return res.status(500).json({ message: "Lỗi xử lý yêu cầu", error: error.message });
         }

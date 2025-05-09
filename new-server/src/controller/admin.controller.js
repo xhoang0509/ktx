@@ -8,7 +8,7 @@ class AdminCtroller {
     async create(req, res) {
         try {
             const admin = await this.adminService.create(req.body);
-            res.status(201).send({ status: 201, message: 'Tạo tài khoản thành công', data: admin });
+            res.status(200).send({ status: 200, message: 'Tạo tài khoản thành công', data: admin });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
