@@ -25,9 +25,9 @@ export function RouteWrapper() {
     (path) => path === location.pathname || matchPath(path, location.pathname)
   );
 
-  // if (!isAllowed) {
-  //   return <Navigate to={handleDestination()} replace />;
-  // }
+  if (!isAllowed) {
+    return <Navigate to={handleDestination()} replace />;
+  }
 
   return <Outlet />;
 }

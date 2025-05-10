@@ -24,6 +24,19 @@ class AdminCtroller {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: e.message });
         }
     }
+
+    async logout(req, res) {
+        try {
+            const token = req.headers.authorization;
+            // const response = await this.adminService.logout(token);
+            const response = {
+                success: true,
+            }
+            res.status(200).send({ status: 200, message: 'Đăng xuất thành công', data: response });
+        } catch (error) {
+            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        }
+    }
 }
 
 module.exports = { AdminCtroller }; 

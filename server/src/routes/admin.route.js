@@ -6,5 +6,5 @@ const adminController = new AdminCtroller();
 
 router.post("/", adminController.create.bind(adminController));
 router.post("/login", adminController.login.bind(adminController));
-
+router.post("/logout", adminController.logout.bind(adminController));
 module.exports = router; 

@@ -21,3 +21,10 @@ INSERT INTO user (
 ('Tô Thị R', 'tothir', 'female', 'hashedpassword18', '0912345695', 'SV0018', 'avatar18.jpg', 'active', NOW(), NOW(), NULL),
 ('Mai Văn S', 'maivans', 'male', 'hashedpassword19', '0912345696', 'SV0019', 'avatar19.jpg', 'active', NOW(), NOW(), NULL),
 ('Châu Thị T', 'chauthit', 'female', 'hashedpassword20', '0912345697', 'SV0020', 'avatar20.jpg', 'deleted', NOW(), NOW(), NULL);
+
+
+-- update user password
+
+use ktx;
+
+UPDATE `user` SET password = '$argon2id$v=19$m=65536,t=3,p=4$nRIektd77bhpdCdsNWAffg$FUnTnwmms/LWzmhKPtPhvdfFYTGEAY8RVNLlpISrCbE'

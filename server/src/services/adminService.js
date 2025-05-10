@@ -48,6 +48,11 @@ class AdminService {
 
         return token;
     }
+
+    async logout(token) {
+        const decoded = jwt.verify(token, process.env.ADMIN_SECRET_KEY);
+        return decoded;
+    }
 }
 
 module.exports = { AdminService }; 

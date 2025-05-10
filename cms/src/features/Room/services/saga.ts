@@ -37,7 +37,6 @@ export function* addRoom({ payload: { onSuccess, body } }: any) {
 
 export function* getRooms({ payload: { onSuccess, pagination, search } }: any) {
     const body = { ...pagination, search };
-    console.log({body,pagination, search})
     try {
         yield put(AppActions.setIsLoading(true));
 
