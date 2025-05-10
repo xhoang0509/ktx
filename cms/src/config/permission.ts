@@ -27,6 +27,7 @@ const RolePaths: { [key: string]: string[] } = {
     "/logout",
     "/request",
     "/request/edit/:id",
+    "/request/detail/:id",
   ],
   manager: [],
   guest: ["/login", "/register"],

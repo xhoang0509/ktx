@@ -30,16 +30,16 @@ const useDashboard = (props: ReceivedProps) => {
   const BestSellerData = useAppSelector(StatisticSelectors.bestSeller);
 
   useEffect(() => {
-    dispatch(StatisticActions.getUserStatistic({ query: month }));
-    dispatch(StatisticActions.getImportStatistic({ query: month }));
-    dispatch(StatisticActions.getOrderStatistic({ query: month }));
-    dispatch(
-      StatisticActions.getRevenueStatistic({
-        query: { type: "month", date: moment().format("YYYY-MM-DD") },
-      })
-    );
-    dispatch(StatisticActions.getProductStatistic({ query: month }));
-    dispatch(StatisticActions.getBestSeller({}));
+    // dispatch(StatisticActions.getUserStatistic({ query: month }));
+    // dispatch(StatisticActions.getImportStatistic({ query: month }));
+    // dispatch(StatisticActions.getOrderStatistic({ query: month }));
+    // dispatch(
+    //   StatisticActions.getRevenueStatistic({
+    //     query: { type: "month", date: moment().format("YYYY-MM-DD") },
+    //   })
+    // );
+    // dispatch(StatisticActions.getProductStatistic({ query: month }));
+    // dispatch(StatisticActions.getBestSeller({}));
   }, [month]);
 
   return {
