@@ -15,7 +15,6 @@ class AdminCtroller {
     }
 
     async login(req, res) {
-        console.log('login admin');
         try {
             const token = await this.adminService.login(req.body);
             res.status(200).send({ status: 200, message: 'Đăng nhập thành công', data: token });

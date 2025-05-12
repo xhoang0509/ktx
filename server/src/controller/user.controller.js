@@ -1,5 +1,6 @@
+const logger = require("../../logger");
 const { UserService } = require("../services/userService");
-
+const argon2 = require('argon2');
 class UserController {
     constructor() {
         this.userService = new UserService();
@@ -7,19 +8,50 @@ class UserController {
 
     async create(req, res) {
         try {
-            const user = await this.userService.create(req.body);
+            const body = req.body
+            if (!body.username || !body.password || !body.confirm_password) {
+                return res.status(400).send({ status: 400, message: 'Vui lòng nhập đầy đủ thông tin' });
+            }
+            if (body.password !== body.confirm_password) {
+                return res.status(400).send({ status: 400, message: 'Mật khẩu không khớp' });
+            }
+            if (body.password.length < 6 || body.password.length > 32) {
+                return res.status(400).send({ status: 400, message: 'Mật khẩu phải có từ 6 đến 32 ký tự' });
+            }
+            if (body.full_name.length < 6 || body.full_name.length > 32) {
+                return res.status(400).send({ status: 400, message: 'Tên phải có từ 6 đến 32 ký tự' });
+            }
+            if (body.student_id.length < 6 || body.student_id.length > 32) {
+                return res.status(400).send({ status: 400, message: 'Mã sinh viên phải có từ 6 đến 32 ký tự' });
+            }
+            const hashPassword = await argon2.hash(body.password);
+            const data = {
+                username: body.username,
+                password: hashPassword,
+                full_name: body.full_name,
+                phone: "",
+                gender: "other",
+                role: "user",
+                student_id: body.student_id,
+                avatar: "",
+                status: "active",
+            }
+            const user = await this.userService.create(data);
             res.status(200).send({ status: 200, message: 'Tạo tài khoản thành công', data: user });
-        } catch (error) {
-            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        } catch (e) {
+            logger.error(__filename, 'create', e.message)
+            res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
     }
 
     async login(req, res) {
         try {
-            const token = await this.userService.login(req.body);
+            const data = req.body
+            const token = await this.userService.login(data);
             res.status(200).send({ status: 200, message: 'Đăng nhập thành công', data: token });
-        } catch (error) {
-            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        } catch (e) {
+            logger.error(__filename, 'login', e.message)
+            res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
     }
 
@@ -32,14 +64,14 @@ class UserController {
             const response = await this.userService.list(page, limit, search);
             res.status(200).send({ status: 200, message: 'Lấy danh sách thành công', data: response });
         } catch (error) {
-            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+            res.status(500).send({ status: 500, message: error.message || 'Có lỗi trong quá trình xử lý' });
         }
     }
 
     async detail(req, res) {
         try {
             const userId = req.user?.sub;
-
+            console.log({ userId })
             const response = await this.userService.detail(userId);
             return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {
@@ -49,14 +81,12 @@ class UserController {
     }
 
     async findById(req, res) {
-        console.log('object');
         try {
             const id = req.params.id;
 
             const response = await this.userService.detail(id);
             return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {
-            console.log(error);
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
     }
@@ -72,7 +102,6 @@ class UserController {
 
     async modify(req, res) {
         try {
-            console.log("User in Request:", req.user);
             const userId = req.user?.sub;
 
             const response = await this.userService.modify(userId, req.body);

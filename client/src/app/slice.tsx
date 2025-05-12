@@ -7,6 +7,7 @@ interface AppState {
     id: string | null;
     username: string | null;
     role: string;
+    full_name: string | null;
   };
 }
 
@@ -16,6 +17,7 @@ const initialState: AppState = {
     id: null,
     username: null,
     role: "guest",
+    full_name: null,
   },
 };
 
@@ -23,9 +25,13 @@ export const AppSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
+    login: (state, { payload }) => {},
+    logout: (state, { payload }) => {},
+    register: (state, { payload }) => {},
     setIsLoading: (state, { payload }) => {
       state.isLoading = payload;
     },
+    getUserInfo: (state, { payload }) => {},
     setUserInfo: (state, { payload }) => {
       state.userInfo = payload;
     },

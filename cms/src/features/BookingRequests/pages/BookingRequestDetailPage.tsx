@@ -74,9 +74,6 @@ const BookingRequestDetailPage = () => {
   };
 
   const handleApprove = async (notes: string) => {
-    // In a real app, you would call an API
-    console.log("Approving booking request with notes:", notes);
-    
     // Update the local state
     if (bookingRequest) {
       setBookingRequest({
@@ -89,7 +86,6 @@ const BookingRequestDetailPage = () => {
 
   const handleReject = async (notes: string) => {
     // In a real app, you would call an API
-    console.log("Rejecting booking request with notes:", notes);
     
     // Update the local state
     if (bookingRequest) {

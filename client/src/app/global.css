@@ -33,7 +33,7 @@ body {
 }
 
 .bg-scroll {
-  background-image: url('../assets/images/login-background.jpg'), url('../assets/images/login-background.jpg'); /* Ảnh nền */
+  background-image: url('../assets/images/background.jpg'), url('../assets/images/background.jpg'); /* Ảnh nền */
   background-size: contain; /* Chiều cao mỗi ảnh */
   background-repeat: repeat-y; /* Lặp theo chiều dọc */
   animation: scrollBackground 5s linear infinite; /* Animation chạy mãi mãi */

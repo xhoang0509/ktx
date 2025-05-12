@@ -69,9 +69,7 @@ export function* login({ payload: { onSuccess, body } }: any) {
 }
 
 export function* logout({ payload: { onSuccess } }: any) {
-    console.log("logout");
     const accessToken: { [x: string]: any } = yield getAccessToken();
-    console.log({ accessToken });
     if (!accessToken) {
         window.location.reload();
         return;

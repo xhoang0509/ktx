@@ -35,6 +35,7 @@ export const UserSlice = createSlice({
     getUsers: (state, { payload }) => {},
     getDetailUser: (state, { payload }) => {},
     addUser: (state, { payload }) => {},
+    editUser: (state, { payload }) => {},
     setUsers: (state, { payload }) => {
       state.users = payload;
     },

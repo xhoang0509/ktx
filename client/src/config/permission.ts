@@ -1,9 +1,7 @@
 const RolePaths: { [key: string]: string[] } = {
-  admin: ["/"],
-  manager: ["/"],
-  student: ["/"],
-  guest: ["/", "/login", "/register", "/dorm-registration"],
-  onlyGuest: ["/login", "/register", "/dorm-registration"],
+  user: ["/", "/contact"],
+  guest: ["/", "/login", "/register", "/dorm-registration", "/contact"],
+  onlyGuest: ["/login", "/register", "/dorm-registration", "/contact"],
 };
 
 export default RolePaths;

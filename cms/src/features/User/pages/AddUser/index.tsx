@@ -23,6 +23,17 @@ import { generateSku } from "@utils/generate.util";
 import { useEffect } from "react";
 import { addProductSchema } from "@features/Product/pages/schemas/AddProductSchemas";
 
+const defaultAddUserForm = {
+    username: "",
+    full_name: "",
+    phone: "",
+    gender: "",
+    role: "",
+    status: "",
+    student_id: "",
+    createdAt: "",
+    updatedAt: "",
+}
 export default function AddUserPage() {
     const {
         register,
@@ -33,7 +44,7 @@ export default function AddUserPage() {
         setValue,
         formState: { errors },
     } = useForm({
-        defaultValues: defaultAddProductForm,
+        defaultValues: defaultAddUserForm,
         resolver: yupResolver(addProductSchema),
     });
     const navigate = useNavigate();

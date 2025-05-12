@@ -38,8 +38,8 @@ const registerInterceptorResponse = (clientInstance: AxiosInstance) => {
     },
     async (error: any) => {
       const data = error?.response?.data;
-
-      if (data?.message && data?.noti) {
+      console.log(data)
+      if (data?.message) {
         toast.error(data?.message);
       }
       return Promise.reject(error);

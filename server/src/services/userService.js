@@ -17,7 +17,14 @@ class UserService {
             where: { username: createDto.username }
         });
         if (existingUser) {
-            throw 'Tài khoản đã tồn tại';
+            throw new Error('Tài khoản đã tồn tại');
+        }
+
+        const existingUserByStudentId = await this.userRepository.findOne({
+            where: { student_id: createDto.student_id }
+        });
+        if (existingUserByStudentId) {
+            throw new Error('Mã sinh viên đã tồn tại');
         }
 
         const hashPass = await argon2.hash(createDto.password);
@@ -35,12 +42,16 @@ class UserService {
                 username: loginDto.username
             }
         });
-        if (!user || !(await argon2.verify(loginDto.password, user.password))) {
-            throw 'Tài khoản hoặc mật khẩu không đúng';
+        console.log(user.password, loginDto.password)
+        const isPasswordValid = await argon2.verify(user.password, loginDto.password)
+        // const isPasswordValid = await argon2.verify("$argon2id$v=19$m=65536,t=3,p=4$Mzk1MYVWQ8B5i1JxpXCkeA$epk/py/dIv6IZQnLm/++M3C9ZyzWs7CzCS8u+g6gEPs", "123456Aa@")
+        console.log({isPasswordValid})
+        if (!user || !isPasswordValid) {
+            throw new Error('Tài khoản hoặc mật khẩu không đúng');
         }
 
         if (user.status !== 'active') {
-            throw 'Tài khoản phải được mở khoá để có thể đăng nhập';
+            throw new Error('Tài khoản phải được mở khoá để có thể đăng nhập');
         }
 
         const payload = {
@@ -55,7 +66,11 @@ class UserService {
         const token = jwt.sign(payload, process.env.USER_SECRET_KEY, {
             expiresIn: '1h'
         });
-        return token;
+        return {
+            token: token,
+            id: user.id,
+            username: user.username,
+        };
     }
 
     async modify(userId, updateDto) {
@@ -65,13 +80,13 @@ class UserService {
         }
 
         await this.userRepository.update(userId, updateDto);
-        const updateUser = await this.userRepository.findOneById(userId);
-        if (updateUser) {
-            await this.userRepository.save(updateUser);
+        const editUser = await this.userRepository.findOneById(userId);
+        if (editUser) {
+            await this.userRepository.save(editUser);
         } else {
             throw 'Không thể cập nhật tài khoản';
         }
-        return updateUser;
+        return editUser;
     }
 
     async remove(userId) {

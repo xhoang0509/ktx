@@ -33,7 +33,8 @@ const seedAdmin = async () => {
     } catch (error) {
         console.error("Error seeding admin data:", error);
     }
-    process.exit(0);
 };
 
-seedAdmin(); 
+module.exports = {
+    seedAdmin
+}

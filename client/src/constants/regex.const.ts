@@ -6,4 +6,4 @@ export const EmailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const OnlyNumberRegex = /^[0-9-]+$/;
 export const AlphabetNumberOnlyRegex = /^[a-zA-Z0-9]+$/;
 export const PasswordValidate =
-  /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
+  /^(?=.*\S).{6,}$/;

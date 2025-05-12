@@ -15,6 +15,7 @@ const PermissionDeniedPage = lazy(() => import("@features/PermissionDenied"));
 const DormRegistrationPage = lazy(
   () => import("@features/DormRegistration/pages/DormRegistration")
 );
+const ContactPage = lazy(() => import("@features/Contact/pages"));
 
 export interface RoutesRendererProps {
   routes: RouteObject[];
@@ -26,7 +27,7 @@ export function RoutesRenderer({ routes }: RoutesRendererProps) {
 }
 
 function AppRouter() {
-  // useAuth();
+  useAuth();
 
   const getRoutes = () => [
     {
@@ -71,6 +72,11 @@ function AppRouter() {
               path: ROUTE_PATHS.DORM_REGISTRATION,
               element: <DormRegistrationPage />,
               title: "Đăng ký phòng",
+            },
+            {
+              path: ROUTE_PATHS.CONTACT,
+              element: <ContactPage />,
+              title: "Liên hệ",
             },
           ],
         },
