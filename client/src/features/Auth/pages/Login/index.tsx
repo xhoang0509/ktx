@@ -6,6 +6,7 @@ import { loginFormDefaultValues } from "@features/Auth/const";
 import { loginSchema } from "@features/Auth/schemas/loginSchema";
 import { Button } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { storeUserInfo } from "@utils/token.util";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
 
@@ -23,7 +24,14 @@ export default function LoginPage() {
     const navigate = useNavigate();
 
     const onSubmit = (data: any) => {
-        dispatch(AppActions.login({ body: data }));
+        dispatch(
+            AppActions.login({
+                body: data,
+                onSuccess: (data: any) => {
+                    storeUserInfo(data);
+                },
+            })
+        );
     };
 
     return (

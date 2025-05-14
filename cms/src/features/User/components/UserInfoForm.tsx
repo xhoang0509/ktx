@@ -7,27 +7,33 @@ import { UserDetail, genderOptions } from "../types";
 interface UserInfoFormProps {
     userData: Partial<UserDetail>;
     onChange: (data: Partial<UserDetail>) => void;
-    control?: any; // Optional form control from parent component
+    control?: any;
 }
 
-export default function UserInfoForm({ userData, onChange, control: externalControl }: UserInfoFormProps) {
-    const { control: internalControl, handleSubmit, setValue, watch } = useForm<Partial<UserDetail>>({
+export default function UserInfoForm({
+    userData,
+    onChange,
+    control: externalControl,
+}: UserInfoFormProps) {
+    const {
+        control: internalControl,
+        handleSubmit,
+        setValue,
+        watch,
+    } = useForm<Partial<UserDetail>>({
         defaultValues: userData,
     });
 
-    // Use either external control from parent component or internal control
     const control = externalControl || internalControl;
 
     const watchedValues = watch();
 
-    // Sync form changes back to parent component
     useEffect(() => {
         if (!externalControl) {
             onChange(watchedValues);
         }
     }, [watchedValues, onChange, externalControl]);
 
-    // Update form when userData changes
     useEffect(() => {
         if (userData && !externalControl) {
             Object.entries(userData).forEach(([key, value]) => {
@@ -134,6 +140,32 @@ export default function UserInfoForm({ userData, onChange, control: externalCont
                                 placeholder="Nhập số điện thoại"
                                 isInvalid={!!fieldState.error}
                                 errorMessage={fieldState.error?.message}
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        name="faculty_name"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Input
+                                {...field}
+                                label="Tên khoa"
+                                placeholder="Nhập tên khoa"
+                                isInvalid={!!fieldState.error}
+                                errorMessage={fieldState.error?.message}
+                            />
+                        )}
+                    />
+
+                    <Controller
+                        name="class_code"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Input
+                                {...field}
+                                label="Mã lớp"
+                                placeholder="Nhập mã lớp"
                             />
                         )}
                     />

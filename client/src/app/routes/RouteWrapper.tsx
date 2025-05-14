@@ -1,25 +1,36 @@
-import { Navigate, Outlet, useLocation } from "react-router";
+import GlobalLoading from "@components/common/GlobalLoading";
+import { matchPath, Navigate, Outlet, useLocation } from "react-router";
 import RolePaths from "../../config/permission";
-import { useAppSelector } from "../store";
 import { AppSelectors } from "../slice";
+import { useAppSelector } from "../store";
 
 export function RouteWrapper() {
-  const location = useLocation();
-  const { role } = useAppSelector(AppSelectors.userInfo);
-  console.log(role)
-  const handleDestination = () => {
-    return role === "guest"
-      ? "/login"
-      : !RolePaths["onlyGuest"].includes(location.pathname)
-      ? "/permission-denied"
-      : "/";
-  };
+    const location = useLocation();
+    const { role } = useAppSelector(AppSelectors.userInfo);
 
-  const allowedRoutes = RolePaths[role as string] || [];
+    const handleDestination = () => {
+        if (role === "guest") {
+            return "/login";
+        }
+        if (!RolePaths["guest"].includes(location.pathname)) {
+            return "/permission-denied";
+        }
+        return "/";
+    };
 
-  if (!allowedRoutes.includes(location.pathname)) {
-    return <Navigate to={handleDestination()} replace />;
-  }
+    if (role === null) {
+        return <GlobalLoading />;
+    }
 
-  return <Outlet />;
+    const allowedRoutes = RolePaths[role as string] || [];
+
+    const isAllowed = allowedRoutes.some(
+        (path) => path === location.pathname || matchPath(path, location.pathname)
+    );
+
+    if (!isAllowed) {
+        return <Navigate to={handleDestination()} replace />;
+    }
+
+    return <Outlet />;
 }

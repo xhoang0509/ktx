@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const router = require('./routes/Route');
 const { AppDataSource } = require('./models/db');
-
+ 
 dotenv.config();
 
 const app = express();

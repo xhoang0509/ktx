@@ -8,29 +8,8 @@ export const SITE_NAVBAR = [
     to: ROUTE_PATHS.DEFAULT,
   },
   {
-    label: "Thủ tục & hoạt động",
-    children: [
-      {
-        label: "Trang 1",
-        to: ROUTE_PATHS.DEFAULT,
-      },
-      {
-        label: "Trang 2",
-        to: ROUTE_PATHS.DEFAULT,
-      },
-      {
-        label: "Trang 3",
-        to: ROUTE_PATHS.DEFAULT,
-      },
-      {
-        label: "Trang 3",
-        to: ROUTE_PATHS.DEFAULT,
-      },
-    ],
-  },
-  {
     label: "Đăng ký phòng",
-    to: ROUTE_PATHS.DORM_REGISTRATION,
+    to: ROUTE_PATHS.ROOM_REGISTRATION,
   },
   {
     label: "Liên hệ",

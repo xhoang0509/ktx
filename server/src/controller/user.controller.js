@@ -1,9 +1,13 @@
 const logger = require("../../logger");
 const { UserService } = require("../services/userService");
 const argon2 = require('argon2');
+const jwt = require('jsonwebtoken');
+const { AppDataSource } = require("../models/db");
+const { User } = require("../models/entities/user");
 class UserController {
     constructor() {
         this.userService = new UserService();
+        this.userRepository = AppDataSource.getRepository(User);
     }
 
     async create(req, res) {
@@ -49,6 +53,31 @@ class UserController {
             const data = req.body
             const token = await this.userService.login(data);
             res.status(200).send({ status: 200, message: 'Đăng nhập thành công', data: token });
+        } catch (e) {
+            logger.error(__filename, 'login', e.message)
+            res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
+        }
+    }
+
+    async info(req, res) {
+        try {
+            const authHeader = req.headers.authorization;
+            if (!authHeader || !authHeader.startsWith("Bearer ")) {
+                return res.status(401).json({ error: "Unauthorized - No token provided" });
+            }
+
+            const token = authHeader.split(" ")[1];
+            const decoded = jwt.verify(token, process.env.USER_SECRET_KEY);
+
+            if (!decoded.username) {
+                return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
+            }
+            const user = await this.userService.findById(decoded.userId);
+            if (!user) {
+                return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
+
+            }
+            res.status(200).send({ status: 200, message: 'Get user info success', data: user });
         } catch (e) {
             logger.error(__filename, 'login', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });

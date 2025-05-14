@@ -28,3 +28,6 @@ INSERT INTO user (
 use ktx;
 
 UPDATE `user` SET password = '$argon2id$v=19$m=65536,t=3,p=4$nRIektd77bhpdCdsNWAffg$FUnTnwmms/LWzmhKPtPhvdfFYTGEAY8RVNLlpISrCbE'
+
+
+ALTER TABLE user MODIFY password VARCHAR(1000);

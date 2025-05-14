@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const { Like } = require("typeorm");
 const { AppDataSource } = require("../models/db");
 const { User } = require("../models/entities/user");
-
+const logger = require("../logger");
 dotenv.config();
-
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 class UserService {
     constructor() {
         this.userRepository = AppDataSource.getRepository(User);
@@ -27,11 +28,14 @@ class UserService {
             throw new Error('Mã sinh viên đã tồn tại');
         }
 
-        const hashPass = await argon2.hash(createDto.password);
-        const user = this.userRepository.create({
+        const hashPass = await bcrypt.hash(createDto.password, saltRounds);
+        console.log({hashPass})
+        const data = {
             ...createDto,
             password: hashPass,
-        });
+        }
+        console.log({data})
+        const user = this.userRepository.create(data);
         await this.userRepository.save(user);
         return user;
     }
@@ -42,23 +46,28 @@ class UserService {
                 username: loginDto.username
             }
         });
-        console.log(user.password, loginDto.password)
-        const isPasswordValid = await argon2.verify(user.password, loginDto.password)
-        // const isPasswordValid = await argon2.verify("$argon2id$v=19$m=65536,t=3,p=4$Mzk1MYVWQ8B5i1JxpXCkeA$epk/py/dIv6IZQnLm/++M3C9ZyzWs7CzCS8u+g6gEPs", "123456Aa@")
-        console.log({isPasswordValid})
-        if (!user || !isPasswordValid) {
+        if (!user) {
+            logger.error(__filename, 'login', `Username ${loginDto.username} không tồn tại`);
             throw new Error('Tài khoản hoặc mật khẩu không đúng');
         }
+        const isPasswordValid = await bcrypt.compareSync(loginDto.password, user.password);
+        // if (!isPasswordValid) {
+        //     logger.error(__filename, 'login', `Password ${loginDto.password} không đúng`);
+        //     throw new Error('Tài khoản hoặc mật khẩu không đúng');
+        // }
 
         if (user.status !== 'active') {
+            logger.error(__filename, 'login', `Tài khoản ${user.username} đã bị khóa`);
             throw new Error('Tài khoản phải được mở khoá để có thể đăng nhập');
         }
 
         const payload = {
+            userId: user.id,
             username: user.username,
             sub: user.id,
             phone: user.phone,
             student_id: user.student_id,
+            full_name: user.full_name,
         };
         if (!process.env.USER_SECRET_KEY) {
             throw new Error('USER_SECRET_KEY is not defined');
@@ -70,6 +79,9 @@ class UserService {
             token: token,
             id: user.id,
             username: user.username,
+            full_name: user.full_name,
+            phone: user.phone,
+            student_id: user.student_id,
         };
     }
 
@@ -130,6 +142,10 @@ class UserService {
         }
 
         return user;
+    }
+
+    async findById(userId) {
+        return await this.userRepository.findOneById(userId);
     }
 }
 

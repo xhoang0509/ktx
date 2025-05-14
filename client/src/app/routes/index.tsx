@@ -5,6 +5,7 @@ import AuthLayout from "@layouts/AuthLayout";
 import MainLayout from "@layouts/MainLayout";
 import { useAuth } from "@hooks/useAuth";
 import { RouteWrapper } from "./RouteWrapper";
+import GlobalLoading from "@components/common/GlobalLoading";
 
 const HomePage = lazy(() => import("@features/Home"));
 const LoginPage = lazy(() => import("@features/Auth/pages/Login"));
@@ -12,8 +13,14 @@ const RegisterPage = lazy(() => import("@features/Auth/pages/Register"));
 const UserInfoPage = lazy(() => import("@features/UserInfo"));
 const NotFoundPage = lazy(() => import("@features/NotFound"));
 const PermissionDeniedPage = lazy(() => import("@features/PermissionDenied"));
-const DormRegistrationPage = lazy(
-  () => import("@features/DormRegistration/pages/DormRegistration")
+const RoomRegistrationPage = lazy(
+  () => import("@features/RoomRegistration/pages/RoomRegistration")
+);
+const RoomBookingPage = lazy(
+  () => import("@features/RoomRegistration/pages/Booking")
+);
+const RoomReportPage = lazy(
+  () => import("@features/RoomRegistration/pages/RoomReport")
 );
 const ContactPage = lazy(() => import("@features/Contact/pages"));
 
@@ -69,9 +76,14 @@ function AppRouter() {
               title: "Thông tin người dùng",
             },
             {
-              path: ROUTE_PATHS.DORM_REGISTRATION,
-              element: <DormRegistrationPage />,
+              path: ROUTE_PATHS.ROOM_REGISTRATION,
+              element: <RoomRegistrationPage />,
               title: "Đăng ký phòng",
+            },
+            {
+              path: ROUTE_PATHS.ROOM_BOOKING,
+              element: <RoomBookingPage />,
+              title: "Đặt phòng",
             },
             {
               path: ROUTE_PATHS.CONTACT,
@@ -93,7 +105,7 @@ function AppRouter() {
 
   return (
     <Router>
-      <Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<GlobalLoading />}>
         <RoutesRenderer routes={getRoutes()} />
       </Suspense>
     </Router>

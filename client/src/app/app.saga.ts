@@ -12,17 +12,36 @@ export function* AppSaga() {
 }
 
 export function* getUserInfo({ payload: { onSuccess } }: any) {
-    const isLogin: [string: any] = yield getAccessToken();
-    if (isLogin) {
-        // onSuccess?.({
-        //     id: "1",
-        //     username: "admin",
-        //     role: "admin",
-        // });
+    const token: [string: any] = yield getAccessToken();
+    console.log({ token });
+    if (token) {
+        try {
+            yield put(AppActions.setIsLoading(true));
+            yield delay(50);
+            const rs: { [x: string]: any } = yield SysFetch.postWithCustomHeader(
+                `/user/info`,
+                {},
+                {
+                    Authorization: `Bearer ${token}`,
+                }
+            );
+            yield put(AppActions.setIsLoading(false));
+            if (rs.status === 200) {
+                onSuccess?.({
+                    id: "1",
+                    username: "admin",
+                    role: "user",
+                    full_name: "admin",
+                });
+            }
+        } catch (error) {
+            yield put(AppActions.setIsLoading(false));
+        }
     } else {
         onSuccess?.({
             id: null,
             username: null,
+            full_name: null,
             role: "guest",
         });
     }
@@ -46,10 +65,10 @@ export function* login({ payload: { onSuccess, body } }: any) {
                 AppActions.setUserInfo({
                     id: rs.data.id,
                     username: rs.data.username,
-                    role: 'user'
+                    full_name: rs.data.full_name,
+                    role: "user",
                 })
             );
-
             onSuccess?.(rs.data);
         } else {
             yield put(AppActions.setIsLoading(false));
@@ -70,7 +89,7 @@ export function* register({ payload: { onSuccess, body } }: any) {
         yield delay(50);
         const rs: { [x: string]: any } = yield SysFetch.post(`/user`, body);
         yield put(AppActions.setIsLoading(false));
-        console.log('run line 74',rs)
+        console.log("run line 74", rs);
         if (rs.status === 200) {
             addToast({
                 title: "Đăng ký thành công",
@@ -82,7 +101,7 @@ export function* register({ payload: { onSuccess, body } }: any) {
                 window.location.href = "/login";
             }, 1000);
         } else {
-            console.log('run line 85')
+            console.log("run line 85");
             yield put(AppActions.setIsLoading(false));
             addToast({
                 title: "Đăng ký thất bại",
@@ -95,35 +114,11 @@ export function* register({ payload: { onSuccess, body } }: any) {
     }
 }
 export function* logout({ payload: { onSuccess } }: any) {
-    const accessToken: { [x: string]: any } = yield getAccessToken();
-    if (!accessToken) {
-        window.location.reload();
-        return;
-    }
-    try {
-        yield put(AppActions.setIsLoading(true));
-        yield delay(50);
-        const rs: { [x: string]: any } = yield SysFetch.post(`/user/logout`, {
-            accessToken,
-        });
-        yield put(AppActions.setIsLoading(false));
-        if (rs.status === 200) {
-            addToast({
-                title: "Đăng xuất thành công",
-                description: "Hẹn gặp lại bạn sau",
-                color: "success",
-            });
-            yield removeAccessToken();
-            yield put(
-                AppActions.setUserInfo({
-                    id: null,
-                    username: null,
-                    role: "guest",
-                })
-            );
-            onSuccess?.(rs.data);
-        }
-    } catch (error) {
-        yield put(AppActions.setIsLoading(false));
-    }
+    yield removeAccessToken();
+    addToast({
+        title: "Đăng xuất thành công",
+        description: "Hẹn gặp lại bạn sau",
+        color: "success",
+    });
+    window.location.reload();
 }

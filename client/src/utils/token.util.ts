@@ -8,3 +8,9 @@ export const storeAccessToken = (accessToken: string) =>
 
 export const removeAccessToken = () =>
   localStorage.removeItem(CONST.STORAGE.ACCESS_TOKEN);
+
+export const storeUserInfo = (userInfo: any) =>
+  localStorage.setItem(CONST.STORAGE.USER_INFO, JSON.stringify(userInfo));
+
+export const getUserInfo = () =>
+  localStorage.getItem(CONST.STORAGE.USER_INFO);

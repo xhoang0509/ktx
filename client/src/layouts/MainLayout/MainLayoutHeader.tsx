@@ -1,30 +1,35 @@
-import React from "react";
+import { AppActions, AppSelectors } from "@app/slice";
+import { useAppDispatch } from "@app/store";
+import { SITE_NAME, SITE_NAVBAR } from "@config/site";
 import {
+    Avatar,
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
     Navbar,
     NavbarBrand,
     NavbarContent,
     NavbarItem,
-    Button,
-    DropdownItem,
-    DropdownTrigger,
-    Dropdown,
-    DropdownMenu,
-    Avatar,
 } from "@heroui/react";
-import { SITE_NAME, SITE_NAVBAR } from "@config/site";
-import { Link, useLocation, useNavigate } from "react-router";
+import React from "react";
 import { useSelector } from "react-redux";
-import { AppSelectors } from "@app/slice";
+import { Link, useLocation, useNavigate } from "react-router";
 
 const MainLayoutHeader: React.FC = () => {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();  
     const { pathname: currentPath } = useLocation();
     const user = useSelector(AppSelectors.userInfo);
-    console.log({ user });
+
     const getFirstLetter = (name: string | null) => {
-        console.log({ name })
-        if (!name) return "";
+        if (!name) return "K";
         return name.charAt(0);
+    };
+
+    const handleLogout = () => {
+        dispatch(AppActions.logout({}));
     };
     return (
         <Navbar
@@ -34,6 +39,7 @@ const MainLayoutHeader: React.FC = () => {
                 item: ["data-[active=true]:text-primary"],
             }}
         >
+            {JSON.stringify(user)}
             <NavbarBrand>
                 <div
                     className="text-primary font-bold text-2xl cursor-pointer"
@@ -44,7 +50,7 @@ const MainLayoutHeader: React.FC = () => {
             </NavbarBrand>
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
                 {SITE_NAVBAR.map((item) => {
-                    return !item?.children?.length ? (
+                    return (
                         <NavbarItem key={item.to} isActive={currentPath === "/" + item.to}>
                             <Link
                                 aria-current="page"
@@ -54,37 +60,6 @@ const MainLayoutHeader: React.FC = () => {
                                 {item.label}
                             </Link>
                         </NavbarItem>
-                    ) : (
-                        <Dropdown>
-                            <NavbarItem>
-                                <DropdownTrigger>
-                                    <Button
-                                        disableRipple
-                                        className="p-0 bg-transparent data-[hover=true]:bg-transparent text-lg hover:text-primary"
-                                        radius="sm"
-                                        variant="light"
-                                    >
-                                        {item.label}
-                                    </Button>
-                                </DropdownTrigger>
-                            </NavbarItem>
-                            <DropdownMenu
-                                aria-label="ACME features"
-                                itemClasses={{
-                                    base: "gap-4",
-                                }}
-                            >
-                                {item.children.map((child) => (
-                                    <DropdownItem
-                                        key={child.to}
-                                        // description="ACME scales apps based on demand and load"
-                                        onPress={() => navigate(child.to)}
-                                    >
-                                        {child.label}
-                                    </DropdownItem>
-                                ))}
-                            </DropdownMenu>
-                        </Dropdown>
                     );
                 })}
             </NavbarContent>
@@ -95,15 +70,7 @@ const MainLayoutHeader: React.FC = () => {
                         <Dropdown>
                             <NavbarItem>
                                 <DropdownTrigger>
-                                    <Avatar name={getFirstLetter(user.full_name) || ""} />
-                                    {/* <Button
-                                        disableRipple
-                                        className="p-0 bg-transparent data-[hover=true]:bg-transparent text-lg hover:text-primary"
-                                        radius="sm"
-                                        variant="light"
-                                    >
-                                        {`item.label`}
-                                    </Button> */}
+                                    <Avatar className="cursor-pointer" name={getFirstLetter(user.full_name) || ""} />
                                 </DropdownTrigger>
                             </NavbarItem>
                             <DropdownMenu
@@ -112,8 +79,11 @@ const MainLayoutHeader: React.FC = () => {
                                     base: "gap-4",
                                 }}
                             >
-                                <DropdownItem key={`child.to`} onPress={() => navigate(`child.to`)}>
-                                    {`child.label`}
+                                <DropdownItem key={1} onPress={() => {}}>
+                                    Thông tin tài khoản
+                                </DropdownItem>
+                                <DropdownItem key={1} onPress={handleLogout}>
+                                    Đăng xuất
                                 </DropdownItem>
                             </DropdownMenu>
                         </Dropdown>

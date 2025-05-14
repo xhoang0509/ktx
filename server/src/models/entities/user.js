@@ -21,7 +21,9 @@ const User = new EntitySchema({
             default: "other"
         },
         password: {
-            type: "varchar"
+            type: "varchar",
+            length: 1000
+
         },
         phone: {
             type: "varchar",
@@ -38,6 +40,12 @@ const User = new EntitySchema({
             type: "enum",
             enum: ["active", "inactive", "graduated", "deleted"],
             default: "active"
+        },
+        faculty_name: {
+            type: "varchar"
+        },
+        class_code: {
+            type: "varchar"
         },
         createdAt: {
             type: "datetime",

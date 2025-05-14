@@ -7,6 +7,7 @@ const userController = new UserController();
 
 router.post("/login", userController.login.bind(userController));
 router.post("/", userController.create.bind(userController));
+router.post("/info", userController.info.bind(userController));
 router.put("/modify", authMiddleware, userController.modify.bind(userController));
 router.put("/:id",  userController.modify.bind(userController));
 router.get("/", userController.list.bind(userController));
