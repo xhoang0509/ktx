@@ -17,7 +17,7 @@ const RoomRegistrationPage = lazy(
   () => import("@features/RoomRegistration/pages/RoomRegistration")
 );
 const RoomBookingPage = lazy(
-  () => import("@features/RoomRegistration/pages/Booking")
+  () => import("@features/RoomRegistration/pages/BookingPage")
 );
 const RoomReportPage = lazy(
   () => import("@features/RoomRegistration/pages/RoomReport")

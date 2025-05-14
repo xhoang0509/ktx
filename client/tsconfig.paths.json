@@ -10,7 +10,8 @@
       "@assets/*": ["src/assets/*"],
       "@app/*": ["src/app/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@hooks/*": ["src/hooks/*"]
+      "@hooks/*": ["src/hooks/*"],
+      "@services/*": ["src/services/*"]
     }
   }
 }
