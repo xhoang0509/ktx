@@ -19,18 +19,19 @@ import { Link, useLocation, useNavigate } from "react-router";
 
 const MainLayoutHeader: React.FC = () => {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();  
+    const dispatch = useAppDispatch();
     const { pathname: currentPath } = useLocation();
     const user = useSelector(AppSelectors.userInfo);
 
     const getFirstLetter = (name: string | null) => {
-        if (!name) return "K";
+        if (!name) return "A";
         return name.charAt(0);
     };
 
     const handleLogout = () => {
         dispatch(AppActions.logout({}));
     };
+    console.log({ user });
     return (
         <Navbar
             maxWidth="xl"
@@ -39,7 +40,6 @@ const MainLayoutHeader: React.FC = () => {
                 item: ["data-[active=true]:text-primary"],
             }}
         >
-            {JSON.stringify(user)}
             <NavbarBrand>
                 <div
                     className="text-primary font-bold text-2xl cursor-pointer"
@@ -70,7 +70,13 @@ const MainLayoutHeader: React.FC = () => {
                         <Dropdown>
                             <NavbarItem>
                                 <DropdownTrigger>
-                                    <Avatar className="cursor-pointer" name={getFirstLetter(user.full_name) || ""} />
+                                    <div className="flex items-center gap-2">
+                                        Xin chào, {user.full_name}
+                                        <Avatar
+                                            className="cursor-pointer"
+                                            name={getFirstLetter(user.full_name) || ""}
+                                        />
+                                    </div>
                                 </DropdownTrigger>
                             </NavbarItem>
                             <DropdownMenu

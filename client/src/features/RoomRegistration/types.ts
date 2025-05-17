@@ -1,18 +1,27 @@
 export interface Student {
   id: string;
-  name: string;
-  studentId: string;
-  className: string;
+  full_name: string;
+  student_id: string;
+  class_code: string;
+  gender: "other" | "male" | "female";
+  faculty_name: string;
+  phone: string;
 }
 
 export interface RoomDetail {
   id: string;
-  roomCode: string;
+  name: string;
+  gender: "other" | "male" | "female";
+  max_capacity: number;
+  current_capacity: number;
+  base_price: number;
+  images: string[];
+  status: "active" | "inactive";
+  note: string;
   building: string;
-  roomType: string;
-  gender: 'Male' | 'Female';
-  status: 'Available' | 'Full';
-  note?: string;
+  type: string;
+  createdAt: string;
+  updatedAt: string;
   students: Student[];
 }
 

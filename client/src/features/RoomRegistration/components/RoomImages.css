@@ -1,0 +1,45 @@
+/* Custom styles for room image carousel */
+
+/* Main slider */
+.room-slider .slick-prev,
+.room-slider .slick-next {
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+}
+
+.room-slider .slick-prev {
+  left: 10px;
+}
+
+.room-slider .slick-next {
+  right: 10px;
+}
+
+.room-slider .slick-prev:before,
+.room-slider .slick-next:before {
+  font-size: 30px;
+  opacity: 0.75;
+  color: white;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.room-slider .slick-slide {
+  padding: 0 2px;
+}
+
+/* Thumbnail slider */
+.thumbnail-slider .slick-slide {
+  padding: 2px;
+  transition: all 0.3s ease;
+}
+
+.thumbnail-slider .slick-current {
+  opacity: 1 !important;
+}
+
+/* Add box shadow on hover for thumbnails */
+.thumbnail-slider .slick-slide:hover {
+  transform: scale(1.05);
+  z-index: 1;
+} 

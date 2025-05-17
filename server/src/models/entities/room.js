@@ -35,6 +35,18 @@ const Room = new EntitySchema({
             type: "varchar",
             default: "active"
         },
+        building: {
+            type: "varchar",
+            nullable: true,
+        },
+        type: {
+            type: "varchar",
+            nullable: true,
+        },
+        note: {
+            type: "varchar",
+            nullable: true,
+        },
         createdAt: {
             type: "datetime",
             default: () => "CURRENT_TIMESTAMP"

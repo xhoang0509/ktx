@@ -4,7 +4,15 @@ const { Like, Not } = require("typeorm");
 const { User } = require("../models/entities/user");
 const { Contract } = require("../models/entities/contracts");
 const { saveBase64Images } = require("../utils/fileUpload");
+const { SEMESTERS } = require("../constants/app.const");
 
+const semesters = [
+    {
+        id: 1,
+        name: "Học kỳ 1"
+    },
+
+]
 class RoomService {
     constructor() {
         this.roomRepository = AppDataSource.getRepository(Room);
@@ -55,7 +63,9 @@ class RoomService {
     }
 
     async detail(roomId) {
-        let room = await this.roomRepository.findOneById(roomId);
+        let room = await this.roomRepository.findOne({
+            where: { id: roomId },
+        });
         if (!room) {
             throw 'Không thấy phòng';
         }
@@ -63,6 +73,18 @@ class RoomService {
         if (!room.images) {
             room.images = [];
         }
+
+        const students = await this.userRepository.find({
+            where: { room: { id: roomId } },
+            select: ["id", "full_name", "phone", "gender", "student_id", "class_code", "faculty_name"]
+        });
+
+        if (students.length > 0) {
+            room.students = students;
+        } else {
+            room.students = [];
+        }
+        room.semesters = SEMESTERS;
         return room;
     }
 

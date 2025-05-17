@@ -11,7 +11,7 @@ class PaymentService {
         this.roomRepo = AppDataSource.getRepository(Room);
     }
 
-    //Admin nhập tiền điện nước cho phòng
+    // Admin nhập tiền điện nước cho phòng
     async addUtilityCost(roomId, utilityAmount, month, year) {
         const room = await this.roomRepo.findOne({
             where: {
@@ -58,7 +58,7 @@ class PaymentService {
         return payments;
     }
 
-    //Admin xem danh sách công nợ sinh viên
+    // Admin xem danh sách công nợ sinh viên
     async getStudentDebts() {
         return await this.paymentRepo.findOne({
             where: {
@@ -68,7 +68,7 @@ class PaymentService {
         });
     }
 
-    //Admin xuất báo cáo tài chính
+    // Admin xuất báo cáo tài chính
     async getFinancialReport(month, year) {
         return await this.paymentRepo.find({
             where: {
@@ -80,7 +80,7 @@ class PaymentService {
         });
     }
 
-    //Theo dõi trễ hạn
+    // Theo dõi trễ hạn
     async getLatePayments() {
         const now = new Date();
         const currentMonth = now.getMonth() + 1;
