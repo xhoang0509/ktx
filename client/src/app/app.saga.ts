@@ -13,7 +13,6 @@ export function* AppSaga() {
 
 export function* getUserInfo({ payload: { onSuccess } }: any) {
     const token: [string: any] = yield getAccessToken();
-    console.log({ token });
     if (token) {
         try {
             yield put(AppActions.setIsLoading(true));
@@ -27,12 +26,14 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
             );
             yield put(AppActions.setIsLoading(false));
             if (rs.status === 200) {
-                onSuccess?.({
-                    id: "1",
-                    username: "admin",
-                    role: "user",
-                    full_name: "admin",
-                });
+                const userInfo = {
+                    id: rs.data.id,
+                    username: rs.data.username,
+                    role: rs.data.role,
+                    full_name: rs.data.full_name,
+                    avatar: rs.data.avatar,
+                }
+                onSuccess?.(userInfo);
             }
         } catch (error) {
             yield put(AppActions.setIsLoading(false));

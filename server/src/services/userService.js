@@ -144,8 +144,20 @@ class UserService {
         return user;
     }
 
-    async findById(userId) {
-        return await this.userRepository.findOneById(userId);
+    async  findById(userId) {
+        const user = await this.userRepository.findOne({
+            where: {
+                id: userId
+            }
+        });
+        if (!user) {
+            throw 'Không thấy tài khoản';
+        }
+
+        return {
+            ...user,
+            role: 'user'
+        };
     }
 }
 

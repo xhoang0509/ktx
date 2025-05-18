@@ -61,10 +61,10 @@ export default function BookingRequestList({
     const columns = [
         { name: "STT", uid: "indexNumber", align: "center", width: "60px" },
         { name: "Tên sinh viên", uid: "studentName" },
-        { name: "Ngày yêu cầu", uid: "requestDate" },
-        { name: "Ngày check-in", uid: "checkInDate" },
-        { name: "Ngày check-out", uid: "checkOutDate" },
-        { name: "Phòng", uid: "roomNumber" },
+        { name: "Ngày yêu cầu", uid: "createdAt" },
+        { name: "Ngày bắt đầu", uid: "start_date" },
+        { name: "Ngày kết thúc", uid: "end_date" },
+        { name: "Phòng", uid: "room_name" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Hành động", uid: "actions", align: "center" },
     ];
@@ -92,13 +92,17 @@ export default function BookingRequestList({
         switch (columnKey) {
             case "gender":
                 return <div className="line-clamp-2">{convertGenderToVietnamese(item.gender)}</div>;
+            case "studentName":
+                return <div className="line-clamp-2">{item?.user?.full_name}</div>;
+            case "room_name":
+                return <div className="line-clamp-2">{item.room.name}</div>;
             case "requestDate":
                 return <div className="line-clamp-2">{formatDateTimeDetail(item.requestDate)}</div>;
-            case "checkInDate":
-                return <div className="line-clamp-2">{formatDateTimeDetail(item.checkInDate)}</div>;
-            case "checkOutDate":
+            case "start_date":
+                return <div className="line-clamp-2">{formatDateTimeDetail(item.start_date)}</div>;
+            case "end_date":
                 return (
-                    <div className="line-clamp-2">{formatDateTimeDetail(item.checkOutDate)}</div>
+                    <div className="line-clamp-2">{formatDateTimeDetail(item.end_date)}</div>
                 );
             case "status":
                 return (

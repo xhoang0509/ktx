@@ -1,5 +1,4 @@
 const { EntitySchema } = require("typeorm");
-
 const Contract = new EntitySchema({
     name: "Contract",
     columns: {
@@ -19,8 +18,16 @@ const Contract = new EntitySchema({
         },
         status: {
             type: "enum",
-            enum: ["pending", "active", "terminated", "expired"],
+            enum: ["pending", "active", "terminated", "expired", "cancelled"],
             default: "pending"
+        },
+        createdAt: {
+            type: "timestamp",
+            default: () => "CURRENT_TIMESTAMP"
+        },
+        updatedAt: {
+            type: "timestamp",
+            default: () => "CURRENT_TIMESTAMP"
         }
     },
     relations: {

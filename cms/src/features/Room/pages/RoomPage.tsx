@@ -6,14 +6,13 @@ import { useCallback, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import RoomTable from "../components/RoomTable";
-import { mockRooms } from "../services/mock";
 import { RoomActions, RoomSelectors } from "../services/slice";
 
 const defaultPagination = {
     page: 1,
     limit: 10,
     totalPages: 1,
-    totalItems: mockRooms.length,
+    totalItems: 1,
 };
 
 export default function RoomPage() {

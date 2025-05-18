@@ -1,6 +1,7 @@
 import { AppActions, AppSelectors } from "@app/slice";
 import { useAppDispatch } from "@app/store";
 import { SITE_NAME, SITE_NAVBAR } from "@config/site";
+import { ROUTE_PATHS } from "@constants/route.const";
 import {
     Avatar,
     Button,
@@ -23,9 +24,14 @@ const MainLayoutHeader: React.FC = () => {
     const { pathname: currentPath } = useLocation();
     const user = useSelector(AppSelectors.userInfo);
 
-    const getFirstLetter = (name: string | null) => {
-        if (!name) return "A";
-        return name.charAt(0);
+    const getFirstLetter = () => {
+        if(user.avatar) {
+            return `${import.meta.env.VITE_API_BASE}/${user.avatar}`
+        }
+        if(user.full_name) {
+            return user.full_name.charAt(0);
+        }
+        return "A";
     };
 
     const handleLogout = () => {
@@ -74,7 +80,8 @@ const MainLayoutHeader: React.FC = () => {
                                         Xin chào, {user.full_name}
                                         <Avatar
                                             className="cursor-pointer"
-                                            name={getFirstLetter(user.full_name) || ""}
+                                            name={getFirstLetter() || ""}
+                                            src={getFirstLetter()}
                                         />
                                     </div>
                                 </DropdownTrigger>
@@ -85,8 +92,15 @@ const MainLayoutHeader: React.FC = () => {
                                     base: "gap-4",
                                 }}
                             >
-                                <DropdownItem key={1} onPress={() => {}}>
+                                <DropdownItem key={1} onPress={() => {
+                                    navigate(`/${ROUTE_PATHS.USER_INFO}`);
+                                }}>
                                     Thông tin tài khoản
+                                </DropdownItem>
+                                <DropdownItem key={1} onPress={() => {
+                                    navigate(`/${ROUTE_PATHS.CONTRACT}`);
+                                }}>
+                                    Lịch sử hợp đồng
                                 </DropdownItem>
                                 <DropdownItem key={1} onPress={handleLogout}>
                                     Đăng xuất

@@ -1,5 +1,12 @@
 const RolePaths: { [key: string]: string[] } = {
-    user: ["/", "/contact", "/room-registration", "/room-registration/:id"],
+    user: [
+        "/",
+        "user-info",
+        "/contact",
+        "/room-registration",
+        "/room-registration/:id",
+        "/contract",
+    ],
     guest: ["/login", "/register", "/contact"],
 };
 

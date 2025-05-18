@@ -6,6 +6,7 @@ import BookingRequestList from "../components/BookingRequestList";
 import { mockBookingRequests } from "../services/mock";
 import { BookingRequestActions } from "../services/slice";
 import { BookingRequest } from "../types";
+import { ContractService } from "@services/contract.service";
 
 const defaultPagination = {
   page: 1,
@@ -17,27 +18,20 @@ const defaultPagination = {
 export default function BookingRequestsPage() {
   const dispatch = useAppDispatch();
 
-  // In a real application, this would come from the Redux store
-  // but for this mock example, we'll use local state
   const [bookingRequests, setBookingRequests] = useState<BookingRequest[]>(mockBookingRequests);
   const [search, setSearch] = useState<string>("");
   const [pagination, setPagination] = useState(defaultPagination);
-  
-  // Initialize the mock data when the component mounts
-  useEffect(() => {
-    // In a real app, we would dispatch an action to fetch data from API
-    dispatch(BookingRequestActions.setBookingRequests(mockBookingRequests));
 
-    // Subscribe to state changes (for mock purposes)
-    const handleStateChanges = () => {
-      setBookingRequests([...mockBookingRequests]);
-    };
-    
-    // Clean up function
-    return () => {
-      // Any cleanup if needed
-    };
-  }, [dispatch]);
+  const fetchBookingRequests = async (searchTerm: string = "") => {
+    const res = await ContractService.getContracts();
+    if(res.status === 200){
+      setBookingRequests(res.data);
+    }
+  }
+  
+  useEffect(() => {
+    fetchBookingRequests();
+  }, []);
 
   // Filter booking requests based on search term
   const getBookingRequests = useCallback((searchTerm: string = "") => {
@@ -51,9 +45,9 @@ export default function BookingRequestsPage() {
       return;
     }
 
-    const filteredRequests = mockBookingRequests.filter((request) =>
-      request.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.roomNumber.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredRequests = bookingRequests.filter((request) =>
+      request.user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request.room.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     setBookingRequests(filteredRequests);

@@ -1,21 +1,24 @@
+import { AppSelectors } from "@app/slice";
+import { ROUTE_PATHS } from "@constants/route.const";
 import { Spinner } from "@heroui/react";
+import { ContractService } from "@services/contract.service";
 import { RoomService } from "@services/room.service";
 import { FC, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 import BookingForm from "../components/BookingForm";
 import RoomImages from "../components/RoomImages";
 import RoomInfoBox from "../components/RoomInfoBox";
 import RoomMembers from "../components/RoomMembers";
-import { BookingPayload, RoomDetail, Semester } from "../types";
+import { BookingPayload, RoomDetail } from "../types";
 
 const Booking: FC = () => {
     const { id } = useParams<{ id: string }>();
-    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
     const [room, setRoom] = useState<RoomDetail | null>(null);
-    const [semesters, setSemesters] = useState<Semester[]>([]);
+    const user = useSelector(AppSelectors.userInfo);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,9 +29,6 @@ const Booking: FC = () => {
                 if (res.id) {
                     setRoom(res);
                 }
-                if (res.semesters) {
-                    setSemesters(res.semesters);
-                }
             } finally {
                 setIsLoading(false);
             }
@@ -38,18 +38,32 @@ const Booking: FC = () => {
     }, [id]);
 
     const handleBookingSubmit = async (data: BookingPayload) => {
-        // In a real app, this would be an API call
-        console.log("Booking submitted:", data);
-
-        // Simulate API delay
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Show success message (in a real app, you'd use a toast notification)
-        alert("Yêu cầu đặt phòng đã được gửi thành công!");
+        setIsLoading(true);
+        try {
+            const payload = {
+                ...data,
+                startDate: data.startDate.toString(),
+                endDate: data.endDate.toString(),
+                userId: user.id,
+            };
+            const res = await ContractService.createContract(payload);
+            if (res.status === 200) {
+                toast.success("Đặt phòng thành công");
+                setTimeout(() => {
+                    navigate(`/${ROUTE_PATHS.CONTRACT}`);
+                }, 1500);
+            } else {
+                toast.error("Đặt phòng thất bại");
+            }
+        } catch (e) {
+            console.log(e);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate(`/${ROUTE_PATHS.ROOM_REGISTRATION}`);
     };
 
     if (isLoading) {
@@ -89,7 +103,6 @@ const Booking: FC = () => {
                     <BookingForm
                         room={room}
                         roomId={room.id}
-                        semesters={semesters}
                         onSubmit={handleBookingSubmit}
                         isDisabled={room.status === "inactive"}
                     />

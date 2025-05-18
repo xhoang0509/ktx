@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-
+const logger = require("../logger");
 const authMiddleware = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -13,7 +13,7 @@ const authMiddleware = (req, res, next) => {
         req.user = decoded;
         return next();
     } catch (error) {
-        console.log(error);
+        logger.error(__filename, 'authMiddleware', error.message);
         return res.status(401).json({ error: "Unauthorized - Invalid token" });
     }
 };

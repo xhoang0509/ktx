@@ -1,3 +1,4 @@
+Đây là prompt cho Cursor AI để thực hiện chức năng generate UI màn hình Booking Room
 > **Tạo một trang đặt phòng trong dự án ReactJS (dùng Vite)**, với tên tiếng Anh là `Booking`. Trang này hiển thị thông tin chi tiết của một phòng ký túc xá và cho phép sinh viên gửi yêu cầu đặt phòng.
 >
 > Dựa theo layout chuẩn, trang bao gồm các phần sau:
@@ -48,3 +49,6 @@
 >
 > * Không cần gọi API thật, có thể mock dữ liệu
 > * Sử dụng Typescript, code rõ ràng
+
+
+Dựa vào prompt mẫu ở trên, hãy cho tôi 1 prompt tương tự với cấu trúc như trên về trang UserInfo, để xem thông tin của Sinh viên bao gồm: full_name , username , gender , phone , student_id , avatar , status , faculty_name , class_code , createdAt , updatedAt. code được code trong folder /features/UserInfo/index.tsx

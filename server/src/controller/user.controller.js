@@ -79,6 +79,9 @@ class UserController {
             }
             res.status(200).send({ status: 200, message: 'Get user info success', data: user });
         } catch (e) {
+            if (e.message === "jwt expired") {
+                return res.status(401).send({ status: 401, message: 'Token đã hết hạn' });
+            }
             logger.error(__filename, 'login', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
@@ -100,7 +103,6 @@ class UserController {
     async detail(req, res) {
         try {
             const userId = req.user?.sub;
-            console.log({ userId })
             const response = await this.userService.detail(userId);
             return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {

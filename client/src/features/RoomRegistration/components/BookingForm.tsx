@@ -1,23 +1,19 @@
+import { Button } from "@heroui/button";
+import { DateRangePicker, Textarea } from "@heroui/react";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { addMonths } from "@utils/date.util";
 import { FC, useState } from "react";
 import { useForm } from "react-hook-form";
-import { BookingPayload, RoomDetail, Semester } from "../types";
-import { Button } from "@heroui/button";
+import { BookingPayload, RoomDetail } from "../types";
 
 interface BookingFormProps {
     room: RoomDetail;
     roomId: string;
-    semesters: Semester[];
     onSubmit: (data: BookingPayload) => void;
     isDisabled?: boolean;
 }
 
-const BookingForm: FC<BookingFormProps> = ({
-    room,
-    roomId,
-    semesters,
-    onSubmit,
-    isDisabled = false,
-}) => {
+const BookingForm: FC<BookingFormProps> = ({ room, roomId, onSubmit, isDisabled = false }) => {
     const disabled = room.current_capacity === room.max_capacity;
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,15 +21,18 @@ const BookingForm: FC<BookingFormProps> = ({
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm<BookingPayload>({
         defaultValues: {
             roomId,
-            semesterId: "",
+            startDate: today(getLocalTimeZone()),
+            endDate: addMonths(today(getLocalTimeZone()), 6),
             note: "",
         },
     });
 
     const handleFormSubmit = async (data: BookingPayload) => {
+        console.log("handleformsubmit");
         if (isDisabled || isSubmitting) return;
 
         setIsSubmitting(true);
@@ -43,6 +42,9 @@ const BookingForm: FC<BookingFormProps> = ({
             setIsSubmitting(false);
         }
     };
+
+    const startDate = watch("startDate");
+    const endDate = watch("endDate");
 
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -56,34 +58,37 @@ const BookingForm: FC<BookingFormProps> = ({
                     >
                         Thời gian đăng ký
                     </label>
-                    <select
-                        id="semesterId"
-                        className={`block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 ${
-                            errors.semesterId ? "border-red-500" : ""
-                        }`}
-                        disabled={isDisabled || isSubmitting}
-                        {...register("semesterId", { required: "Vui lòng chọn học kỳ" })}
-                    >
-                        <option value="">-- Chọn học kỳ --</option>
-                        {semesters.map((semester) => (
-                            <option key={semester.id} value={semester.id}>
-                                {semester.name}
-                            </option>
-                        ))}
-                    </select>
-                    {errors.semesterId && (
-                        <p className="mt-1 text-sm text-red-600">{errors.semesterId.message}</p>
-                    )}
+                    <DateRangePicker
+                        defaultValue={{
+                            start: today(getLocalTimeZone()),
+                            end: addMonths(today(getLocalTimeZone()), 6),
+                        }}
+                        minValue={today(getLocalTimeZone())}
+                        maxValue={addMonths(today(getLocalTimeZone()), 6)}
+                        className="max-w-xs"
+                        label="Thời gian đăng ký phòng"
+                        errorMessage={(error) => {
+                            const errorMessage = error.validationErrors.map((error) => {
+                                if (error.includes("or later.")) {
+                                    return "Ngày bắt đầu phải là ngày trước ngày hiện tại.";
+                                }
+                                if (error.includes("before end date.")) {
+                                    return "Ngày bắt đầu phải trước ngày kết thúc.";
+                                }
+                            });
+                            return errorMessage.join(" ");
+                        }}
+                        value={{
+                            start: startDate,
+                            end: endDate,
+                        }}
+                    />
                 </div>
 
                 <div>
-                    <label htmlFor="note" className="block text-sm font-medium text-gray-700 mb-1">
-                        Ghi chú của sinh viên
-                    </label>
-                    <textarea
-                        id="note"
-                        rows={4}
-                        className="block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                    <Textarea
+                        className="w-full"
+                        label="Ghi chú của sinh viên"
                         placeholder="Mong muốn ở cùng bạn, nhu cầu đặc biệt..."
                         disabled={isDisabled || isSubmitting}
                         {...register("note")}

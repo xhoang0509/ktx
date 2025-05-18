@@ -6,8 +6,9 @@ interface AppState {
   userInfo: {
     id: string | null;
     username: string | null;
-    role: string;
+    role: string | null;
     full_name: string | null;
+    avatar: string | null;
   };
 }
 
@@ -16,8 +17,9 @@ const initialState: AppState = {
   userInfo: {
     id: null,
     username: null,
-    role: "guest",
+    role: null,
     full_name: null,
+    avatar: null,
   },
 };
 

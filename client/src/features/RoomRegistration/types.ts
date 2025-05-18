@@ -1,3 +1,5 @@
+import { CalendarDate } from "@internationalized/date";
+
 export interface Student {
   id: string;
   full_name: string;
@@ -32,6 +34,7 @@ export interface Semester {
 
 export interface BookingPayload {
   roomId: string;
-  semesterId: string;
+  startDate: CalendarDate;
+  endDate: CalendarDate;
   note?: string;
 } 
