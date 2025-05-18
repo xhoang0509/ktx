@@ -1,8 +1,17 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { ProductActions } from "@features/Product/services/slice";
 import { IUser } from "@features/User/services/slice";
 import { EyeIcon, PencilIcon } from "@heroicons/react/24/solid";
-import { Chip, Pagination, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow, Tooltip } from "@heroui/react";
+import {
+    Chip,
+    Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Tooltip,
+} from "@heroui/react";
 import { useAppDispatch } from "@services/store";
 import { formatDateTimeDetail, formatUserStatus, getColorUserStatus } from "@utils/fomart.util";
 import { convertGenderToVietnamese } from "@utils/gender.util";
@@ -10,27 +19,19 @@ import React, { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 
 interface IProps {
-    users: IUser[]
+    users: IUser[];
     pagination?: {
         page: number;
         totalPages: number;
     };
     onChangePagination?: (page: number) => void;
 }
-export default function UserTable({
-    users,
-    pagination,
-    onChangePagination, }: IProps) {
-        
+export default function UserTable({ users, pagination, onChangePagination }: IProps) {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
     const navigateEditUser = (id: string) => {
         navigate(`/${ROUTE_PATHS.EDIT_USER_BASE}/${id}`);
-    };
-
-    const deleteProduct = (id: string) => {
-        dispatch(ProductActions.deleteProduct({ id }));
     };
 
     const columns = [
@@ -50,25 +51,15 @@ export default function UserTable({
 
         switch (columnKey) {
             case "gender":
-                return (
-                    <div className="line-clamp-2">{convertGenderToVietnamese(item.gender)}</div>
-                );
+                return <div className="line-clamp-2">{convertGenderToVietnamese(item.gender)}</div>;
             case "createdAt":
-                return (
-                    <div className="line-clamp-2">{formatDateTimeDetail(item.createdAt)}</div>
-                );
+                return <div className="line-clamp-2">{formatDateTimeDetail(item.createdAt)}</div>;
             case "updatedAt":
-                return (
-                    <div className="line-clamp-2">{formatDateTimeDetail(item.updatedAt)}</div>
-                );
+                return <div className="line-clamp-2">{formatDateTimeDetail(item.updatedAt)}</div>;
 
             case "isActive":
                 return (
-                    <Chip
-                        color={getColorUserStatus(item.status)}
-                        size="sm"
-                        variant="bordered"
-                    >
+                    <Chip color={getColorUserStatus(item.status)} size="sm" variant="bordered">
                         {formatUserStatus(item.status)}
                     </Chip>
                 );
@@ -110,7 +101,8 @@ export default function UserTable({
 
     const renderPagination = useMemo(() => {
         return (
-            pagination && pagination?.totalPages > 1 && (
+            pagination &&
+            pagination?.totalPages > 1 && (
                 <div className="flex w-full justify-center">
                     <Pagination
                         isDisabled={!onChangePagination}
@@ -152,21 +144,14 @@ export default function UserTable({
                     }))}
                 >
                     {(item: any) => (
-                        <TableRow
-                            key={item?._id}
-                        >
-                            {(columnKey) => (
-                                <TableCell>
-                                    {renderCell(item, columnKey)}
-                                </TableCell>
-                            )}
+                        <TableRow key={item?._id}>
+                            {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
             </Table>
-        )
-    }, [users, columns, renderCell])
+        );
+    }, [users, columns, renderCell]);
 
-    return <div>{renderTable}</div>
-};
-
+    return <div>{renderTable}</div>;
+}
