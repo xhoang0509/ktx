@@ -9,6 +9,7 @@ import {
     DropdownItem,
     DropdownMenu,
     DropdownTrigger,
+    Image,
     Navbar,
     NavbarBrand,
     NavbarContent,
@@ -17,7 +18,7 @@ import {
 import React from "react";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router";
-
+import schoolLogo from "@assets/images/school_logo.jpg";
 const MainLayoutHeader: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -25,10 +26,10 @@ const MainLayoutHeader: React.FC = () => {
     const user = useSelector(AppSelectors.userInfo);
 
     const getFirstLetter = () => {
-        if(user.avatar) {
-            return `${import.meta.env.VITE_API_BASE}/${user.avatar}`
+        if (user.avatar) {
+            return `${import.meta.env.VITE_API_BASE}/${user.avatar}`;
         }
-        if(user.full_name) {
+        if (user.full_name) {
             return user.full_name.charAt(0);
         }
         return "A";
@@ -37,21 +38,24 @@ const MainLayoutHeader: React.FC = () => {
     const handleLogout = () => {
         dispatch(AppActions.logout({}));
     };
-    console.log({ user });
+
     return (
         <Navbar
             maxWidth="xl"
             classNames={{
-                base: ["bg-[#e4f9ff]"],
+                base: ["bg-[#d2f5ff]"],
                 item: ["data-[active=true]:text-primary"],
             }}
         >
             <NavbarBrand>
                 <div
-                    className="text-primary font-bold text-2xl cursor-pointer"
+                    className="flex items-center gap-2 cursor-pointer"
                     onClick={() => navigate("/")}
                 >
-                    {SITE_NAME}
+                    <Image src={schoolLogo} width={32} height={32} className="mr-2 rounded-none" />
+                    <div className="text-primary font-bold text-2xl cursor-pointer">
+                        {SITE_NAME}
+                    </div>
                 </div>
             </NavbarBrand>
             <NavbarContent className="hidden sm:flex gap-4" justify="center">
@@ -92,14 +96,20 @@ const MainLayoutHeader: React.FC = () => {
                                     base: "gap-4",
                                 }}
                             >
-                                <DropdownItem key={1} onPress={() => {
-                                    navigate(`/${ROUTE_PATHS.USER_INFO}`);
-                                }}>
+                                <DropdownItem
+                                    key={1}
+                                    onPress={() => {
+                                        navigate(`/${ROUTE_PATHS.USER_INFO}`);
+                                    }}
+                                >
                                     Thông tin tài khoản
                                 </DropdownItem>
-                                <DropdownItem key={1} onPress={() => {
-                                    navigate(`/${ROUTE_PATHS.CONTRACT}`);
-                                }}>
+                                <DropdownItem
+                                    key={1}
+                                    onPress={() => {
+                                        navigate(`/${ROUTE_PATHS.CONTRACT}`);
+                                    }}
+                                >
                                     Lịch sử hợp đồng
                                 </DropdownItem>
                                 <DropdownItem key={1} onPress={handleLogout}>

@@ -37,6 +37,8 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
             }
         } catch (error) {
             yield put(AppActions.setIsLoading(false));
+            removeAccessToken();
+            window.location.href = "/login";
         }
     } else {
         onSuccess?.({
@@ -90,7 +92,6 @@ export function* register({ payload: { onSuccess, body } }: any) {
         yield delay(50);
         const rs: { [x: string]: any } = yield SysFetch.post(`/user`, body);
         yield put(AppActions.setIsLoading(false));
-        console.log("run line 74", rs);
         if (rs.status === 200) {
             addToast({
                 title: "Đăng ký thành công",
@@ -102,7 +103,6 @@ export function* register({ payload: { onSuccess, body } }: any) {
                 window.location.href = "/login";
             }, 1000);
         } else {
-            console.log("run line 85");
             yield put(AppActions.setIsLoading(false));
             addToast({
                 title: "Đăng ký thất bại",

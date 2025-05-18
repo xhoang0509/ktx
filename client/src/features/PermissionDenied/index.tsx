@@ -6,7 +6,6 @@ const PermissionDenied: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    console.log('handleClick')
     navigate("/");
   };
   return (

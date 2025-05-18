@@ -30,12 +30,10 @@ export function* getUsers({ payload: { onSuccess, pagination, search } }: any) {
 
 
 export function* getDetailUser({ payload: { id, onSuccess } }: any) {
-  console.log({id, onSuccess})
   try {
     yield put(AppActions.setIsLoading(true));
     yield delay(50);
     const rs: { [x: string]: any } = yield SysFetch.get(`/user/${id}`);
-    console.log(`/user/${id}`)
     yield put(AppActions.setIsLoading(false));
     if (rs.status === 200) {
       onSuccess?.(rs.data);

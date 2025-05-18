@@ -15,4 +15,8 @@ export const SITE_NAVBAR = [
     label: "Liên hệ",
     to: ROUTE_PATHS.CONTACT,
   },
+  {
+    label: "Bài viết",
+    to: ROUTE_PATHS.BLOG,
+  },
 ];

@@ -9,4 +9,6 @@ export const ROUTE_PATHS = {
   PERMISSION_DENIED: "permission-denied",
   CONTACT: "contact",
   CONTRACT: "contract",
+  BLOG: "blog",
+  BLOG_DETAIL: "blog/:id",
 };

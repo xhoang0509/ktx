@@ -19,7 +19,8 @@ const RoomRegistrationPage = lazy(
 const RoomBookingPage = lazy(() => import("@features/RoomRegistration/pages/BookingPage"));
 const ContractPage = lazy(() => import("@features/Contract/"));
 const ContactPage = lazy(() => import("@features/Contact/pages"));
-
+const BlogView = lazy(() => import("@features/Blog/View"));
+const BlogIndex = lazy(() => import("@features/Blog/Index"));
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
@@ -91,6 +92,17 @@ function AppRouter() {
                             element: <ContactPage />,
                             title: "Liên hệ",
                         },
+                        {
+                            path: ROUTE_PATHS.BLOG_DETAIL,
+                            element: <BlogView />,
+                            title: "Blog",
+                        },
+                        {
+                            path: ROUTE_PATHS.BLOG,
+                            element: <BlogIndex />,
+                            title: "Blog",
+                        },
+
                     ],
                 },
             ],

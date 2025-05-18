@@ -4,13 +4,13 @@ import { Image } from "@heroui/react";
 import React from "react";
 import { useNavigate } from "react-router";
 import MenuItem from "./MenuItem";
-
+import schoolLogo from "@assets/images/school_logo.jpg";
 const SideBar: React.FC = () => {
   const navigate = useNavigate();
   return (
     <div className="min-w-[260px] p-4 bg-white border-r-1 max-h-[calc(100vh-24px)] overflow-y-auto flex flex-col sticky top-0">
-      <div className="text-primary font-bold text-2xl cursor-pointer flex gap-4 items-center">
-        <Image src="/logo.jfif" className="w-[50px]" />Room Track
+      <div className="text-primary font-bold text-2xl cursor-pointer flex gap-4 items-center" onClick={() => navigate('/')}>
+        <Image src={schoolLogo} className="w-[50px]" />Room Track
       </div>
 
       <div className="px-2 mt-8 flex-1">

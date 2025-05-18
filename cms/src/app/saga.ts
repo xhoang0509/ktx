@@ -23,7 +23,6 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
     //   yield put(AppActions.setIsLoading(false));
     // }
     const isLogin: [string: any] = yield getAccessToken();
-    console.log({isLogin});
     if (isLogin) {
         onSuccess?.({
             id: "1",

@@ -34,6 +34,8 @@ export const formatStatus = (status: BookingRequestStatus) => {
             return "Đã duyệt";
         case BookingRequestStatus.REJECTED:
             return "Từ chối";
+        case BookingRequestStatus.CANCELLED:
+            return "Đã hủy";
         default:
             return "Không xác định";
     }
@@ -46,6 +48,8 @@ export function getColorStatus(status: BookingRequestStatus) {
         case BookingRequestStatus.APPROVED:
             return "success";
         case BookingRequestStatus.REJECTED:
+            return "danger";
+        case BookingRequestStatus.CANCELLED:
             return "danger";
         default:
             return "default";
@@ -87,6 +91,7 @@ export default function BookingRequestList({
     }, [pagination, onChangePagination]);
 
     const renderCell = useCallback((item: any, columnKey: React.Key) => {
+        console.log(item)
         const cellValue = item[columnKey as keyof any];
 
         switch (columnKey) {
@@ -95,7 +100,7 @@ export default function BookingRequestList({
             case "studentName":
                 return <div className="line-clamp-2">{item?.user?.full_name}</div>;
             case "room_name":
-                return <div className="line-clamp-2">{item.room.name}</div>;
+                return <div className="line-clamp-2">{item?.room?.name}</div>;
             case "requestDate":
                 return <div className="line-clamp-2">{formatDateTimeDetail(item.requestDate)}</div>;
             case "start_date":

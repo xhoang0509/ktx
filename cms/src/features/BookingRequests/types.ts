@@ -2,9 +2,10 @@ import { Room } from "@features/Room/types";
 import { UserDetail } from "@features/User";
 
 export enum BookingRequestStatus {
-    PENDING = "PENDING",
-    APPROVED = "APPROVED",
-    REJECTED = "REJECTED",
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected",
+    CANCELLED = "cancelled",
 }
 
 // example of data
