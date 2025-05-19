@@ -12,7 +12,7 @@ const seedUser = async () => {
         const randomStudentId = Math.floor(Math.random() * 1000000000);
         const userData = [
             {
-                username: "user",
+                email: "user1@gmail.com",
                 password: "Matkhau123@",
                 gender: "male",
                 phone: "0909090909",
@@ -25,7 +25,7 @@ const seedUser = async () => {
 
         for (const user of userData) {
             const hashedPassword = await argon2.hash(user.password);
-            const existingUser = await userRepository.findOneBy({ username: user.username });
+            const existingUser = await userRepository.findOneBy({ email: user.email });
             if (!existingUser) {
                 const data = {
                     ...user,

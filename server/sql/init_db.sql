@@ -2,7 +2,7 @@
 
 CREATE TABLE `admin` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `role` enum('superadmin','staff') NOT NULL DEFAULT 'staff',
   `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,7 +63,7 @@ CREATE TABLE `room_device` (
 CREATE TABLE `user` (
   `id` int NOT NULL AUTO_INCREMENT,
   `full_name` varchar(255) NOT NULL,
-  `username` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL,
   `gender` enum('male','female','other') NOT NULL DEFAULT 'other',
   `password` varchar(255) NOT NULL,
   `phone` varchar(255) DEFAULT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE `user` (
   `updatedAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `roomId` int DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `IDX_78a916df40e02a9deb1c4b75ed` (`username`),
+  UNIQUE KEY `IDX_78a916df40e02a9deb1c4b75ed` (`email`),
   UNIQUE KEY `IDX_726563a72061070f771b221345` (`student_id`),
   KEY `FK_9a5b6e98e76999b2c6778a30eec` (`roomId`),
   CONSTRAINT `FK_9a5b6e98e76999b2c6778a30eec` FOREIGN KEY (`roomId`) REFERENCES `room` (`id`)

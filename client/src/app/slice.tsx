@@ -5,7 +5,7 @@ interface AppState {
   isLoading: boolean;
   userInfo: {
     id: string | null;
-    username: string | null;
+    email: string | null;
     role: string | null;
     full_name: string | null;
     avatar: string | null;
@@ -16,7 +16,7 @@ const initialState: AppState = {
   isLoading: false,
   userInfo: {
     id: null,
-    username: null,
+    email: null,
     role: null,
     full_name: null,
     avatar: null,

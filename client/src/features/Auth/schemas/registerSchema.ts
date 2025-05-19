@@ -3,11 +3,12 @@ import * as yup from "yup";
 
 export const registerSchema = yup
     .object({
-        username: yup
+        email: yup
             .string()
-            .min(5, "Username phải có ít nhất 5 ký tự")
-            .max(30, "Username có nhiều nhất 30 ký tự")
-            .required("Username không được bỏ trống"),
+            .email("Email không hợp lệ")
+            .min(5, "Email phải có ít nhất 5 ký tự")
+            .max(30, "Email có nhiều nhất 30 ký tự")
+            .required("Email không được bỏ trống"),
         full_name: yup
             .string()
             .min(5, "Họ và tên phải có ít nhất 5 ký tự")

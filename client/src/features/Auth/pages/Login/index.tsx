@@ -40,9 +40,9 @@ export default function LoginPage() {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="text-2xl font-semibold mb-4">Đăng nhập</div>
                     <div>
-                        <div className="mb-2">Tên đăng nhập</div>
-                        <AppInput control={control} name="username" type="text" size="lg" />
-                        <div className="text-danger text-xs mt-1">{errors.username?.message}</div>
+                        <div className="mb-2">Email</div>
+                        <AppInput control={control} name="email" type="text" size="lg" />
+                        <div className="text-danger text-xs mt-1">{errors.email?.message}</div>
                     </div>
                     <div className="mt-4">
                         <div className="mb-2">Mật khẩu</div>

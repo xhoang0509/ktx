@@ -39,6 +39,10 @@ const Room = new EntitySchema({
             type: "varchar",
             nullable: true,
         },
+        floor: {
+            type: "int",
+            nullable: true,
+        },
         type: {
             type: "varchar",
             nullable: true,

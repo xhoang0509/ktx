@@ -32,7 +32,6 @@ const BookingForm: FC<BookingFormProps> = ({ room, roomId, onSubmit, isDisabled 
     });
 
     const handleFormSubmit = async (data: BookingPayload) => {
-        console.log("handleformsubmit");
         if (isDisabled || isSubmitting) return;
 
         setIsSubmitting(true);

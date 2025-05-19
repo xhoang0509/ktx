@@ -5,9 +5,9 @@ const { Like } = require("typeorm");
 const { AppDataSource } = require("../models/db");
 const { User } = require("../models/entities/user");
 const logger = require("../logger");
+const { saveBase64Images } = require("../utils/fileUpload");
 dotenv.config();
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+
 class UserService {
     constructor() {
         this.userRepository = AppDataSource.getRepository(User);
@@ -15,7 +15,7 @@ class UserService {
 
     async create(createDto) {
         const existingUser = await this.userRepository.findOne({
-            where: { username: createDto.username }
+            where: { email: createDto.email }
         });
         if (existingUser) {
             throw new Error('Tài khoản đã tồn tại');
@@ -28,13 +28,14 @@ class UserService {
             throw new Error('Mã sinh viên đã tồn tại');
         }
 
-        const hashPass = await bcrypt.hash(createDto.password, saltRounds);
-        console.log({hashPass})
+        const hassPass = await argon2.hash(createDto.password);
+
         const data = {
             ...createDto,
-            password: hashPass,
+            password: hassPass,
+            faculty_name: createDto?.faculty_name || '',
+            class_code: createDto?.class_code || '',
         }
-        console.log({data})
         const user = this.userRepository.create(data);
         await this.userRepository.save(user);
         return user;
@@ -43,27 +44,27 @@ class UserService {
     async login(loginDto) {
         const user = await this.userRepository.findOne({
             where: {
-                username: loginDto.username
+                email: loginDto.email
             }
         });
         if (!user) {
-            logger.error(__filename, 'login', `Username ${loginDto.username} không tồn tại`);
+            logger.error(__filename, 'login', `Email ${loginDto.email} không tồn tại`);
             throw new Error('Tài khoản hoặc mật khẩu không đúng');
         }
-        const isPasswordValid = await bcrypt.compareSync(loginDto.password, user.password);
-        // if (!isPasswordValid) {
-        //     logger.error(__filename, 'login', `Password ${loginDto.password} không đúng`);
-        //     throw new Error('Tài khoản hoặc mật khẩu không đúng');
-        // }
+        const isPasswordValid = await argon2.verify(user.password, loginDto.password);
+        if (!isPasswordValid) {
+            logger.error(__filename, 'login', `Password ${loginDto.password} không đúng`);
+            throw new Error('Tài khoản hoặc mật khẩu không đúng');
+        }
 
         if (user.status !== 'active') {
-            logger.error(__filename, 'login', `Tài khoản ${user.username} đã bị khóa`);
+            logger.error(__filename, 'login', `Tài khoản ${user.email} đã bị khóa`);
             throw new Error('Tài khoản phải được mở khoá để có thể đăng nhập');
         }
 
         const payload = {
             userId: user.id,
-            username: user.username,
+            email: user.email,
             sub: user.id,
             phone: user.phone,
             student_id: user.student_id,
@@ -78,7 +79,7 @@ class UserService {
         return {
             token: token,
             id: user.id,
-            username: user.username,
+            email: user.email,
             full_name: user.full_name,
             phone: user.phone,
             student_id: user.student_id,
@@ -91,7 +92,28 @@ class UserService {
             throw 'Không tìm thấy tài khoản';
         }
 
-        await this.userRepository.update(userId, updateDto);
+        const updateData = {}
+
+        if (updateDto.class_code) {
+            updateData.class_code = updateDto.class_code
+        }
+        if (updateDto.faculty_name) {
+            updateData.faculty_name = updateDto.faculty_name
+        }
+        if (updateDto.full_name) {
+            updateData.full_name = updateDto.full_name
+        }
+        if (updateDto.phone) {
+            updateData.phone = updateDto.phone
+        }
+        if (updateDto.avatar) {
+            if (typeof updateDto.avatar === 'string' && updateDto.avatar.includes('base64')) {
+                const newImagePaths = await saveBase64Images([updateDto.avatar], "users");
+                updateData.avatar = newImagePaths[0];
+            }
+        }
+
+        await this.userRepository.update(userId, updateData);
         const editUser = await this.userRepository.findOneById(userId);
         if (editUser) {
             await this.userRepository.save(editUser);
@@ -100,6 +122,7 @@ class UserService {
         }
         return editUser;
     }
+
 
     async remove(userId) {
         const user = await this.userRepository.findOneById(userId);
@@ -117,7 +140,7 @@ class UserService {
 
         const filterUser = search ? [
             { full_name: Like(`%${search}%`) },
-            { username: Like(`%${search}%`) },
+            { email: Like(`%${search}%`) },
             { phone: Like(`%${search}%`) },
             { student_id: Like(`%${search}%`) }
         ] : {};
@@ -128,7 +151,6 @@ class UserService {
             skip: skip,
             order: { id: "DESC" },
         });
-        // i want to return the total number of items and pages in the response
         const totalItems = total;
         const totalPages = Math.ceil(totalItems / limit);
 
@@ -144,7 +166,7 @@ class UserService {
         return user;
     }
 
-    async  findById(userId) {
+    async findById(userId) {
         const user = await this.userRepository.findOne({
             where: {
                 id: userId

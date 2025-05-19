@@ -1,10 +1,10 @@
 export const loginFormDefaultValues = {
-  username: "nguyenvana",
+  email: "nguyenvana@gmail.com",
   password: "123456Aa@",
 };
 
 export const registerFormDefaultValues = {
-  username: "nguyenvana",
+  email: "nguyenvana@gmail.com",
   password: "123456Aa@",
   full_name: "Nguyen Van A",
   student_id: "DNC20190000",

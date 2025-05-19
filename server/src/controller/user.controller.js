@@ -1,6 +1,5 @@
 const logger = require("../../logger");
 const { UserService } = require("../services/userService");
-const argon2 = require('argon2');
 const jwt = require('jsonwebtoken');
 const { AppDataSource } = require("../models/db");
 const { User } = require("../models/entities/user");
@@ -13,7 +12,7 @@ class UserController {
     async create(req, res) {
         try {
             const body = req.body
-            if (!body.username || !body.password || !body.confirm_password) {
+            if (!body.email || !body.password || !body.confirm_password) {
                 return res.status(400).send({ status: 400, message: 'Vui lòng nhập đầy đủ thông tin' });
             }
             if (body.password !== body.confirm_password) {
@@ -28,10 +27,14 @@ class UserController {
             if (body.student_id.length < 6 || body.student_id.length > 32) {
                 return res.status(400).send({ status: 400, message: 'Mã sinh viên phải có từ 6 đến 32 ký tự' });
             }
-            const hashPassword = await argon2.hash(body.password);
+            const exitsUser = await this.userRepository.findOne({ where: { email: body.email } });
+            if (exitsUser) {
+                return res.status(400).send({ status: 400, message: 'Email đã tồn tại' });
+            }
+            
             const data = {
-                username: body.username,
-                password: hashPassword,
+                email: body.email,
+                password: body.password,
                 full_name: body.full_name,
                 phone: "",
                 gender: "other",
@@ -44,6 +47,43 @@ class UserController {
             res.status(200).send({ status: 200, message: 'Tạo tài khoản thành công', data: user });
         } catch (e) {
             logger.error(__filename, 'create', e.message)
+            res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
+        }
+    }
+
+    async uploadAvatar(req, res) {
+        console.log('run upload avatar')
+        try {
+            const userId = req.user?.sub;
+            const file = req.file;
+            
+            if (!file) {
+                return res.status(400).send({ status: 400, message: 'Không có file được tải lên' });
+            }
+            
+            if (!userId) {
+                return res.status(401).send({ status: 401, message: 'Không tìm thấy thông tin người dùng' });
+            }
+
+            // Get file path
+            const avatarUrl = `/uploads/avatars/${file.filename}`;
+            
+            // Update user avatar in database
+            const user = await this.userRepository.findOne({ where: { id: userId } });
+            if (!user) {
+                return res.status(404).send({ status: 404, message: 'Không tìm thấy người dùng' });
+            }
+            
+            user.avatar = avatarUrl;
+            await this.userRepository.save(user);
+            
+            res.status(200).send({ 
+                status: 200, 
+                message: 'Upload avatar thành công', 
+                data: { avatar: avatarUrl } 
+            });
+        } catch (e) {
+            logger.error(__filename, 'uploadAvatar', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
     }
@@ -69,7 +109,7 @@ class UserController {
             const token = authHeader.split(" ")[1];
             const decoded = jwt.verify(token, process.env.USER_SECRET_KEY);
 
-            if (!decoded.username) {
+            if (!decoded.email) {
                 return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
             }
             const user = await this.userService.findById(decoded.userId);

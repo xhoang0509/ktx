@@ -32,9 +32,9 @@ const Register: React.FC = () => {
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="text-2xl font-semibold mb-4">Đăng ký</div>
                     <div>
-                        <div className="mb-2">Tên đăng nhập</div>
-                        <AppInput control={control} name="username" type="text" size="lg" />
-                        <div className="text-danger text-xs mt-1">{errors.username?.message}</div>
+                        <div className="mb-2">Email</div>
+                        <AppInput control={control} name="email" type="text" size="lg" />
+                        <div className="text-danger text-xs mt-1">{errors.email?.message}</div>
                     </div>
                     <div>
                         <div className="mb-2">Họ và tên</div>
@@ -60,7 +60,7 @@ const Register: React.FC = () => {
                     </div>
                     <div className="mt-6">
                         <Button className="btn w-full" type="submit" color="primary">
-                            Đăng nhập
+                            Đăng ký
                         </Button>
                     </div>
                     <div className="text-right mt-2">

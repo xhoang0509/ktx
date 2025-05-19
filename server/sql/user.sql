@@ -1,5 +1,5 @@
 INSERT INTO user (
-    full_name, username, gender, password, phone, student_id, avatar, status, createdAt, updatedAt, roomId
+    full_name, email, gender, password, phone, student_id, avatar, status, createdAt, updatedAt, roomId
 ) VALUES
 ('Nguyễn Văn A', 'nguyenvana', 'male', 'hashedpassword1', '0912345678', 'SV0001', 'avatar1.jpg', 'active', NOW(), NOW(), NULL),
 ('Trần Thị B', 'tranthib', 'female', 'hashedpassword2', '0912345679', 'SV0002', 'avatar2.jpg', 'active', NOW(), NOW(), NULL),

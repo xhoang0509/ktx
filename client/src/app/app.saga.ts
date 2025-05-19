@@ -28,7 +28,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
             if (rs.status === 200) {
                 const userInfo = {
                     id: rs.data.id,
-                    username: rs.data.username,
+                    email: rs.data.email,
                     role: rs.data.role,
                     full_name: rs.data.full_name,
                     avatar: rs.data.avatar,
@@ -43,7 +43,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
     } else {
         onSuccess?.({
             id: null,
-            username: null,
+            email: null,
             full_name: null,
             role: "guest",
         });
@@ -67,7 +67,7 @@ export function* login({ payload: { onSuccess, body } }: any) {
             yield put(
                 AppActions.setUserInfo({
                     id: rs.data.id,
-                    username: rs.data.username,
+                    email: rs.data.email,
                     full_name: rs.data.full_name,
                     role: "user",
                 })

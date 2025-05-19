@@ -31,7 +31,7 @@ const UserInfoFields: React.FC<UserInfoFieldsProps> = ({ user }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <InfoField label="Họ và tên" value={user.full_name} />
-      <InfoField label="Tên đăng nhập" value={user.username} />
+      <InfoField label="Email" value={user.email} />
       <InfoField label="Mã sinh viên" value={user.student_id} />
       <InfoField label="Giới tính" value={getGender(user.gender)} />
       <InfoField label="Số điện thoại" value={user.phone || 'Chưa có thông tin'} />

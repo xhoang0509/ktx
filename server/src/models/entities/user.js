@@ -11,9 +11,9 @@ const User = new EntitySchema({
         full_name: {
             type: "varchar"
         },
-        username: {
+        email: {
             type: "varchar",
-            unique: true
+            unique: true,
         },
         gender: {
             type: "enum",

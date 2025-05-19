@@ -44,5 +44,5 @@ pnpm-lock.yaml
 # .rdb
 *.rdb
 
-server/src/`public/images/
+server/src/public/images/
 .cursor/*

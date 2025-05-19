@@ -32,6 +32,7 @@ export default function AddRoomPage() {
     const dispatch = useAppDispatch();
 
     const onSubmit = (data: any) => {
+        console.log(data);
         dispatch(
             RoomActions.addRoom({
                 body: data,
@@ -105,6 +106,27 @@ export default function AddRoomPage() {
                                 />
                                 <div className="text-danger text-xs mt-1">
                                     {errors.base_price?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Tầng</div>
+                                <AppNumberInput
+                                    control={control}
+                                    name="floor"
+                                    size="sm"
+                                    minValue={0}
+                                />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.floor?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Tòa nhà</div>
+                                <AppInput control={control} name="building" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.building?.message}
                                 </div>
                             </div>
 
