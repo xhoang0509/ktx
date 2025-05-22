@@ -16,6 +16,7 @@ export const ROUTE_PATHS = {
   CATEGORY: "category",
   PRODUCT: "product",
   EDIT_DEVICE: "device/edit/:id",
+  ADD_DEVICE: "device/add",
   REQUEST: "request",
   REQUEST_DETAIL: "request/detail/:id",
   EDIT_REQUEST_BASE: "request/edit",

@@ -1,19 +1,17 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { CheckCircleIcon, EyeIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
-  Chip,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-  Tooltip,
+    Chip,
+    Pagination,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+    Tooltip,
 } from "@heroui/react";
 import { useAppDispatch } from "@services/store";
-import { formatVND } from "@utils/fomart.util";
-import moment from "moment";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 
@@ -25,81 +23,88 @@ export interface Device {
     status: string;
 }
 
+export interface Pagination {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+}
+
 export type Props = {
     devices: Device[];
     pagination: Pagination;
     onChangePagination: (page: number) => void;
+    onDelete: (id: string) => void;
 };
-export default function DeviceTable({ devices, pagination, onChangePagination }: Props) {
+export default function DeviceTable({ devices, pagination, onChangePagination, onDelete }: Props) {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
     const columns = [
-        { name: "ID", uid: "_id", width: "50px" },
-        { name: "userId", uid: "userId" },
-        { name: "Tổng tiền", uid: "totalPrice" },
-        { name: "Thời điểm tạo", uid: "createdAt" },
+        { name: "ID", uid: "id", width: "50px" },
+        { name: "Tên thiết bị", uid: "name" },
+        { name: "Loại thiết bị", uid: "type" },
+        { name: "Năm sản xuất", uid: "year_of_manufacture" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Tuỳ chọn", uid: "actions", align: "center" },
     ];
-
-    const updateOrderStatus = (orderId: string, status: string) => {};
-
-    const navigateEditOrder = (id: string) => {
-        navigate(`/${ROUTE_PATHS.EDIT_REQUEST_BASE}/${id}`);
+    const handleDelete = (id: string) => {
+        onDelete(id);
     };
     const renderCell = useCallback((item: any, columnKey: React.Key) => {
         const cellValue = item[columnKey as keyof any];
 
+        const getDeviceStatus = (status: string) => {
+            switch (status) {
+                case "good":
+                    return "Tốt";
+                case "broken":
+                    return "Hỏng";
+                case "under_maintenance":
+                    return "Đang bảo trì";
+                case "deleted":
+                    return "Đã xóa";
+            }
+        };
         switch (columnKey) {
             case "status":
                 return (
                     <Chip
-                        color={orderStatus[item.status].color as any}
+                        color={
+                            item.status == "good"
+                                ? "success"
+                                : item.status == "broken"
+                                ? "danger"
+                                : item.status == "under_maintenance"
+                                ? "warning"
+                                : "danger"
+                        }
                         size="sm"
                         variant="bordered"
                     >
-                        {orderStatus[item.status].label}
+                        {getDeviceStatus(item.status)}
                     </Chip>
                 );
-            case "totalPrice":
-                return <div>{formatVND(item.totalPrice)}</div>;
-            case "createdAt":
-                return <div>{moment(item.createdAt).format("HH:mm:ss DD-MM-YYYY")}</div>;
+
             case "actions":
                 return (
                     <div className="relative flex items-center gap-2 justify-center">
-                        <Tooltip content="Xem">
+                        <Tooltip content="Sửa">
                             <span
-                                onClick={() => navigateEditOrder(item._id)}
+                                onClick={() => navigate(`/${ROUTE_PATHS.DEVICE}/edit/${item.id}`)}
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
-                                <EyeIcon className="size-4 text-secondary" />
+                                <PencilIcon className="size-4 text-secondary" />
                             </span>
                         </Tooltip>
-
-                        {item.status == "pending" && (
-                            <>
-                                <Tooltip content="Huỷ">
-                                    <span
-                                        onClick={() => updateOrderStatus(item._id, "cancelled")}
-                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                    >
-                                        <XCircleIcon className="size-4 text-danger" />
-                                    </span>
-                                </Tooltip>
-                                <Tooltip content="xác nhận">
-                                    <span
-                                        onClick={() => {
-                                            updateOrderStatus(item._id, "shipping");
-                                        }}
-                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                    >
-                                        <CheckCircleIcon className="size-4 text-success" />
-                                    </span>
-                                </Tooltip>
-                            </>
-                        )}
+                        <Tooltip content="Xóa">
+                            <span
+                                onClick={() => handleDelete(item.id)}
+                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
+                                <TrashIcon className="size-4 text-secondary" />
+                            </span>
+                        </Tooltip>
                     </div>
                 );
             default:
@@ -146,13 +151,12 @@ export default function DeviceTable({ devices, pagination, onChangePagination }:
                 </TableHeader>
                 <TableBody
                     items={
-                      []
-                        // orders?.length
-                        //     ? orders?.map((item: any, index: number) => ({
-                        //           ...item,
-                        //           indexNumber: index + 1,
-                        //       }))
-                        //     : []
+                        devices?.length
+                            ? devices?.map((item: any, index: number) => ({
+                                  ...item,
+                                  indexNumber: index + 1,
+                              }))
+                            : []
                     }
                 >
                     {(item: any) => (

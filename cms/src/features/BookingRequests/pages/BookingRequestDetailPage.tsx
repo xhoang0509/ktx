@@ -6,7 +6,8 @@ import AppHeader from "@components/AppHeader";
 import BookingRequestInfo from "../components/BookingRequestInfo";
 import AdminDecisionBox from "../components/AdminDecisionBox";
 import { BookingRequestDetail, BookingRequestStatus } from "../types";
-
+import { useDispatch } from "react-redux";
+import { BookingRequestActions } from "../services/slice";
 const mockBookingRequestDetail: BookingRequestDetail = {
     id: "1",
     requestCode: "YC001",
@@ -41,32 +42,22 @@ const mockBookingRequestDetail: BookingRequestDetail = {
 };
 
 const BookingRequestDetailPage = () => {
+    const dispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const [bookingRequest, setBookingRequest] = useState<BookingRequestDetail | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
-        // Simulating API call
-        setTimeout(() => {
-            setBookingRequest(mockBookingRequestDetail);
-            setLoading(false);
-        }, 500);
-
-        // In a real app, you would fetch the data from API
-        // const fetchBookingRequest = async () => {
-        //   try {
-        //     setLoading(true);
-        //     const response = await api.get(`/booking-requests/${id}`);
-        //     setBookingRequest(response.data);
-        //   } catch (error) {
-        //     console.error("Error fetching booking request:", error);
-        //   } finally {
-        //     setLoading(false);
-        //   }
-        // };
-        //
-        // fetchBookingRequest();
+        dispatch(
+            BookingRequestActions.getBookingRequestDetail({
+                id,
+                onSuccess: (data: BookingRequestDetail) => {
+                    setBookingRequest(data);
+                    setLoading(false);
+                },
+            })
+        );
     }, [id]);
 
     const handleBack = () => {

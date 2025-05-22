@@ -18,6 +18,7 @@ import {
     formatUserStatus,
     formatVND,
     getColorUserStatus,
+    getRoomStatus,
 } from "@utils/fomart.util";
 import { convertGenderToVietnamese } from "@utils/gender.util";
 import { useCallback, useMemo, useState } from "react";
@@ -43,8 +44,12 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
         { name: "Giới tính", uid: "gender" },
         { name: "Sức chứa", uid: "capacity", align: "center" },
         { name: "Giá cơ bản", uid: "price", align: "right" },
+        { name: "Tầng", uid: "floor", align: "center" },
+        { name: "Tòa nhà", uid: "building" },
+        { name: "Loại phòng", uid: "type" },
         { name: "Hình ảnh", uid: "images", align: "center" },
         { name: "Cập nhật lần cuối", uid: "updatedAt" },
+        { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Thao tác", uid: "actions", align: "center" },
     ];
 
@@ -68,7 +73,6 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
     const cancelDelete = () => {
         setRoomToDelete(null);
     };
-
     const renderPagination = useMemo(() => {
         return (
             pagination &&
@@ -108,7 +112,15 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
                         </div>
                     );
                 case "price":
-                    return <div className="line-clamp-2">{formatVND(item.base_price)}</div>;
+                    return <div className="line-clamp-2">{formatVND(Number(item.base_price))}</div>;
+                case "floor":
+                    return <div className="line-clamp-2">{item.floor}</div>;
+                case "building":
+                    return <div className="line-clamp-2">{item.building}</div>;
+                case "type":
+                    return <div className="line-clamp-2">{item.type}</div>;
+                case "status":
+                    return <div className="line-clamp-2">{getRoomStatus(item.status)}</div>;
                 case "images":
                     return (
                         <div className="flex gap-1 justify-center">

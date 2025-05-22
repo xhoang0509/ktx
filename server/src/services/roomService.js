@@ -21,11 +21,24 @@ class RoomService {
     }
 
     async create(data) {
+        const existingRoom = await this.roomRepository.findOne({
+            where: {
+                name: data.name
+            }
+        });
+        if (existingRoom) {
+            throw new Error("Tên phòng đã tồn tại! Vui lòng chọn tên khác");
+        }
+
         if (data.images && Array.isArray(data.images) && data.images.length > 0) {
             const imagePaths = await saveBase64Images(data.images);
             data.images = imagePaths;
         } else {
             data.images = [];
+        }
+
+        if (data.base_price) {
+            data.base_price = Number(data.base_price);
         }
 
         const room = this.roomRepository.create(data);
@@ -85,6 +98,7 @@ class RoomService {
             room.students = [];
         }
         room.semesters = SEMESTERS;
+        room.images = room.images.map(image => `http://localhost:${process.env.PORT}/${image}`);
         return room;
     }
 
@@ -96,13 +110,19 @@ class RoomService {
         ] : {};
 
 
-        const [rooms, total] = await this.roomRepository.findAndCount({
+        let [rooms, total] = await this.roomRepository.findAndCount({
             where: filterRoom,
             take: limit,
             skip: skip,
             order: { id: "DESC" },
         });
-        return { total, page, limit, rooms };
+
+        rooms = rooms.map(room => {
+            room.images = room.images.map(image => `http://localhost:${process.env.PORT}/${image}`);
+            return room;
+        });
+        const totalPages = Math.ceil(total / limit);
+        return { totalItems: total, page, limit, totalPages, rooms };
     }
 
     async delete(roomId) {

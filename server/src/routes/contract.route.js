@@ -12,6 +12,7 @@ router.get("/view", authMiddleware, contractController.view.bind(contractControl
 router.post("/:id/cancel", authMiddleware, contractController.cancel.bind(contractController));
 router.post("/transfer-room", contractController.transferRoom.bind(contractController));
 router.get("/pending", contractController.getPendingContracts.bind(contractController));
-router.post("/approve", contractController.approveContract.bind(contractController));
-
+router.post("/:id/approve", contractController.approveContract.bind(contractController));
+router.post("/:id/reject", contractController.rejectContract.bind(contractController));
+router.get("/:id", contractController.adminGetContractDetail.bind(contractController));
 module.exports = router; 

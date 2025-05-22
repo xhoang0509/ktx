@@ -19,11 +19,13 @@ const EditUserPage = lazy(() => import("@features/User/pages/EditUser"));
 const ViewUserPage = lazy(() => import("@features/User/pages/ViewUser"));
 
 const Devicepage = lazy(() => import("@features/Device/pages/Device"));
+const AddDevicePage = lazy(() => import("@features/Device/pages/AddDevice"));
 const RoomPage = lazy(() => import("@features/Room/pages/RoomPage"));
 const AddRoomPage = lazy(() => import("@features/Room/pages/AddRoom"));
 const EditDevicePage = lazy(() => import("@features/Device/pages/EditDevice"));
 const LogoutPage = lazy(() => import("@features/Logout"));
 const RequestPage = lazy(() => import("@features/BookingRequests/pages/BookingRequestsPage"));
+
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
@@ -97,8 +99,14 @@ function AppRouter() {
                         {
                             path: ROUTE_PATHS.EDIT_DEVICE,
                             element: <EditDevicePage />,
-                            title: "Chi tiết thiết bị",
+                            title: "Sửa thiết bị",
                         },
+                        {
+                            path: ROUTE_PATHS.ADD_DEVICE,
+                            element: <AddDevicePage />,
+                            title: "Thêm thiết bị",
+                        },
+
                         // Room
                         {
                             path: ROUTE_PATHS.ROOM,

@@ -7,26 +7,22 @@ import { ROUTE_PATHS } from "@constants/route.const";
 import { Button, SelectItem } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@services/store";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
-import {
-    addRoomSchema,
-    defaultAddRoomForm,
-    genderOptions,
-    statusOptions,
-} from "../services/const";
+import { addRoomSchema, defaultAddRoomForm, genderOptions, statusOptions } from "../services/const";
 import { RoomActions } from "../services/slice";
-import { useEffect } from "react";
+import AppTextarea from "@components/common/AppTextArea";
 
 export default function EditRoomPage() {
-  const { id } = useParams();
+    const { id } = useParams();
 
     const {
         handleSubmit,
         control,
         reset,
         formState: { errors },
-        watch
+        watch,
     } = useForm({
         defaultValues: defaultAddRoomForm,
         resolver: yupResolver(addRoomSchema),
@@ -50,18 +46,17 @@ export default function EditRoomPage() {
 
     useEffect(() => {
         if (id) {
-          dispatch(
-            RoomActions.getDetailRoom({
-              id,
-              onSuccess: (data: any) =>{
-                console.log('data', data)
-                reset(data)
-              },
-            })
-          );
+            dispatch(
+                RoomActions.getDetailRoom({
+                    id,
+                    onSuccess: (data: any) => {
+                        console.log("data", data);
+                        reset(data);
+                    },
+                })
+            );
         }
-      }, [dispatch]);
-
+    }, [dispatch]);
 
     return (
         <div className="h-full flex flex-col">
@@ -129,6 +124,36 @@ export default function EditRoomPage() {
                             </div>
 
                             <div className="col-span-6">
+                                <div className="mb-2">Tầng</div>
+                                <AppNumberInput
+                                    control={control}
+                                    name="floor"
+                                    size="sm"
+                                    minValue={0}
+                                    maxValue={999999999}
+                                />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.floor?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Tòa nhà</div>
+                                <AppInput control={control} name="building" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.building?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Loại phòng</div>
+                                <AppInput control={control} name="type" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.building?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
                                 <div className="mb-2">Trạng thái</div>
                                 <AppSelect control={control} name="status" size="md">
                                     {statusOptions.map((item) => (
@@ -137,6 +162,14 @@ export default function EditRoomPage() {
                                 </AppSelect>
                                 <div className="text-danger text-xs mt-1">
                                     {errors.status?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Ghi chú</div>
+                                <AppTextarea control={control} name="note" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.note?.message}
                                 </div>
                             </div>
                         </div>

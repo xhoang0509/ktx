@@ -4,7 +4,7 @@ import AppHeader from "@components/AppHeader";
 import { formatVND } from "@utils/fomart.util";
 import moment from "moment";
 import { ClockIcon } from "@heroicons/react/24/solid";
-import { orderStatus } from "@features/Order/services/const";
+import { deviceStatus } from "@features/Device/services/const";
 import AppImage from "@components/AppImage";
 import { Button } from "@heroui/react";
 
@@ -50,10 +50,10 @@ const AddBlogLayout: FC<Props> = ({ detailOrder, updateOrderStatus }) => {
               </div>
               <div
                 className={`text-${
-                  orderStatus[detailOrder.status as string].color
+                  deviceStatus[detailOrder.status as string].color
                 }`}
               >
-                {orderStatus[detailOrder.status as string].label}
+                {deviceStatus[detailOrder.status as string].label}
               </div>
             </div>
             <div className="border-b-2 pb-2">

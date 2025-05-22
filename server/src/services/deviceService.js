@@ -58,7 +58,7 @@ class DeviceService {
     }
 
     async remove(deviceId) {
-        const device = await this.deviceRepository.findOneById(deviceId);
+        const device = await this.deviceRepository.findOne({ where: { id: deviceId } });
         if (!device) {
             throw 'Không tìm thấy thiết bị';
         }

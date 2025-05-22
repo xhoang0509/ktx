@@ -2,6 +2,7 @@ import AppHeader from "@components/AppHeader";
 import AppInput from "@components/common/AppInput";
 import AppNumberInput from "@components/common/AppNumberInput";
 import AppSelect from "@components/common/AppSelect";
+import AppTextarea from "@components/common/AppTextArea";
 import AppUploadImage from "@components/common/AppUploadImage";
 import { ROUTE_PATHS } from "@constants/route.const";
 import { Button, SelectItem } from "@heroui/react";
@@ -30,7 +31,7 @@ export default function AddRoomPage() {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-
+    console.log(errors);
     const onSubmit = (data: any) => {
         console.log(data);
         dispatch(
@@ -116,6 +117,7 @@ export default function AddRoomPage() {
                                     name="floor"
                                     size="sm"
                                     minValue={0}
+                                    maxValue={999999999}
                                 />
                                 <div className="text-danger text-xs mt-1">
                                     {errors.floor?.message}
@@ -131,14 +133,34 @@ export default function AddRoomPage() {
                             </div>
 
                             <div className="col-span-6">
+                                <div className="mb-2">Loại phòng</div>
+                                <AppInput control={control} name="type" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.building?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
                                 <div className="mb-2">Trạng thái</div>
-                                <AppSelect control={control} name="status" size="md">
+                                <AppSelect
+                                    control={control}
+                                    name="status"
+                                    size="md"
+                                >
                                     {statusOptions.map((item) => (
                                         <SelectItem key={item.key}>{item.label}</SelectItem>
                                     ))}
                                 </AppSelect>
                                 <div className="text-danger text-xs mt-1">
                                     {errors.status?.message}
+                                </div>
+                            </div>
+
+                            <div className="col-span-6">
+                                <div className="mb-2">Ghi chú</div>
+                                <AppTextarea control={control} name="note" />
+                                <div className="text-danger text-xs mt-1">
+                                    {errors.note?.message}
                                 </div>
                             </div>
                         </div>

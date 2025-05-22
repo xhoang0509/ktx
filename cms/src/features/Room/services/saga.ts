@@ -102,8 +102,8 @@ export function* deleteRoom({ payload: { onSuccess, id } }: any) {
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             addToast({
-                title: "Xoá sản phẩm thành công",
-                description: "Sản phẩm đã được xoá",
+                title: "Xoá phòng thành công",
+                description: "Phòng đã được xoá",
                 color: "success",
             });
             yield put(RoomActions.getRooms({}));

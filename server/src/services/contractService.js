@@ -2,6 +2,7 @@ const { Contract } = require("../models/entities/contracts");
 const { User } = require("../models/entities/user");
 const { Room } = require("../models/entities/room");
 const { AppDataSource } = require("../models/db");
+const { In } = require("typeorm");
 
 class ContractService {
     constructor() {
@@ -16,6 +17,7 @@ class ContractService {
                 id: userId
             }
         });
+
         const room = await this.roomRepo.findOne({
             where: {
                 id: data.roomId
@@ -27,14 +29,20 @@ class ContractService {
         if (!room) {
             throw new Error("Không tìm thấy phòng");
         }
+        
+        if(user.gender !== room.gender) {
+            throw new Error("Giới tính không khớp");
+        }
+
         const contracts = await this.contractRepo.find({
             where: {
                 user: {
                     id: userId
                 },
-                status: "active"
+                status: In(["pending", "active"])
             }
         });
+
         if (contracts.length > 0) {
             throw new Error("Bạn đang trong 1 hợp đồng khác, không thể tạo mới!");
         }

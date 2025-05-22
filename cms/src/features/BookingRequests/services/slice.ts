@@ -20,18 +20,9 @@ export const BookingRequestSlice = createSlice({
   initialState,
   reducers: {
     getBookingRequests: (state, { payload }) => {},
-    approveBookingRequest: (state, { payload }) => {
-      const { id } = payload;
-      state.bookingRequests = state.bookingRequests.map(request => 
-        request.id === id ? { ...request, status: BookingRequestStatus.APPROVED } : request
-      );
-    },
-    rejectBookingRequest: (state, { payload }) => {
-      const { id } = payload;
-      state.bookingRequests = state.bookingRequests.map(request => 
-        request.id === id ? { ...request, status: BookingRequestStatus.REJECTED } : request
-      );
-    },
+    getBookingRequestDetail: (state, { payload }) => {},
+    approveBookingRequest: (state, { payload }) => {},
+    rejectBookingRequest: (state, { payload }) => {},
     setBookingRequests: (state, { payload }) => {
       state.bookingRequests = payload;
     },
@@ -48,8 +39,6 @@ const BookingRequestReducer = BookingRequestSlice.reducer;
 export default BookingRequestReducer;
 export const BookingRequestActions = BookingRequestSlice.actions;
 
-// Note: The BookingRequest reducer needs to be added to the store.
-// For this example, we'll mock the selectors
 export const BookingRequestSelectors = {
   bookingRequests: (state: any) => state.bookingRequest?.bookingRequests || [],
   page: (state: any) => state.bookingRequest?.page || 1,

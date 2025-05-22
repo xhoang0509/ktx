@@ -45,7 +45,7 @@ class ContractController {
                 { room_id: Like(`%${search}%`) },
                 { user_id: Like(`%${search}%`) },
             ] : {};
-            
+
             const contracts = await contractRepo.find({
                 where: filter,
                 relations: {
@@ -71,6 +71,22 @@ class ContractController {
             const userId = req.user?.sub;
             const contract = await this.contractService.view(userId, req.body);
             return res.status(200).json({ message: "Xem hợp đồng thành công", contract });
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
+    async adminGetContractDetail(req, res) {
+        try {
+            const { id: contractId } = req.params;
+            const contract = await contractRepo.findOne({
+                where: { id: contractId },
+                relations: {
+                    user: true,
+                    room: true
+                }
+            });
+            return res.status(200).json({ message: "Xem hợp đồng thành công", data: contract });
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }
@@ -110,6 +126,17 @@ class ContractController {
         }
     }
 
+    async rejectContract(req, res) {
+        try {
+            const { contractId, approve } = req.body;
+
+            const contract = await this.contractService.approveContract(contractId, approve);
+            return res.status(200).json({ message: "Cập nhật hợp đồng thành công", contract });
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+    }
+
     async getPendingContracts(req, res) {
         try {
             const contracts = await this.contractService.getPendingContracts();
@@ -118,6 +145,8 @@ class ContractController {
             return res.status(400).json({ message: error.message });
         }
     }
+
+
 }
 
 module.exports = { ContractController }; 

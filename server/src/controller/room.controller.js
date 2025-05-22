@@ -11,7 +11,7 @@ class RoomController {
 
             res.status(200).send({ status: 200, message: 'Tạo phòng thành công', data: response });
         } catch (error) {
-            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+            res.status(500).send({ status: 500, message: error.message || 'Có lỗi trong quá trình xử lý', error: error.message });
         }
     }
 
@@ -42,12 +42,12 @@ class RoomController {
     async detail(req, res) {
         try {
             const response = await this.roomService.detail(Number(req.params.roomId));
-    
+
             res.status(200).send({ status: 200, message: "Lấy thông tin phòng thành công", data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: "Có lỗi trong quá trình xử lý", error: error.message });
         }
-    }   
+    }
 
     async delete(req, res) {
         try {
@@ -58,7 +58,7 @@ class RoomController {
             res.status(500).send({ status: 500, message: "Có lỗi trong quá trình xử lý", error: error.message });
         }
     }
-    
+
     async getRoommates(req, res) {
         try {
             const userId = req.user?.sub;

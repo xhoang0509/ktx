@@ -4,6 +4,7 @@ const { DeviceController } = require("../controller/device.controller");
 const router = Router();
 const deviceController = new DeviceController();
 
+// path: /device
 router.post("/", deviceController.create.bind(deviceController));
 router.put("/:deviceId", deviceController.modify.bind(deviceController));
 router.get("/", deviceController.list.bind(deviceController));

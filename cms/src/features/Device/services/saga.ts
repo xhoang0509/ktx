@@ -1,73 +1,108 @@
-import { put, delay, takeLatest } from "redux-saga/effects";
-import { OrderActions } from "./slice";
-import SysFetch from "@services/axios";
 import { AppActions } from "@app/slice";
+import { addToast } from "@heroui/react";
+import SysFetch from "@services/axios";
 import qs from "qs";
-import { addToast, pagination } from "@heroui/react";
-import { defaultPagination } from "./const";
+import { delay, put, takeLatest } from "redux-saga/effects";
+import { DeviceActions } from "./slice";
 
-export function* OrderSaga() {
-  yield takeLatest(OrderActions.getOrders, getOrders);
-  yield takeLatest(OrderActions.updateStatusOrder, updateStatusOrder);
-  yield takeLatest(OrderActions.getDetailOrder, getDetailOrder);
+export function* DeviceSaga() {
+    yield takeLatest(DeviceActions.getDevices, getDevices);
+    yield takeLatest(DeviceActions.getDeviceDetail, getDeviceDetail);
+    yield takeLatest(DeviceActions.addDevice, addDevice);
+    yield takeLatest(DeviceActions.editDevice, editDevice);
+    yield takeLatest(DeviceActions.deleteDevice, deleteDevice);
 }
 
-export function* getOrders({ payload: { onSuccess, pagination } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-    yield delay(50);
+export function* getDevices({ payload: { onSuccess, pagination, search } }: any) {
+    const body = { ...pagination, search };
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/order/admin?${qs.stringify(pagination)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(OrderActions.setOrders(rs.data.data));
-      onSuccess?.(rs.data);
+        const rs: { [x: string]: any } = yield SysFetch.get(`/device?${qs.stringify(body)}`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(DeviceActions.setDevices(rs.data.devices));
+            onSuccess?.(rs.data);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
 
-export function* updateStatusOrder({
-  payload: { onSuccess, orderId, status },
-}: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-    yield delay(50);
+export function* getDeviceDetail({ payload: { onSuccess, id } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.patch(
-      `/order/${orderId}/status`,
-      { status }
-    );
+        const rs: { [x: string]: any } = yield SysFetch.get(`/device/${id}`);
 
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      addToast({
-        title: "Cập nhật trạng thái thiết bị thành công",
-        description: `Thiết bị đã được chuyển sang trạng thái ${status}`,
-        color: "success",
-      });
-      onSuccess?.();
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            onSuccess?.(rs.data);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
 
-export function* getDetailOrder({ payload: { onSuccess, orderId } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-    yield delay(50);
+export function* addDevice({ payload: { onSuccess, body } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.get(`/order/${orderId}`);
-
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      onSuccess?.(rs.data);
+        const rs: { [x: string]: any } = yield SysFetch.post(`/device`, body);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            addToast({
+                title: "Thông báo",
+                description: "Thêm mới thiết bị thành công",
+                color: "success",
+            });
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
+
+export function* editDevice({ payload: { onSuccess, body, id } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+
+        const rs: { [x: string]: any } = yield SysFetch.put(`/device/${id}`, body);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            addToast({
+                title: "Sửa thiết bị thành công",
+                description: "Thiết bị đã được cập nhật",
+                color: "success",
+            });
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+
+export function* deleteDevice({ payload: { onSuccess, id } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+        const rs: { [x: string]: any } = yield SysFetch.delete(`/device/${id}`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+

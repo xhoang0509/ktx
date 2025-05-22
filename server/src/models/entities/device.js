@@ -11,9 +11,15 @@ const Device = new EntitySchema({
         name: {
             type: "varchar"
         },
+        type: {
+            type: "varchar"
+        },
+        year_of_manufacture: {
+            type: "int"
+        },
         status: {
             type: "enum",
-            enum: ["good", "broken", "deleted"],
+            enum: ["good", "broken", "under_maintenance", "deleted"],
             default: "good"
         },
         createdAt: {
