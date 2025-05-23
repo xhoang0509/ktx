@@ -45,7 +45,6 @@ export default function DevicePage() {
     }, [search, pagination.page]);
     
     const onDelete = (id: string) => {
-      console.log('first')
         dispatch(DeviceActions.deleteDevice({ id }));
     };
 
@@ -63,7 +62,7 @@ export default function DevicePage() {
                 onSearch={onSearch}
                 onChangeInput={setSearch}
                 valueInput={search}
-                placeholder="Tìm kiếm theo tên phòng"
+                placeholder="Tìm kiếm theo tên thiết bị"
             />
             <div className="bg-white rounded-2xl p-4 shadow-md m-4">
                 <DeviceTable

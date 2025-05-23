@@ -123,7 +123,7 @@ export default function RoomImages({ images }: RoomImagesProps) {
                 <h2 className="text-xl font-semibold mb-4">Hình ảnh phòng</h2>
                 <div className="overflow-hidden rounded-lg">
                     <img
-                        src={`${import.meta.env.VITE_API_BASE}/${images[0]}`}
+                        src={images[0]}
                         alt="Room image"
                         className="w-full h-auto object-cover"
                     />
@@ -147,7 +147,7 @@ export default function RoomImages({ images }: RoomImagesProps) {
                         <div key={index} className="outline-none">
                             <div className="aspect-[16/9] overflow-hidden rounded-lg">
                                 <img
-                                    src={`${import.meta.env.VITE_API_BASE}/${image}`}
+                                    src={image}
                                     alt={`Room image ${index + 1}`}
                                     className="w-full h-full object-cover"
                                 />
@@ -179,7 +179,7 @@ export default function RoomImages({ images }: RoomImagesProps) {
                             >
                                 <div className="aspect-[4/3] overflow-hidden rounded-md">
                                     <img
-                                        src={`${import.meta.env.VITE_API_BASE}/${image}`}
+                                        src={image}
                                         alt={`Thumbnail ${index + 1}`}
                                         className="w-full h-full object-cover"
                                     />

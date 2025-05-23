@@ -1,4 +1,5 @@
 import {
+    BanknotesIcon,
   ClipboardDocumentListIcon,
   CubeIcon,
   HomeIcon,
@@ -42,4 +43,9 @@ export const SITE_MENU = [
         path: "/request",
         icon: ReceiptPercentIcon,
     },
+    {
+        label: "Hóa đơn điện nước",
+        path: "/bill",
+        icon: BanknotesIcon,
+    }
 ];

@@ -98,7 +98,7 @@ class RoomService {
             room.students = [];
         }
         room.semesters = SEMESTERS;
-        room.images = room.images.map(image => `http://localhost:${process.env.PORT}/${image}`);
+        room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
         return room;
     }
 
@@ -118,7 +118,7 @@ class RoomService {
         });
 
         rooms = rooms.map(room => {
-            room.images = room.images.map(image => `http://localhost:${process.env.PORT}/${image}`);
+            room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
             return room;
         });
         const totalPages = Math.ceil(total / limit);

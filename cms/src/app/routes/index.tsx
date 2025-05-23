@@ -25,11 +25,13 @@ const AddRoomPage = lazy(() => import("@features/Room/pages/AddRoom"));
 const EditDevicePage = lazy(() => import("@features/Device/pages/EditDevice"));
 const LogoutPage = lazy(() => import("@features/Logout"));
 const RequestPage = lazy(() => import("@features/BookingRequests/pages/BookingRequestsPage"));
+const BillPage = lazy(() => import("@features/Bill/pages/Index"));
+const AddBillPage = lazy(() => import("@features/Bill/pages/AddBillPage"));
+const EditBillPage = lazy(() => import("@features/Bill/pages/EditBillPage"));
 
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
-
 export function RoutesRenderer({ routes }: RoutesRendererProps) {
     const renderedRoutes = useRoutes(routes);
     return renderedRoutes;
@@ -138,6 +140,22 @@ function AppRouter() {
                             path: ROUTE_PATHS.LOGOUT,
                             element: <LogoutPage />,
                             title: "Đăng xuất",
+                        },
+                        // Bill: Hóa đơn điện nước
+                        {
+                            path: ROUTE_PATHS.BILL,
+                            element: <BillPage />,
+                            title: "Hóa đơn điện nước",
+                        },
+                        {
+                            path: ROUTE_PATHS.ADD_BILL,
+                            element: <AddBillPage />,
+                            title: "Thêm hóa đơn",
+                        },
+                        {
+                            path: ROUTE_PATHS.EDIT_BILL,
+                            element: <EditBillPage />,
+                            title: "Sửa hóa đơn",
                         },
                     ],
                 },

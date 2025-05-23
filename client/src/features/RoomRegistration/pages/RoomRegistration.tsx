@@ -133,9 +133,7 @@ export default function RoomRegistration() {
                                                         return (
                                                             <Image
                                                                 key={index}
-                                                                src={`${
-                                                                    import.meta.env.VITE_API_BASE
-                                                                }${image}`}
+                                                                src={image}
                                                                 alt="room"
                                                                 className="object-cover"
                                                                 height={100}
