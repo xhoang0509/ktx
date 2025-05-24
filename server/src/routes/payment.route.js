@@ -3,17 +3,22 @@ const { PaymentController } = require("../controller/payment.controller");
 const { authMiddleware } = require("../middleware/userMiddleware");
 
 const router = Router();
-const paymentController = new PaymentController();
 
 //Admin
-router.post("/admin-utility", paymentController.addUtilityCost.bind(paymentController));
-router.post("/admin-debts", paymentController.getStudentDebts.bind(paymentController));
-router.post("/admin-report", paymentController.getFinancialReport.bind(paymentController));
-router.get("/admin-late-payments", paymentController.getLatePayments.bind(paymentController));
+router.post("/admin-bill", PaymentController.addBill);
+router.get("/admin-list", PaymentController.getBillList);
+router.get("/admin-bill/:id", PaymentController.getBillById);
+router.post("/admin-utility", PaymentController.addUtilityCost);
+router.post("/admin-debts", PaymentController.getStudentDebts);
+router.post("/admin-report", PaymentController.getFinancialReport);
+router.get("/admin-late-payments", PaymentController.getLatePayments);
 
 //Sinh viên
-router.post("/student-my-payments", authMiddleware, paymentController.getStudentPayments.bind(paymentController));
-router.post("/student-pay", paymentController.completePayment.bind(paymentController));
-router.get("/student-history", authMiddleware, paymentController.getPaymentHistory.bind(paymentController));
+router.post("/student-my-payments", authMiddleware, PaymentController.getStudentPayments);
+router.post("/student-pay", PaymentController.completePayment);
+router.get("/student-history", authMiddleware, PaymentController.getPaymentHistory);
+
+router.post('/', authMiddleware, PaymentController.createPaymentUrl);
+router.get('/', authMiddleware, PaymentController.getCodeIpnUrl);
 
 module.exports = router; 

@@ -1,27 +1,12 @@
-const { AppDataSource } = require("../models/db");
-const { Room } = require("../models/entities/room");
+const { RoomModel, UserModel } = require("../models/db");
 const { Like, Not } = require("typeorm");
-const { User } = require("../models/entities/user");
-const { Contract } = require("../models/entities/contracts");
 const { saveBase64Images } = require("../utils/fileUpload");
 const { SEMESTERS } = require("../constants/app.const");
 
-const semesters = [
-    {
-        id: 1,
-        name: "Học kỳ 1"
-    },
-
-]
-class RoomService {
-    constructor() {
-        this.roomRepository = AppDataSource.getRepository(Room);
-        this.userRepository = AppDataSource.getRepository(User);
-        this.contractRepo = AppDataSource.getRepository(Contract);
-    }
+const RoomService = {
 
     async create(data) {
-        const existingRoom = await this.roomRepository.findOne({
+        const existingRoom = await RoomModel.findOne({
             where: {
                 name: data.name
             }
@@ -41,14 +26,14 @@ class RoomService {
             data.base_price = Number(data.base_price);
         }
 
-        const room = this.roomRepository.create(data);
-        await this.roomRepository.save(room);
+        const room = RoomModel.create(data);
+        await RoomModel.save(room);
 
         return room;
-    }
+    },
 
     async modify(roomId, data) {
-        const room = await this.roomRepository.findOneById(roomId);
+        const room = await RoomModel.findOneById(roomId);
         if (!room) {
             throw 'Không thấy phòng';
         }
@@ -67,16 +52,16 @@ class RoomService {
         }
 
         Object.assign(room, data);
-        const updateRoom = await this.roomRepository.save(room);
+        const updateRoom = await RoomModel.save(room);
         if (!updateRoom) {
             throw 'Không thể cập nhập';
         }
 
         return updateRoom;
-    }
+    },
 
     async detail(roomId) {
-        let room = await this.roomRepository.findOne({
+        let room = await RoomModel.findOne({
             where: { id: roomId },
         });
         if (!room) {
@@ -87,7 +72,7 @@ class RoomService {
             room.images = [];
         }
 
-        const students = await this.userRepository.find({
+        const students = await UserModel.find({
             where: { room: { id: roomId } },
             select: ["id", "full_name", "phone", "gender", "student_id", "class_code", "faculty_name"]
         });
@@ -100,7 +85,7 @@ class RoomService {
         room.semesters = SEMESTERS;
         room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
         return room;
-    }
+    },
 
     async list(page, limit, search) {
         const skip = (page - 1) * limit;
@@ -110,7 +95,7 @@ class RoomService {
         ] : {};
 
 
-        let [rooms, total] = await this.roomRepository.findAndCount({
+        let [rooms, total] = await RoomModel.findAndCount({
             where: filterRoom,
             take: limit,
             skip: skip,
@@ -123,15 +108,15 @@ class RoomService {
         });
         const totalPages = Math.ceil(total / limit);
         return { totalItems: total, page, limit, totalPages, rooms };
-    }
+    },
 
     async delete(roomId) {
-        const room = await this.roomRepository.findOneById(roomId);
+        const room = await RoomModel.findOne({ where: { id: roomId } });
         if (!room) {
             throw 'Không thấy phòng';
         }
-        await this.roomRepository.delete(roomId);
-    }
+        await RoomModel.delete(roomId);
+    },
 
     async getRoommates(userId) {
         const user = await this.userRepository.findOne({
@@ -149,7 +134,7 @@ class RoomService {
             },
             select: ["id", "full_name", "phone"]
         })
-    }
+    },
 
     async getRoomChangeHistory(userId) {
         const contracts = await this.contractRepo.find({
@@ -170,7 +155,7 @@ class RoomService {
             start_date: c.start_date,
             end_date: c.end_date
         }));
-    }
+    },
 }
 
-module.exports = { RoomService }; 
+module.exports = RoomService

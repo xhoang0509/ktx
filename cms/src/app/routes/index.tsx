@@ -28,6 +28,7 @@ const RequestPage = lazy(() => import("@features/BookingRequests/pages/BookingRe
 const BillPage = lazy(() => import("@features/Bill/pages/Index"));
 const AddBillPage = lazy(() => import("@features/Bill/pages/AddBillPage"));
 const EditBillPage = lazy(() => import("@features/Bill/pages/EditBillPage"));
+const ContractPage = lazy(() => import("@features/Bill/pages/ContractPage"));
 
 export interface RoutesRendererProps {
     routes: RouteObject[];
@@ -156,6 +157,11 @@ function AppRouter() {
                             path: ROUTE_PATHS.EDIT_BILL,
                             element: <EditBillPage />,
                             title: "Sửa hóa đơn",
+                        },
+                        {
+                            path: ROUTE_PATHS.BILL_CONTRACT,
+                            element: <ContractPage />,
+                            title: "",
                         },
                     ],
                 },

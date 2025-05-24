@@ -1,18 +1,13 @@
-const { AppDataSource } = require("../models/db");
-const { Admin } = require("../models/entities/admin");
+const { AdminModel } = require("../models/db");
 const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 const dotenv = require('dotenv');
 
 dotenv.config();
 
-class AdminService {
-    constructor() {
-        this.adminRepository = AppDataSource.getRepository(Admin);
-    }
-
+const AdminService = {
     async create(createAdminDto) {
-        const existingAdmin = await this.adminRepository.findOne({
+        const existingAdmin = await AdminModel.findOne({
             where: { username: createAdminDto.username }
         });
         if (existingAdmin) {
@@ -20,17 +15,17 @@ class AdminService {
         }
 
         const hassPass = await argon2.hash(createAdminDto.password);
-        const admin = this.adminRepository.create({
+        const admin = AdminModel.create({
             ...createAdminDto,
             password: hassPass,
         });
-        await this.adminRepository.save(admin);
+        await AdminModel.save(admin);
         return admin;
-    }
+    },
 
     async login(loginDto) {
-        const admin = await this.adminRepository.findOne({
-            where: { username: loginDto.username}
+        const admin = await AdminModel.findOne({
+            where: { username: loginDto.username }
         });
         if (!admin || !(await argon2.verify(admin.password, loginDto.password))) {
             throw 'Tài khoản hoặc mật khẩu không đúng';
@@ -47,7 +42,7 @@ class AdminService {
         const token = jwt.sign(payload, process.env.ADMIN_SECRET_KEY, { expiresIn: '1h' });
 
         return token;
-    }
+    },
 
     async logout(token) {
         const decoded = jwt.verify(token, process.env.ADMIN_SECRET_KEY);
@@ -55,4 +50,4 @@ class AdminService {
     }
 }
 
-module.exports = { AdminService }; 
+module.exports = AdminService; 

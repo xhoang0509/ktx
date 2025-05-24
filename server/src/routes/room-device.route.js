@@ -1,13 +1,12 @@
 const { Router } = require("express");
-const { RoomDeviceController } = require("../controller/room-device.controller");
+const RoomDeviceController = require("../controller/room-device.controller");
 
 const router = Router();
-const rdController = new RoomDeviceController();
 
-router.post("/", rdController.create.bind(rdController));
-router.put("/:id", rdController.modify.bind(rdController));
-router.get("/", rdController.list.bind(rdController));
-router.get("/:id", rdController.detail.bind(rdController));
-router.delete("/:id", rdController.remove.bind(rdController));
+router.post("/", RoomDeviceController.create);
+router.put("/:id", RoomDeviceController.modify);
+router.get("/", RoomDeviceController.list);
+router.get("/:id", RoomDeviceController.detail);
+router.delete("/:id", RoomDeviceController.remove);
 
 module.exports = router; 

@@ -1,82 +1,71 @@
-const { Request } = require("../models/entities/requests");
-const { User } = require("../models/entities/user");
-const { Contract } = require("../models/entities/contracts");
-const { Room } = require("../models/entities/room");
-const { AppDataSource } = require("../models/db");
+const { UserModel, RequestModel, ContractModel, RoomModel } = require("../models/db");
 
-class RequestService {
-    constructor() {
-        this.requestRepo = AppDataSource.getRepository(Request);
-        this.userRepo = AppDataSource.getRepository(User);
-        this.contractRepo = AppDataSource.getRepository(Contract);
-        this.roomRepo = AppDataSource.getRepository(Room);
-    }
-
+const RequestService = {
     // Gửi yêu cầu (bao gồm rời ký túc xá, sửa chữa, khiếu nại, đề xuất)
     async createRequest(userId, category, description) {
-        const user = await this.userRepo.findOne({ where: { id: userId }, relations: ["room"] });
+        const user = await UserModel.findOne({ where: { id: userId }, relations: ["room"] });
         if (!user) throw new Error("Tài khoản không tồn tại");
         if (!user.room) throw new Error("Bạn chưa có phòng");
-    
+
         if (!["repair", "complaint", "suggestion", "leave_dorm", "guest_visit"].includes(category)) {
             throw new Error("Loại yêu cầu không hợp lệ");
         }
-    
+
         // Kiểm tra yêu cầu rời KTX đã tồn tại chưa
         if (category === "leave_dorm") {
-            const existingRequest = await this.requestRepo.findOne({
+            const existingRequest = await RequestModel.findOne({
                 where: { user: { id: userId }, category: "leave_dorm", status: "pending" },
             });
             if (existingRequest) throw new Error("Bạn đã có yêu cầu rời ký túc xá đang chờ xử lý");
         }
-    
-        const request = this.requestRepo.create({ user, category, description, status: "pending" });
-        return await this.requestRepo.save(request);
-    }
+
+        const request = Request.create({ user, category, description, status: "pending" });
+        return await request.save();
+    },
 
     // Duyệt yêu cầu (dùng chung cho tất cả loại yêu cầu)
     async approveRequest(requestId) {
-        const request = await this.requestRepo.findOne({ where: { id: requestId }, relations: ["user"] });
+        const request = await RequestModel.findOne({ where: { id: requestId }, relations: ["user"] });
         if (!request) throw new Error("Yêu cầu không tồn tại");
 
         request.status = "approved";
-        await this.requestRepo.save(request);
+        await request.save();
 
         // Nếu là yêu cầu rời ký túc xá → Hủy hợp đồng và giảm số lượng sinh viên trong phòng
         if (request.category === "leave_dorm") {
-            const contract = await this.contractRepo.findOne({
+            const contract = await ContractModel.findOne({
                 where: { user: { id: request.user.id }, status: "active" },
                 relations: ["room"],
             });
 
             if (contract) {
                 contract.status = "terminated";
-                await this.contractRepo.save(contract);
+                await contract.save();
 
-                const room = await this.roomRepo.findOne({ where: { id: contract.room.id } });
+                const room = await RoomModel.findOne({ where: { id: contract.room.id } });
                 if (room) {
                     room.current_capacity -= 1;
-                    await this.roomRepo.save(room);
+                    await room.save();
                 }
             }
         }
 
         return request;
-    }
+    },
 
     // Từ chối yêu cầu
     async rejectRequest(requestId) {
-        const request = await this.requestRepo.findOne({ where: { id: requestId } });
+        const request = await RequestModel.findOne({ where: { id: requestId } });
         if (!request) throw new Error("Yêu cầu không tồn tại");
 
         request.status = "rejected";
-        return await this.requestRepo.save(request);
-    }
+        return await request.save();
+    },
 
     // Lấy danh sách yêu cầu đang chờ xử lý
     async getPendingRequests() {
-        return await this.requestRepo.find({ where: { status: "pending" }, relations: ["user"] });
+        return await RequestModel.find({ where: { status: "pending" }, relations: ["user"] });
     }
-}
+};
 
-module.exports = { RequestService }; 
+module.exports = RequestService

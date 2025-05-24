@@ -8,9 +8,9 @@ import { BillActions } from "./slice";
 export function* BillSaga() {
     yield takeLatest(BillActions.getBills, getBills);
     yield takeLatest(BillActions.getBillDetail, getBillDetail);
-    // yield takeLatest(BillActions.addBill, addBill);
-    // yield takeLatest(BillActions.editBill, editBill);
-    // yield takeLatest(BillActions.deleteBill, deleteBill);
+    yield takeLatest(BillActions.addBill, addBill);
+    yield takeLatest(BillActions.editBill, editBill);
+    yield takeLatest(BillActions.deleteBill, deleteBill);
 }
 
 export function* getBills({ payload: { onSuccess, pagination, search } }: any) {
@@ -19,7 +19,7 @@ export function* getBills({ payload: { onSuccess, pagination, search } }: any) {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.get(`/bill?${qs.stringify(body)}`);
+        const rs: { [x: string]: any } = yield SysFetch.get(`/payment/admin-list?${qs.stringify(body)}`);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             yield put(BillActions.setBills(rs.data.bills));
@@ -35,7 +35,7 @@ export function* getBillDetail({ payload: { onSuccess, id } }: any) {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.get(`/bill/${id}`);
+        const rs: { [x: string]: any } = yield SysFetch.get(`/payment/admin-bill/${id}`);
 
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
@@ -46,17 +46,17 @@ export function* getBillDetail({ payload: { onSuccess, id } }: any) {
     }
 }
 
-export function* addDevice({ payload: { onSuccess, body } }: any) {
+export function* addBill({ payload: { onSuccess, body } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.post(`/device`, body);
+        const rs: { [x: string]: any } = yield SysFetch.post(`/payment/admin-bill`, body);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             addToast({
                 title: "Thông báo",
-                description: "Thêm mới thiết bị thành công",
+                description: "Thêm mới hóa đơn thành công",
                 color: "success",
             });
             onSuccess?.(rs.data);
@@ -68,17 +68,17 @@ export function* addDevice({ payload: { onSuccess, body } }: any) {
     }
 }
 
-export function* editDevice({ payload: { onSuccess, body, id } }: any) {
+export function* editBill({ payload: { onSuccess, body, id } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.put(`/device/${id}`, body);
+        const rs: { [x: string]: any } = yield SysFetch.put(`/payment/admin-bill/${id}`, body);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             addToast({
-                title: "Sửa thiết bị thành công",
-                description: "Thiết bị đã được cập nhật",
+                title: "Sửa hóa đơn thành công",
+                description: "Hóa đơn đã được cập nhật",
                 color: "success",
             });
             onSuccess?.(rs.data);
@@ -90,11 +90,11 @@ export function* editDevice({ payload: { onSuccess, body, id } }: any) {
     }
 }
 
-export function* deleteDevice({ payload: { onSuccess, id } }: any) {
+export function* deleteBill({ payload: { onSuccess, id } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
-        const rs: { [x: string]: any } = yield SysFetch.delete(`/device/${id}`);
+        const rs: { [x: string]: any } = yield SysFetch.delete(`/payment/admin-bill/${id}`);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             onSuccess?.(rs.data);

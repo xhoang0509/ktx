@@ -1,18 +1,18 @@
 const { Router } = require("express");
 const { authMiddleware } = require("../middleware/userMiddleware");
-const { ContractController } = require("../controller/contract.controller");
+const ContractController = require("../controller/contract.controller");
 
 const router = Router();
-const contractController = new ContractController();
 
-router.post("/", authMiddleware, contractController.create.bind(contractController));
-router.get("/list", authMiddleware, contractController.list.bind(contractController));
-router.get("/list-admin", contractController.listAdmin.bind(contractController));
-router.get("/view", authMiddleware, contractController.view.bind(contractController));
-router.post("/:id/cancel", authMiddleware, contractController.cancel.bind(contractController));
-router.post("/transfer-room", contractController.transferRoom.bind(contractController));
-router.get("/pending", contractController.getPendingContracts.bind(contractController));
-router.post("/:id/approve", contractController.approveContract.bind(contractController));
-router.post("/:id/reject", contractController.rejectContract.bind(contractController));
-router.get("/:id", contractController.adminGetContractDetail.bind(contractController));
+router.post("/", authMiddleware, ContractController.create);
+router.get("/list", authMiddleware, ContractController.list);
+router.get("/list-admin", ContractController.listAdmin);
+router.get("/view", authMiddleware, ContractController.view);
+router.post("/:id/cancel", authMiddleware, ContractController.cancel);
+router.post("/transfer-room", ContractController.transferRoom);
+router.get("/pending", ContractController.getPendingContracts);
+// admin
+router.post("/:id/approve", ContractController.approveContract);
+router.post("/:id/reject", ContractController.rejectContract);
+router.get("/:id", ContractController.adminGetContractDetail);
 module.exports = router; 

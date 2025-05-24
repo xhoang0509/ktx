@@ -1,10 +1,10 @@
 import {
     BanknotesIcon,
-  ClipboardDocumentListIcon,
-  CubeIcon,
-  HomeIcon,
-  ReceiptPercentIcon,
-  UserIcon
+    ClipboardDocumentListIcon,
+    CubeIcon,
+    HomeIcon,
+    ReceiptPercentIcon,
+    UserIcon,
 } from "@heroicons/react/24/solid";
 
 export const SITE_NAME = import.meta.env.VITE_APP_SITE_NAME || "{empty-site-name}";
@@ -47,5 +47,5 @@ export const SITE_MENU = [
         label: "Hóa đơn điện nước",
         path: "/bill",
         icon: BanknotesIcon,
-    }
+    },
 ];

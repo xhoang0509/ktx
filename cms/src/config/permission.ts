@@ -18,6 +18,7 @@ const RolePaths: { [key: string]: string[] } = {
         "/bill",
         "/bill/add",
         "/bill/edit/:id",
+        "/bill/contract/:id",
     ],
     manager: [],
     guest: ["/login", "/register"],

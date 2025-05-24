@@ -1,27 +1,19 @@
-const { Contract } = require("../models/entities/contracts");
-const { User } = require("../models/entities/user");
-const { Room } = require("../models/entities/room");
-const { AppDataSource } = require("../models/db");
+const { UserModel, RoomModel, ContractModel } = require("../models/db");
 const { In } = require("typeorm");
 
-class ContractService {
-    constructor() {
-        this.contractRepo = AppDataSource.getRepository(Contract);
-        this.userRepo = AppDataSource.getRepository(User);
-        this.roomRepo = AppDataSource.getRepository(Room);
-    }
-
+const ContractService = {
     async create(userId, data) {
-        const user = await this.userRepo.findOne({
+        const user = await UserModel.findOne({
             where: {
                 id: userId
             }
         });
 
-        const room = await this.roomRepo.findOne({
+        const room = await RoomModel.findOne({
             where: {
                 id: data.roomId
-            }
+            },
+            relations: ["users"]
         });
         if (!user) {
             throw new Error("Không tìm thấy tài khoản");
@@ -29,12 +21,12 @@ class ContractService {
         if (!room) {
             throw new Error("Không tìm thấy phòng");
         }
-        
-        if(user.gender !== room.gender) {
+
+        if (user.gender !== room.gender) {
             throw new Error("Giới tính không khớp");
         }
 
-        const contracts = await this.contractRepo.find({
+        const contracts = await ContractModel.find({
             where: {
                 user: {
                     id: userId
@@ -54,8 +46,12 @@ class ContractService {
             throw new Error("Ngày bắt đầu và ngày kết thúc không được để trống");
         }
 
+        if (room.users.some((u) => u.id === user.id)) {
+            throw new Error("Bạn đã ở trong phòng này");
+        }
+
         const duration = Math.ceil((new Date(data.endDate) - new Date(data.startDate)) / (1000 * 60 * 60 * 24));
-        const contract = this.contractRepo.create({
+        const contract = ContractModel.create({
             user,
             room,
             start_date: data.startDate,
@@ -63,23 +59,29 @@ class ContractService {
             duration: duration,
             status: "pending"
         });
-        await this.contractRepo.save(contract);
+        await ContractModel.save(contract);
 
         room.current_capacity += 1;
-        await this.roomRepo.save(room);
+        if (!room.users) {
+            room.users = [];
+        }
+        if (!room.users.some((u) => u.id === user.id)) {
+            room.users.push(user);
+        }
+        await RoomModel.save(room);
 
         return contract;
-    }
+    },
 
     async view(userId) {
-        const contract = await this.contractRepo.findOne({
+        const contract = await ContractModel.findOne({
             where: { user: { id: userId } },
         });
         return contract;
-    }
+    },
 
     async list(userId) {
-        const contracts = await this.contractRepo.find({
+        const contracts = await ContractModel.find({
             where: { user: { id: userId } },
             relations: ["room"],
             order: {
@@ -87,10 +89,10 @@ class ContractService {
             }
         });
         return contracts;
-    }
+    },
 
     async cancel({ contractId, userId }) {
-        const contract = await this.contractRepo.findOne({
+        const contract = await ContractModel.findOne({
             where: { id: contractId, user: { id: userId } },
         });
 
@@ -98,19 +100,20 @@ class ContractService {
             throw new Error("Hợp đồng không tồn tại");
         }
 
-        await this.contractRepo.update({
+        await ContractModel.update({
             id: contractId
         }, { status: "cancelled" });
 
 
-        const newContract = await this.contractRepo.findOne({
+        const newContract = await ContractModel.findOne({
             where: { id: contractId, user: { id: userId } },
         });
 
         return newContract;
-    }
+    },
+
     async transferRoom(userId, newRoomId) {
-        const user = await this.userRepo.findOne({
+        const user = await UserModel.findOne({
             where: { id: userId },
             relations: ["room", "contracts"],
         });
@@ -120,7 +123,7 @@ class ContractService {
         }
 
         const oldRoom = user.room;
-        const newRoom = await this.roomRepo.findOne({ where: { id: newRoomId } });
+        const newRoom = await RoomModel.findOne({ where: { id: newRoomId } });
 
         if (!newRoom) {
             throw new Error("Phòng mới không tồn tại");
@@ -131,18 +134,18 @@ class ContractService {
         }
 
         // Tìm hợp đồng hiện tại và cập nhật trạng thái
-        const currentContract = await this.contractRepo.findOne({
+        const currentContract = await ContractModel.findOne({
             where: { user: { id: userId }, status: "active" },
         });
 
         if (currentContract) {
             currentContract.status = "terminated";
-            await this.contractRepo.save(currentContract);
+            await ContractModel.save(currentContract);
         }
 
         // Giảm số lượng người ở phòng cũ
         oldRoom.current_capacity -= 1;
-        await this.roomRepo.save(oldRoom);
+        await RoomModel.save(oldRoom);
 
         // Tạo hợp đồng mới
         const startDate = new Date();
@@ -150,7 +153,7 @@ class ContractService {
         const endDate = new Date();
         endDate.setMonth(startDate.getMonth() + duration);
 
-        const newContract = this.contractRepo.create({
+        const newContract = ContractModel.create({
             user,
             room: newRoom,
             start_date: startDate.toISOString().split("T")[0],
@@ -159,17 +162,17 @@ class ContractService {
             status: "pending",
         });
 
-        await this.contractRepo.save(newContract);
+        await ContractModel.save(newContract);
 
         // Tăng số lượng người ở phòng mới
         newRoom.current_capacity += 1;
-        await this.roomRepo.save(newRoom);
+        await RoomModel.save(newRoom);
 
         return newContract;
-    }
+    },
 
     async approveContract(contractId, approve) {
-        const contract = await this.contractRepo.findOne({
+        const contract = await ContractModel.findOne({
             where: { id: contractId },
             relations: ["room", "user"],
         });
@@ -189,21 +192,21 @@ class ContractService {
             // Từ chối hợp đồng, giảm số người trong phòng
             contract.status = "terminated";
             contract.room.current_capacity -= 1;
-            await this.roomRepo.save(contract.room);
+            await RoomModel.save(contract.room);
         }
 
-        await this.contractRepo.save(contract);
+        await ContractModel.save(contract);
         return contract;
-    }
+    },
 
     async getPendingContracts() {
-        const contract = await this.contractRepo.find({
+        const contract = await ContractModel.find({
             where: { status: "pending" },
             relations: ["user", "room"],
         });
 
         return contract;
-    }
+    },
 }
 
-module.exports = { ContractService }; 
+module.exports = ContractService 

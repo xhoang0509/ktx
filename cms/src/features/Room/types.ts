@@ -10,6 +10,8 @@ export interface Room {
   gender: RoomGender;
   max_capacity: number;
   current_capacity: number;
+  type: string;
+  building: string;
   base_price: number;
   createdAt: string;
   updatedAt: string;

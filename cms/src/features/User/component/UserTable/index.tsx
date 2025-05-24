@@ -84,14 +84,6 @@ export default function UserTable({ users, pagination, onChangePagination }: IPr
                                 <PencilIcon className="size-4 text-success" />
                             </span>
                         </Tooltip>
-                        {/* <Tooltip content="Xoá">
-                            <span
-                                onClick={() => deleteProduct(item.id)}
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                                <TrashIcon className="size-4 text-danger" />
-                            </span>
-                        </Tooltip> */}
                     </div>
                 );
             default:
@@ -144,7 +136,7 @@ export default function UserTable({ users, pagination, onChangePagination }: IPr
                     }))}
                 >
                     {(item: any) => (
-                        <TableRow key={item?._id}>
+                        <TableRow key={item?.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

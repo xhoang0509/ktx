@@ -6,11 +6,11 @@ import { ROUTE_PATHS } from "@constants/route.const";
 import { Button, SelectItem } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@services/store";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
-import { addDeviceSchema } from "../services/schema";
+import { addBillSchema } from "../services/schema";
 import { BillActions } from "../services/slice";
-import { useEffect } from "react";
 
 const defaultAddDeviceForm = {
     name: "",
@@ -31,7 +31,7 @@ export default function EditBillPage() {
         formState: { errors },
     } = useForm({
         defaultValues: defaultAddDeviceForm,
-        resolver: yupResolver(addDeviceSchema),
+        resolver: yupResolver(addBillSchema),
     });
     const navigate = useNavigate();
     const dispatch = useAppDispatch();

@@ -160,7 +160,7 @@ export default function DeviceTable({ devices, pagination, onChangePagination, o
                     }
                 >
                     {(item: any) => (
-                        <TableRow key={item?._id}>
+                        <TableRow key={item?.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

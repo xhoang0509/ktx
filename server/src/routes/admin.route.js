@@ -2,9 +2,8 @@ const { Router } = require("express");
 const { AdminCtroller } = require("../controller/admin.controller");
 
 const router = Router();
-const adminController = new AdminCtroller();
 
-router.post("/", adminController.create.bind(adminController));
-router.post("/login", adminController.login.bind(adminController));
-router.post("/logout", adminController.logout.bind(adminController));
+router.post("/", AdminCtroller.create);
+router.post("/login", AdminCtroller.login);
+router.post("/logout", AdminCtroller.logout);
 module.exports = router; 

@@ -1,5 +1,6 @@
 import AppReducer from "@app/slice";
 import BillReducer from "@features/Bill/services/slice";
+import BookingRequestReducer from "@features/BookingRequests/services/slice";
 import StatisticReducer from "@features/Dashboard/services/slice";
 import DeviceReducer from "@features/Device/services/slice";
 import RoomReducer from "@features/Room/services/slice";
@@ -11,5 +12,6 @@ export const reducers = {
   statistic: StatisticReducer,
   room: RoomReducer,
   device: DeviceReducer,
-  bill: BillReducer
+  bill: BillReducer,
+  bookingRequest: BookingRequestReducer
 };

@@ -1,26 +1,23 @@
-const { RequestService } = require("../services/requestService");
+const RequestService = require("../services/request.service");
 
-class RequestController {
-    constructor() {
-        this.requestSer = new RequestService();
-    }
+const RequestController = {
 
     // Gửi yêu cầu (rời KTX, sửa chữa, khiếu nại, đề xuất)
     async createRequest(req, res) {
         try {
             const userId = req.user?.sub;
             const { category, description } = req.body;
-    
+
             if (!["repair", "complaint", "suggestion", "leave_dorm", "guest_visit"].includes(category)) {
                 return res.status(400).json({ message: "Loại yêu cầu không hợp lệ" });
             }
-    
+
             const response = await this.requestSer.createRequest(userId, category, description);
             return res.status(200).json({ message: "Gửi yêu cầu thành công", response });
         } catch (error) {
             return res.status(500).json({ message: "Lỗi xử lý yêu cầu", error: error.message });
         }
-    }    
+    },
 
     // Duyệt yêu cầu
     async approveRequest(req, res) {
@@ -31,7 +28,7 @@ class RequestController {
         } catch (error) {
             return res.status(500).json({ message: "Lỗi xử lý yêu cầu", error: error.message });
         }
-    }
+    },
 
     // Từ chối yêu cầu
     async rejectRequest(req, res) {
@@ -42,7 +39,7 @@ class RequestController {
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }
-    }
+    },
 
     // Lấy danh sách yêu cầu đang chờ xử lý
     async getPendingRequests(req, res) {
@@ -55,4 +52,4 @@ class RequestController {
     }
 }
 
-module.exports = { RequestController }; 
+module.exports = RequestController

@@ -2,26 +2,21 @@ const argon2 = require("argon2");
 const dotenv = require('dotenv');
 const jwt = require('jsonwebtoken');
 const { Like } = require("typeorm");
-const { AppDataSource } = require("../models/db");
-const { User } = require("../models/entities/user");
+const {  UserModel } = require("../models/db");
 const logger = require("../logger");
 const { saveBase64Images } = require("../utils/fileUpload");
 dotenv.config();
 
-class UserService {
-    constructor() {
-        this.userRepository = AppDataSource.getRepository(User);
-    }
-
+const UserService = {
     async create(createDto) {
-        const existingUser = await this.userRepository.findOne({
+        const existingUser = await UserModel.findOne({
             where: { email: createDto.email }
         });
         if (existingUser) {
             throw new Error('Tài khoản đã tồn tại');
         }
 
-        const existingUserByStudentId = await this.userRepository.findOne({
+        const existingUserByStudentId = await UserModel.findOne({
             where: { student_id: createDto.student_id }
         });
         if (existingUserByStudentId) {
@@ -36,13 +31,13 @@ class UserService {
             faculty_name: createDto?.faculty_name || '',
             class_code: createDto?.class_code || '',
         }
-        const user = this.userRepository.create(data);
-        await this.userRepository.save(user);
+        const user = UserModel.create(data);
+        await UserModel.save(user);
         return user;
-    }
+    },
 
     async login(loginDto) {
-        const user = await this.userRepository.findOne({
+        const user = await UserModel.findOne({
             where: {
                 email: loginDto.email
             }
@@ -84,10 +79,10 @@ class UserService {
             phone: user.phone,
             student_id: user.student_id,
         };
-    }
+    },
 
     async modify(userId, updateDto) {
-        const user = await this.userRepository.findOneById(userId);
+        const user = await UserModel.findOneById(userId);
         if (!user) {
             throw 'Không tìm thấy tài khoản';
         }
@@ -113,27 +108,27 @@ class UserService {
             }
         }
 
-        await this.userRepository.update(userId, updateData);
-        const editUser = await this.userRepository.findOneById(userId);
+        await UserModel.update(userId, updateData);
+        const editUser = await UserModel.findOneById(userId);
         if (editUser) {
-            await this.userRepository.save(editUser);
+            await UserModel.save(editUser);
         } else {
             throw 'Không thể cập nhật tài khoản';
         }
         return editUser;
-    }
+    },
 
 
     async remove(userId) {
-        const user = await this.userRepository.findOneById(userId);
+        const user = await UserModel.findOneById(userId);
         if (!user) {
             throw 'Không tìm thấy tài khoản';
         }
 
         user.status = 'deleted';
-        await this.userRepository.save(user);
+        await UserModel.save(user);
         return 'Xoá tài khoản thành công';
-    }
+    },
 
     async list(page, limit, search) {
         const skip = (page - 1) * limit;
@@ -145,7 +140,7 @@ class UserService {
             { student_id: Like(`%${search}%`) }
         ] : {};
 
-        const [users, total] = await this.userRepository.findAndCount({
+        const [users, total] = await UserModel.findAndCount({
             where: filterUser,
             take: limit,
             skip: skip,
@@ -155,19 +150,19 @@ class UserService {
         const totalPages = Math.ceil(totalItems / limit);
 
         return { total, totalItems, totalPages, page, limit, users };
-    }
+    },
 
     async detail(userId) {
-        const user = await this.userRepository.findOneById(userId);
+        const user = await UserModel.findOneById(userId);
         if (!user) {
             throw 'Không thấy tài khoản';
         }
 
         return user;
-    }
+    },
 
     async findById(userId) {
-        const user = await this.userRepository.findOne({
+        const user = await UserModel.findOne({
             where: {
                 id: userId
             }
@@ -180,7 +175,7 @@ class UserService {
             ...user,
             role: 'user'
         };
-    }
+    },
 }
 
-module.exports = { UserService }; 
+module.exports = UserService; 

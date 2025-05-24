@@ -15,7 +15,7 @@ export function* getBookingRequests({ payload: { onSuccess } }: any) {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.get(`/contract`);
+        const rs: { [x: string]: any } = yield SysFetch.get(`/contract/list-admin`);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             yield put(BookingRequestActions.setBookingRequests(rs.data));

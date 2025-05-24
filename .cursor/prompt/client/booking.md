@@ -51,4 +51,5 @@
 > * Sử dụng Typescript, code rõ ràng
 
 
-Dựa vào prompt mẫu ở trên, hãy cho tôi 1 prompt tương tự với cấu trúc như trên về trang UserInfo, để xem thông tin của Sinh viên bao gồm: full_name , username , gender , phone , student_id , avatar , status , faculty_name , class_code , createdAt , updatedAt. code được code trong folder /features/UserInfo/index.tsx
+Dựa vào prompt mẫu ở trên, hãy cho tôi 1 prompt tương tự với cấu trúc như trên về trang AddBillPage, thông tin của form gồm có:
+1. Room: được select từ list các hợp đồng đang active. Từ đây có thể lấy được giá tiền phòng

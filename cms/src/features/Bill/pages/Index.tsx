@@ -1,7 +1,7 @@
 import AppHeader from "@components/AppHeader";
 import { SearchForm } from "@components/SearchInput";
 import { defaultPagination } from "@features/Device/services/const";
-import { DeviceActions, DeviceSelectors } from "@features/Device/services/slice";
+import { DeviceActions } from "@features/Device/services/slice";
 import { Button } from "@heroui/button";
 import { useAppDispatch, useAppSelector } from "@services/store";
 import { useCallback, useEffect, useState } from "react";
@@ -32,6 +32,7 @@ export default function BillPage() {
             })
         );
     };
+    console.log({pagination});
 
     useEffect(() => {
         getBills(pagination, search);
@@ -64,7 +65,7 @@ export default function BillPage() {
                 onSearch={onSearch}
                 onChangeInput={setSearch}
                 valueInput={search}
-                placeholder="Tìm kiếm theo tên hóa đơn"
+                placeholder="Tìm kiếm theo mã hóa đơn"
             />
             <div className="bg-white rounded-2xl p-4 shadow-md m-4">
                 <BillTable

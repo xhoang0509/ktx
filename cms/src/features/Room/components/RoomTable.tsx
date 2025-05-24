@@ -221,7 +221,7 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
                     }))}
                 >
                     {(item: any) => (
-                        <TableRow key={item?._id}>
+                        <TableRow key={item?.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

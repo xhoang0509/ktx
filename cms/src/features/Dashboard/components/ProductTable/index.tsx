@@ -74,7 +74,7 @@ const ProductTableLayout: FC<Props> = ({ products, columns }) => {
           }))}
         >
           {(item: any) => (
-            <TableRow key={item?._id}>
+            <TableRow key={item?.id}>
               {(columnKey) => (
                 <TableCell>{renderCell(item, columnKey)}</TableCell>
               )}

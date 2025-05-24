@@ -1,14 +1,13 @@
 const { Router } = require("express");
-const { DeviceController } = require("../controller/device.controller");
+const DeviceController = require("../controller/device.controller");
 
 const router = Router();
-const deviceController = new DeviceController();
 
 // path: /device
-router.post("/", deviceController.create.bind(deviceController));
-router.put("/:deviceId", deviceController.modify.bind(deviceController));
-router.get("/", deviceController.list.bind(deviceController));
-router.get("/:deviceId", deviceController.detail.bind(deviceController));
-router.delete("/:deviceId", deviceController.remove.bind(deviceController));
+router.post("/", DeviceController.create);
+router.put("/:deviceId", DeviceController.modify);
+router.get("/", DeviceController.list);
+router.get("/:deviceId", DeviceController.detail);
+router.delete("/:deviceId", DeviceController.remove);
 
 module.exports = router; 

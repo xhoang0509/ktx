@@ -1,1 +1,1 @@
-export { default as Device } from "./pages/Device";
+export { default as Contract } from "./pages/ContractPage";

@@ -75,6 +75,3 @@ const Room = new EntitySchema({
 });
 
 module.exports = { Room };
-
-
-// give me array mock data for room with 10 items Vietnameses data

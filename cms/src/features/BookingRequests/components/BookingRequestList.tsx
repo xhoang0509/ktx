@@ -91,7 +91,6 @@ export default function BookingRequestList({
     }, [pagination, onChangePagination]);
 
     const renderCell = useCallback((item: any, columnKey: React.Key) => {
-        console.log(item)
         const cellValue = item[columnKey as keyof any];
 
         switch (columnKey) {
@@ -173,7 +172,7 @@ export default function BookingRequestList({
                 }))}
             >
                 {(item: any) => (
-                    <TableRow key={item?._id}>
+                    <TableRow key={item?.id}>
                         {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                     </TableRow>
                 )}

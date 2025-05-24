@@ -1,14 +1,64 @@
 import * as yup from "yup";
 
-export const addDeviceSchema = yup
-  .object({
-    name: yup
-      .string()
-      .min(1, "Tên thiết bị phải có ít nhất 5 ký tự")
-      .max(500, "Tên thiết bị có nhiều nhất 30 ký tự")
-      .required("Không được bỏ trống Tên thiết bị"),
-    type: yup.string().required("Không được bỏ trống Loại thiết bị"),
-    year_of_manufacture: yup.number().required("Không được bỏ trống Năm sản xuất"),
-    status: yup.string().required("Không được bỏ trống Trạng thái"),
-  })
-  .required();
+export const addBillSchema = yup.object().shape({
+  contractId: yup.string().required("Vui lòng chọn hợp đồng"),
+  electricity: yup.object().shape({
+    startReading: yup
+      .number()
+      .required("Vui lòng nhập chỉ số đầu")
+      .min(0, "Chỉ số không được âm"),
+    endReading: yup
+      .number()
+      .required("Vui lòng nhập chỉ số cuối")
+      .min(0, "Chỉ số không được âm")
+      .test(
+        "is-greater-than-start",
+        "Chỉ số cuối phải lớn hơn hoặc bằng chỉ số đầu",
+        (value, context) => {
+          const { startReading } = context.parent;
+          return value >= startReading;
+        }
+      ),
+    usage: yup.number(),
+    unitPrice: yup
+      .number()
+      .required("Vui lòng nhập đơn giá")
+      .min(0, "Đơn giá không được âm"),
+    amount: yup.number(),
+  }),
+  water: yup.object().shape({
+    startReading: yup
+      .number()
+      .required("Vui lòng nhập chỉ số đầu")
+      .min(0, "Chỉ số không được âm"),
+    endReading: yup
+      .number()
+      .required("Vui lòng nhập chỉ số cuối")
+      .min(0, "Chỉ số không được âm")
+      .test(
+        "is-greater-than-start",
+        "Chỉ số cuối phải lớn hơn hoặc bằng chỉ số đầu",
+        (value, context) => {
+          const { startReading } = context.parent;
+          return value >= startReading;
+        }
+      ),
+    usage: yup.number(),
+    unitPrice: yup
+      .number()
+      .required("Vui lòng nhập đơn giá")
+      .min(0, "Đơn giá không được âm"),
+    amount: yup.number(),
+  }),
+  internet: yup
+    .number()
+    .required("Vui lòng nhập tiền Internet")
+    .min(0, "Giá trị không được âm"),
+  cleaning: yup
+    .number()
+    .required("Vui lòng nhập tiền vệ sinh")
+    .min(0, "Giá trị không được âm"),
+  totalAmount: yup.number(),
+});
+
+export const billSchema = addBillSchema;

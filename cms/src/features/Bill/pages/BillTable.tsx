@@ -1,5 +1,6 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { Room } from "@features/Room/types";
+import { DocumentIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
     Chip,
     Pagination,
@@ -12,15 +13,34 @@ import {
     Tooltip,
 } from "@heroui/react";
 import { useAppDispatch } from "@services/store";
+import { formatVND } from "@utils/fomart.util";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
+import { Contract } from "../types";
 
 export interface Bill {
-    _id: string;
-    userId: string;
-    totalPrice: number;
+    id: string;
+    electricity: {
+        usage: number;
+        amount: number;
+        unitPrice: number;
+        endReading: number;
+        startReading: number;
+    };
+    water: {
+        usage: number;
+        amount: number;
+        unitPrice: number;
+        endReading: number;
+        startReading: number;
+    };
+    internet: number;
+    cleaning: number;
+    totalAmount: number;
     createdAt: string;
-    status: string;
+    updatedAt: string;
+    contract: Contract;
+    room: Room;
 }
 
 export interface Pagination {
@@ -31,7 +51,7 @@ export interface Pagination {
 }
 
 export type Props = {
-    bills: Bill[];
+    bills: Bill[] | any;
     pagination: Pagination;
     onChangePagination: (page: number) => void;
     onDelete: (id: string) => void;
@@ -41,10 +61,13 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
     const dispatch = useAppDispatch();
 
     const columns = [
-        { name: "ID", uid: "id", width: "50px" },
-        { name: "Tên thiết bị", uid: "name" },
-        { name: "Loại thiết bị", uid: "type" },
-        { name: "Năm sản xuất", uid: "year_of_manufacture" },
+        { name: "ID", uid: "id", width: "20px" },
+        { name: "Mã hóa đơn", uid: "code" },
+        { name: "Phòng", uid: "room" },
+        { name: "Họ tên", uid: "full_name" },
+        { name: "Email", uid: "email" },
+        { name: "Mã sinh viên", uid: "student_id" },
+        { name: "Tổng số tiền", uid: "totalAmount" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Tuỳ chọn", uid: "actions", align: "center" },
     ];
@@ -52,49 +75,71 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
         onDelete(id);
     };
     const renderCell = useCallback((item: any, columnKey: React.Key) => {
+        const roomName = item?.room?.name || "Không có";
+        const fullName = item?.user?.full_name || "Không có";
+        const email = item?.user?.email || "Không có";
+        const studentId = item?.user?.student_id || "Không có";
         const cellValue = item[columnKey as keyof any];
 
-        const getDeviceStatus = (status: string) => {
+        const getBillStatus = (status: string) => {
             switch (status) {
-                case "good":
-                    return "Tốt";
-                case "broken":
-                    return "Hỏng";
-                case "under_maintenance":
-                    return "Đang bảo trì";
-                case "deleted":
-                    return "Đã xóa";
+                case "pending":
+                    return "Chưa thanh toán";
+                case "paid":
+                    return "Đã thanh toán";
+                case "overdue":
+                    return "Quá hạn";
+                default:
+                    return "Chưa thanh toán";
             }
         };
         switch (columnKey) {
+            case "room":
+                return <div>{roomName}</div>;
+            case "full_name":
+                return <div>{fullName}</div>;
+            case "email":
+                return <div>{email}</div>;
+            case "student_id":
+                return <div>{studentId}</div>;
+            case "totalAmount":
+                return <div>{formatVND(cellValue)}</div>;
             case "status":
                 return (
                     <Chip
                         color={
-                            item.status == "good"
-                                ? "success"
-                                : item.status == "broken"
-                                ? "danger"
-                                : item.status == "under_maintenance"
+                            item.status == "pending"
                                 ? "warning"
+                                : item.status == "paid"
+                                ? "success"
+                                : item.status == "overdue"
+                                ? "danger"
                                 : "danger"
                         }
                         size="sm"
                         variant="bordered"
                     >
-                        {getDeviceStatus(item.status)}
+                        {getBillStatus(item.status)}
                     </Chip>
                 );
 
             case "actions":
                 return (
                     <div className="relative flex items-center gap-2 justify-center">
-                        <Tooltip content="Sửa">
+                        <Tooltip content="Xuất hóa đơn">
                             <span
-                                onClick={() => navigate(`/${ROUTE_PATHS.DEVICE}/edit/${item.id}`)}
+                                onClick={() => navigate(`/${ROUTE_PATHS.BILL}/contract/${item.id}`)}
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
-                                <PencilIcon className="size-4 text-secondary" />
+                                <DocumentIcon className="size-4 text-yellow-700" />
+                            </span>
+                        </Tooltip>
+                        <Tooltip content="Sửa">
+                            <span
+                                onClick={() => navigate(`/${ROUTE_PATHS.BILL}/edit/${item.id}`)}
+                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                            >
+                                <PencilIcon className="size-4 text-blue-500" />
                             </span>
                         </Tooltip>
                         <Tooltip content="Xóa">
@@ -102,13 +147,13 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                 onClick={() => handleDelete(item.id)}
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
-                                <TrashIcon className="size-4 text-secondary" />
+                                <TrashIcon className="size-4 text-red-500" />
                             </span>
                         </Tooltip>
                     </div>
                 );
             default:
-                return cellValue;
+                return typeof cellValue === "object" ? "" : cellValue;
         }
     }, []);
 
@@ -160,7 +205,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                     }
                 >
                     {(item: any) => (
-                        <TableRow key={item?._id}>
+                        <TableRow key={item?.id}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

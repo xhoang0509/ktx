@@ -33,6 +33,7 @@ export const ROUTE_PATHS = {
     ADD_BILL: "bill/add",
     EDIT_BILL_BASE: "bill/edit",
     EDIT_BILL: "bill/edit/:id",
+    BILL_CONTRACT: "bill/contract/:id",
 
     PERMISSION_DENIED: "permission-denied",
 };

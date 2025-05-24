@@ -1,19 +1,9 @@
 const { LessThanOrEqual } = require("typeorm");
-const { Payment } = require("../models/entities/payments");
-const { User } = require("../models/entities/user");
-const { Room } = require("../models/entities/room");
-const { AppDataSource } = require("../models/db");
+const { PaymentModel, RoomModel } = require("../models/db");
 
-class PaymentService {
-    constructor() {
-        this.paymentRepo = AppDataSource.getRepository(Payment);
-        this.userRepo = AppDataSource.getRepository(User);
-        this.roomRepo = AppDataSource.getRepository(Room);
-    }
-
-    // Admin nhập tiền điện nước cho phòng
+const PaymentService = {
     async addUtilityCost(roomId, utilityAmount, month, year) {
-        const room = await this.roomRepo.findOne({
+        const room = await RoomModel.findOne({
             where: {
                 id: roomId
             },
@@ -31,7 +21,7 @@ class PaymentService {
         const amountPerStudent = utilityAmount / students?.length;
 
         const payments = await Promise.all(students.map(async (s) => {
-            let payment = await this.paymentRepo.findOne({
+            let payment = await PaymentModel.findOne({
                 where: {
                     user: s,
                     month,
@@ -39,7 +29,7 @@ class PaymentService {
                 }
             });
             if (!payment) {
-                payment = this.paymentRepo.create({
+                payment = PaymentModel.create({
                     user: s,
                     room,
                     rent_amount: room.base_price,
@@ -53,24 +43,24 @@ class PaymentService {
                 payment.utility_amount = amountPerStudent;
                 payment.total_amount = payment.rent_amount + amountPerStudent;
             }
-            return this.paymentRepo.save(payment);
+            return PaymentModel.save(payment);
         }));
         return payments;
-    }
+    },
 
     // Admin xem danh sách công nợ sinh viên
     async getStudentDebts() {
-        return await this.paymentRepo.findOne({
+        return await PaymentModel.findOne({
             where: {
                 status: "pending"
             },
             relations: ["user", "room"]
         });
-    }
+    },
 
     // Admin xuất báo cáo tài chính
     async getFinancialReport(month, year) {
-        return await this.paymentRepo.find({
+        return await PaymentModel.find({
             where: {
                 month,
                 year,
@@ -78,7 +68,7 @@ class PaymentService {
             },
             relations: ["user", "room"],
         });
-    }
+    },
 
     // Theo dõi trễ hạn
     async getLatePayments() {
@@ -86,7 +76,7 @@ class PaymentService {
         const currentMonth = now.getMonth() + 1;
         const currentYear = now.getFullYear();
 
-        return await this.paymentRepo.find({
+        return await PaymentModel.find({
             where: [
                 {
                     status: "pending",
@@ -96,11 +86,11 @@ class PaymentService {
             ],
             relations: ["user", "room"],
         });
-    }
+    },
 
     //Sinh viên xem hoá đơn của mình
     async getStudentPayments(userId) {
-        return await this.paymentRepo.find({
+        return await PaymentModel.find({
             where: {
                 user: {
                     id: userId,
@@ -108,11 +98,11 @@ class PaymentService {
             },
             relations: ["room"],
         });
-    }
+    },
 
     //Sinh viên thanh toán
     async completePayment(paymentId, paymentMethod) {
-        const payment = await this.paymentRepo.findOne({
+        const payment = await PaymentModel.findOne({
             where: {
                 id: paymentId,
             },
@@ -125,17 +115,17 @@ class PaymentService {
         payment.payment_method = paymentMethod;
         payment.is_settled = true;
 
-        return await this.paymentRepo.save(payment);
-    }
+        return await PaymentModel.save(payment);
+    },
 
     //Sinh viên xem lịch sử thanh toán
     async getPaymentHistory(userId) {
-        return await this.paymentRepo.find({
+        return await PaymentModel.find({
             where: { user: { id: userId } },
             order: { payment_date: "DESC" },
             relations: ["room"]
         });
-    }
+    },
 }
 
-module.exports = { PaymentService }; 
+module.exports = PaymentService

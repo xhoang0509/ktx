@@ -1,13 +1,9 @@
 const logger = require("../../logger");
-const { UserService } = require("../services/userService");
+const UserService = require("../services/users.service");
 const jwt = require('jsonwebtoken');
-const { AppDataSource } = require("../models/db");
-const { User } = require("../models/entities/user");
-class UserController {
-    constructor() {
-        this.userService = new UserService();
-        this.userRepository = AppDataSource.getRepository(User);
-    }
+const { UserModel } = require("../models/db");
+
+const UserController = {
 
     async create(req, res) {
         try {
@@ -27,11 +23,11 @@ class UserController {
             if (body.student_id.length < 6 || body.student_id.length > 32) {
                 return res.status(400).send({ status: 400, message: 'Mã sinh viên phải có từ 6 đến 32 ký tự' });
             }
-            const exitsUser = await this.userRepository.findOne({ where: { email: body.email } });
+            const exitsUser = await UserModel.findOne({ where: { email: body.email } });
             if (exitsUser) {
                 return res.status(400).send({ status: 400, message: 'Email đã tồn tại' });
             }
-            
+
             const data = {
                 email: body.email,
                 password: body.password,
@@ -43,61 +39,61 @@ class UserController {
                 avatar: "",
                 status: "active",
             }
-            const user = await this.userService.create(data);
+            const user = await UserService.create(data);
             res.status(200).send({ status: 200, message: 'Tạo tài khoản thành công', data: user });
         } catch (e) {
             logger.error(__filename, 'create', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
-    }
+    },
 
     async uploadAvatar(req, res) {
         console.log('run upload avatar')
         try {
             const userId = req.user?.sub;
             const file = req.file;
-            
+
             if (!file) {
                 return res.status(400).send({ status: 400, message: 'Không có file được tải lên' });
             }
-            
+
             if (!userId) {
                 return res.status(401).send({ status: 401, message: 'Không tìm thấy thông tin người dùng' });
             }
 
             // Get file path
             const avatarUrl = `/uploads/avatars/${file.filename}`;
-            
+
             // Update user avatar in database
-            const user = await this.userRepository.findOne({ where: { id: userId } });
+            const user = await UserModel.findOne({ where: { id: userId } });
             if (!user) {
                 return res.status(404).send({ status: 404, message: 'Không tìm thấy người dùng' });
             }
-            
+
             user.avatar = avatarUrl;
-            await this.userRepository.save(user);
-            
-            res.status(200).send({ 
-                status: 200, 
-                message: 'Upload avatar thành công', 
-                data: { avatar: avatarUrl } 
+            await UserModel.save(user);
+
+            res.status(200).send({
+                status: 200,
+                message: 'Upload avatar thành công',
+                data: { avatar: avatarUrl }
             });
         } catch (e) {
             logger.error(__filename, 'uploadAvatar', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
-    }
+    },
 
     async login(req, res) {
         try {
             const data = req.body
-            const token = await this.userService.login(data);
+            const token = await UserService.login(data);
             res.status(200).send({ status: 200, message: 'Đăng nhập thành công', data: token });
         } catch (e) {
             logger.error(__filename, 'login', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
-    }
+    },
 
     async info(req, res) {
         try {
@@ -112,7 +108,7 @@ class UserController {
             if (!decoded.email) {
                 return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
             }
-            const user = await this.userService.findById(decoded.userId);
+            const user = await UserService.findById(decoded.userId);
             if (!user) {
                 return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
 
@@ -125,7 +121,7 @@ class UserController {
             logger.error(__filename, 'login', e.message)
             res.status(500).send({ status: 500, message: e.message || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
-    }
+    },
 
     async list(req, res) {
         try {
@@ -133,49 +129,49 @@ class UserController {
             const limit = parseInt(req.query.limit) || 10;
             const search = req.query.search || "";
 
-            const response = await this.userService.list(page, limit, search);
+            const response = await UserService.list(page, limit, search);
             res.status(200).send({ status: 200, message: 'Lấy danh sách thành công', data: response });
         } catch (error) {
             res.status(500).send({ status: 500, message: error.message || 'Có lỗi trong quá trình xử lý' });
         }
-    }
+    },
 
     async detail(req, res) {
         try {
             const userId = req.user?.sub;
-            const response = await this.userService.detail(userId);
+            const response = await UserService.detail(userId);
             return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {
             console.log(error);
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
-    }
+    },
 
     async findById(req, res) {
         try {
             const id = req.params.id;
 
-            const response = await this.userService.detail(id);
+            const response = await UserService.detail(id);
             return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
         } catch (error) {
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
-    }
+    },
 
     async remove(req, res) {
         try {
-            const response = await this.userService.remove(Number(req.params.id));
+            const response = await UserService.remove(Number(req.params.id));
             return res.status(200).send({ status: 200, message: 'Xóa tài khoản thành công', data: response });
         } catch (error) {
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
-    }
+    },
 
     async modify(req, res) {
         try {
             const userId = req.user?.sub;
 
-            const response = await this.userService.modify(userId, req.body);
+            const response = await UserService.modify(userId, req.body);
             return res.status(200).send({ status: 200, message: 'Sửa thông tin thành công', data: response });
         } catch (error) {
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
@@ -183,4 +179,4 @@ class UserController {
     }
 }
 
-module.exports = { UserController }; 
+module.exports = UserController
