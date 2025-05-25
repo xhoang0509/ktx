@@ -1,9 +1,12 @@
+import AppInput from "@components/common/AppInput";
 import { Chip, Input } from "@heroui/react";
 import { formatDateTime } from "@utils/fomart.util";
+import { Control, Controller } from "react-hook-form";
 import { BookingRequestDetail, BookingRequestStatus } from "../types";
 
-interface BookingRequestInfoProps {
+interface EditRequestFormProps {
     bookingRequest: BookingRequestDetail;
+    control: Control<any>;
 }
 
 export const getStatusText = (status: BookingRequestStatus) => {
@@ -36,7 +39,7 @@ export const getStatusContractColor = (status: BookingRequestStatus) => {
     }
 };
 
-const BookingRequestInfo = ({ bookingRequest }: BookingRequestInfoProps) => {
+const EditRequestForm = ({ control, bookingRequest }: EditRequestFormProps) => {
     const { id, createdAt, user, room, start_date, end_date, status } = bookingRequest;
 
     return (
@@ -56,63 +59,86 @@ const BookingRequestInfo = ({ bookingRequest }: BookingRequestInfoProps) => {
 
                     <div className="col-span-6 md:col-span-3">
                         <div className="mb-2">Mã sinh viên</div>
-                        <Input value={user.student_id} readOnly />
+                        <Input value={user.student_id} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-3">
                         <div className="mb-2">Tên sinh viên</div>
-                        <Input value={user.full_name} readOnly />
+                        <Input value={user.full_name} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-3">
                         <div className="mb-2">Ngày tạo</div>
-                        <Input value={formatDateTime(createdAt)} readOnly />
+                        <Input value={formatDateTime(createdAt)} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-3">
                         <div className="mb-2">Lớp</div>
-                        <Input value={user.class_code} readOnly />
+                        <Input value={user.class_code} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-3">
                         <div className="mb-2">Email</div>
-                        <Input value={user.email} readOnly />
+                        <Input value={user.email} readOnly data-readonly="true" />
                     </div>
                 </div>
             </div>
 
             <div className="bg-white rounded-2xl p-4 shadow-md col-span-4">
-                <h3 className="text-lg font-medium mb-4">Nội dung yêu cầu</h3>
+                <h3 className="text-lg font-bold mb-4">Nội dung yêu cầu</h3>
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Ngày bắt đầu</div>
-                        <Input value={`${start_date}`} readOnly />
+                        <Controller
+                            control={control}
+                            name={`start_date`}
+                            render={({ field }) => (
+                                <AppInput
+                                    value={field.value}
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                    }}
+                                    min={0}
+                                />
+                            )}
+                        />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Ngày kết thúc</div>
-                        <Input value={`${end_date}`} readOnly />
+                        <Controller
+                            control={control}
+                            name={`end_date`}
+                            render={({ field }) => (
+                                <AppInput
+                                    value={field.value}
+                                    onValueChange={(value) => {
+                                        field.onChange(value);
+                                    }}
+                                    min={0}
+                                />
+                            )}
+                        />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Số người tối đa</div>
-                        <Input value={`${room.max_capacity}`} readOnly />
+                        <Input value={`${room.max_capacity}`} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Tòa nhà</div>
-                        <Input value={room.building} readOnly />
+                        <Input value={room.building} readOnly data-readonly="true" />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Loại phòng</div>
-                        <Input value={`${room.type}`} readOnly />
+                        <Input value={`${room.type}`} readOnly data-readonly="true" />
                     </div>
-
 
                     <div className="col-span-12">
                         <div className="mb-2">Ghi chú</div>
-                        <Input value={room.note} readOnly />
+                        <Input value={room.note} readOnly data-readonly="true" />
                     </div>
                 </div>
             </div>
@@ -120,4 +146,4 @@ const BookingRequestInfo = ({ bookingRequest }: BookingRequestInfoProps) => {
     );
 };
 
-export default BookingRequestInfo;
+export default EditRequestForm;

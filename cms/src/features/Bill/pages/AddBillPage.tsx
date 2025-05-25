@@ -41,9 +41,12 @@ export default function AddBillPage() {
         const roomPrice = selectedContract?.room?.base_price
             ? parseInt(selectedContract.room.base_price.toString())
             : 0;
-        console.log({ roomPrice });
         const totalAmount =
-            roomPrice + electricityAmount + waterAmount + internetAmount + cleaningAmount;
+            Number(roomPrice) +
+            Number(electricityAmount) +
+            Number(waterAmount) +
+            Number(internetAmount) +
+            Number(cleaningAmount);
         setValue("totalAmount", totalAmount);
     }, [
         electricityAmount,
@@ -57,6 +60,7 @@ export default function AddBillPage() {
     useEffect(() => {
         dispatch(
             BookingRequestActions.getBookingRequests({
+                data: { status: "active" },
                 onSuccess: (data: any) => {},
             })
         );

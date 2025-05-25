@@ -84,15 +84,16 @@ export default function UserInfoForm({
                     />
 
                     <Controller
-                        name="username"
+                        name="email"
                         control={control}
                         render={({ field, fieldState }) => (
                             <Input
                                 {...field}
-                                label="Tên đăng nhập"
-                                placeholder="Nhập tên đăng nhập"
+                                label="Email"
+                                placeholder="Nhập email"
                                 isInvalid={!!fieldState.error}
                                 errorMessage={fieldState.error?.message}
+                                disabled={true}
                             />
                         )}
                     />
@@ -107,6 +108,7 @@ export default function UserInfoForm({
                                 placeholder="Nhập mã số sinh viên"
                                 isInvalid={!!fieldState.error}
                                 errorMessage={fieldState.error?.message}
+                                disabled={true}
                             />
                         )}
                     />

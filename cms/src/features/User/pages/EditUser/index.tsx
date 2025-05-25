@@ -15,7 +15,7 @@ import { useNavigate, useParams } from "react-router-dom";
 interface EditUserFormData {
     id?: string;
     full_name: string;
-    username: string;
+    email: string;
     gender: "male" | "female" | "other";
     phone: string;
     student_id: string;
@@ -26,7 +26,7 @@ interface EditUserFormData {
 }
 
 const defaultEditUserForm: EditUserFormData = {
-    username: "",
+    email: "",
     full_name: "",
     phone: "",
     gender: "other",

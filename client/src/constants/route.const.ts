@@ -11,4 +11,6 @@ export const ROUTE_PATHS = {
   CONTRACT: "contract",
   BLOG: "blog",
   BLOG_DETAIL: "blog/:id",
+  // payment
+  PAYMENT: "payment",
 };

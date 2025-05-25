@@ -12,6 +12,7 @@ export interface Room {
   current_capacity: number;
   type: string;
   building: string;
+  note: string;
   base_price: number;
   createdAt: string;
   updatedAt: string;

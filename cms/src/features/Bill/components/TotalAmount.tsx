@@ -7,6 +7,8 @@ interface TotalAmountProps {
     internetAmount: number;
     cleaningAmount: number;
     selectedContract: Contract | null;
+    totalAmount?: number;
+    isEdit?: boolean;
 }
 
 export default function TotalAmount({
@@ -15,12 +17,19 @@ export default function TotalAmount({
     internetAmount,
     cleaningAmount,
     selectedContract,
+    totalAmount,
+    isEdit,
 }: TotalAmountProps) {
     const roomPrice = selectedContract?.room?.base_price
         ? parseInt(selectedContract.room.base_price.toString())
         : 0;
-    const totalAmount =
-        roomPrice + electricityAmount + waterAmount + internetAmount + cleaningAmount;
+
+    const calcTotalAmount =
+        roomPrice +
+        Number(electricityAmount) +
+        Number(waterAmount) +
+        Number(internetAmount) +
+        Number(cleaningAmount);
 
     return (
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-5 shadow-sm">
@@ -60,7 +69,8 @@ export default function TotalAmount({
                 <div className="flex justify-between items-center pt-2">
                     <span className="text-lg font-semibold">Tổng tiền:</span>
                     <span className="text-xl font-bold text-blue-700">
-                        {totalAmount.toLocaleString()} VNĐ
+                        {isEdit ? totalAmount?.toLocaleString() : calcTotalAmount.toLocaleString()}
+                        VNĐ
                     </span>
                 </div>
             </div>

@@ -24,12 +24,12 @@ const RoomPage = lazy(() => import("@features/Room/pages/RoomPage"));
 const AddRoomPage = lazy(() => import("@features/Room/pages/AddRoom"));
 const EditDevicePage = lazy(() => import("@features/Device/pages/EditDevice"));
 const LogoutPage = lazy(() => import("@features/Logout"));
-const RequestPage = lazy(() => import("@features/BookingRequests/pages/BookingRequestsPage"));
+const RequestPage = lazy(() => import("@features/BookingRequests/pages/Index"));
 const BillPage = lazy(() => import("@features/Bill/pages/Index"));
 const AddBillPage = lazy(() => import("@features/Bill/pages/AddBillPage"));
 const EditBillPage = lazy(() => import("@features/Bill/pages/EditBillPage"));
 const ContractPage = lazy(() => import("@features/Bill/pages/ContractPage"));
-
+const EditRequest = lazy(() => import("@features/BookingRequests/pages/Edit"));
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
@@ -135,6 +135,11 @@ function AppRouter() {
                         {
                             path: ROUTE_PATHS.REQUEST_DETAIL,
                             element: <BookingRequestDetailPage />,
+                            title: "Chi tiết yêu cầu",
+                        },
+                        {
+                            path: ROUTE_PATHS.EDIT_REQUEST,
+                            element: <EditRequest />,
                             title: "Chi tiết yêu cầu",
                         },
                         {

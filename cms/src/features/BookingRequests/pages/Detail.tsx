@@ -1,45 +1,13 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import AppHeader from "@components/AppHeader";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { Button, Spinner } from "@heroui/react";
-import AppHeader from "@components/AppHeader";
-import BookingRequestInfo from "../components/BookingRequestInfo";
-import AdminDecisionBox from "../components/AdminDecisionBox";
-import { BookingRequestDetail, BookingRequestStatus } from "../types";
+import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import AdminDecisionBox from "../components/AdminDecisionBox";
+import BookingRequestInfo from "../components/BookingRequestInfo";
 import { BookingRequestActions } from "../services/slice";
-const mockBookingRequestDetail: BookingRequestDetail = {
-    id: "1",
-    requestCode: "YC001",
-    studentId: "SV1234",
-    studentName: "Nguyễn Văn A",
-    studentClass: "K66-CNTT",
-    email: "nguyenvana@example.com",
-    phone: "0912345678",
-    requestDate: "2025-05-05T10:30:00",
-    requestType: "Tham gia nội trú",
-    semester: "Học kỳ 1 năm học 2025-2026",
-    buildingName: "KTX A",
-    roomType: "4 người",
-    peopleCount: 4,
-    notes: "Sinh viên có nguyện vọng ở cùng bạn học cùng lớp",
-    status: BookingRequestStatus.PENDING,
-    attachments: [
-        {
-            id: "1",
-            name: "don_dang_ky.pdf",
-            url: "#",
-        },
-        {
-            id: "2",
-            name: "xac_nhan_sv.pdf",
-            url: "#",
-        },
-    ],
-    adminNotes: "",
-    createdAt: "2025-05-05T10:30:00",
-    updatedAt: "2025-05-05T10:30:00",
-};
+import { BookingRequestDetail, BookingRequestStatus } from "../types";
 
 const BookingRequestDetailPage = () => {
     const dispatch = useDispatch();
@@ -65,25 +33,19 @@ const BookingRequestDetailPage = () => {
     };
 
     const handleApprove = async (notes: string) => {
-        // Update the local state
         if (bookingRequest) {
             setBookingRequest({
                 ...bookingRequest,
-                status: BookingRequestStatus.APPROVED,
-                adminNotes: notes,
+                status: BookingRequestStatus.ACTIVE,
             });
         }
     };
 
     const handleReject = async (notes: string) => {
-        // In a real app, you would call an API
-
-        // Update the local state
         if (bookingRequest) {
             setBookingRequest({
                 ...bookingRequest,
-                status: BookingRequestStatus.REJECTED,
-                adminNotes: notes,
+                status: BookingRequestStatus.CANCELLED,
             });
         }
     };

@@ -1,6 +1,6 @@
 import { ROUTE_PATHS } from "@constants/route.const";
 import { Room } from "@features/Room/types";
-import { DocumentIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
     Chip,
     Pagination,
@@ -134,22 +134,26 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                 <DocumentIcon className="size-4 text-yellow-700" />
                             </span>
                         </Tooltip>
-                        <Tooltip content="Sửa">
-                            <span
-                                onClick={() => navigate(`/${ROUTE_PATHS.BILL}/edit/${item.id}`)}
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                                <PencilIcon className="size-4 text-blue-500" />
-                            </span>
-                        </Tooltip>
-                        <Tooltip content="Xóa">
-                            <span
-                                onClick={() => handleDelete(item.id)}
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                                <TrashIcon className="size-4 text-red-500" />
-                            </span>
-                        </Tooltip>
+                        {["pending"].includes(item.status) && (
+                            <Tooltip content="Sửa">
+                                <span
+                                    onClick={() => navigate(`/${ROUTE_PATHS.BILL}/edit/${item.id}`)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <PencilIcon className="size-4 text-blue-500" />
+                                </span>
+                            </Tooltip>
+                        )}
+                        {/* {["pending"].includes(item.status) && (
+                            <Tooltip content="Xóa">
+                                <span
+                                    onClick={() => handleDelete(item.id)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <TrashIcon className="size-4 text-red-500" />
+                                </span>
+                            </Tooltip>
+                        )} */}
                     </div>
                 );
             default:

@@ -8,6 +8,7 @@ const RolePaths: { [key: string]: string[] } = {
         "/blog/:id",
         "/blog",
         "/contract",
+        "/payment",
     ],
     guest: ["/login", "/register", "/contact"],
 };

@@ -50,7 +50,6 @@ export default function EditRoomPage() {
                 RoomActions.getDetailRoom({
                     id,
                     onSuccess: (data: any) => {
-                        console.log("data", data);
                         reset(data);
                     },
                 })

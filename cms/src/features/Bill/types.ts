@@ -56,3 +56,12 @@ export const defaultBillForm: BillForm = {
     cleaning: 30000,
     totalAmount: 0,
 };
+
+export const defaultEditForm: any = {
+    contractId: "",
+    electricity: { ...defaultServiceFee, unitPrice: 0 },
+    water: { ...defaultServiceFee, unitPrice: 0 },
+    internet: 0,
+    cleaning: 0,
+    totalAmount: 0,
+};

@@ -17,8 +17,8 @@ export default function BookingRequestsPage() {
     const [search, setSearch] = useState<string>("");
     const [pagination, setPagination] = useState(defaultPagination);
 
-    const fetchBookingRequests = async (searchTerm: string = "") => {
-        const res = await ContractService.getContracts();
+    const fetchBookingRequests = async (search: string = "") => {
+        const res = await ContractService.getContracts({ search });
         if (res.status === 200) {
             setBookingRequests(res.data);
         }
@@ -38,12 +38,12 @@ export default function BookingRequestsPage() {
 
     return (
         <div>
-            <AppHeader pageTitle="Danh sách yêu cầu đặt phòng" />
+            <AppHeader pageTitle="Danh sách hợp đồng đặt phòng" />
             <SearchForm
                 onSearch={onSearch}
                 onChangeInput={setSearch}
                 valueInput={search}
-                placeholder="Tìm theo tên sinh viên hoặc số phòng"
+                placeholder="Tìm theo tên sinh viên"
             />
             <div className="bg-white rounded-2xl p-4 shadow-md m-4">
                 <BookingRequestList

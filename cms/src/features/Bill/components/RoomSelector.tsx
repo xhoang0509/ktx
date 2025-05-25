@@ -11,15 +11,15 @@ import { formatVND } from "@utils/fomart.util";
 interface RoomSelectorProps {
     control: Control<any>;
     onContractSelect: (contract: Contract | null) => void;
+    selectedContract: Contract | null;
 }
 
-export default function RoomSelector({ control, onContractSelect }: RoomSelectorProps) {
-    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+export default function RoomSelector({ control, onContractSelect , selectedContract}: RoomSelectorProps) {
     const bookingRequests = useAppSelector(BookingRequestSelectors.bookingRequests);
 
-    useEffect(() => {
-        onContractSelect(selectedContract);
-    }, [selectedContract, onContractSelect]);
+    // useEffect(() => {
+    //     onContractSelect(selectedContract);
+    // }, [selectedContract, onContractSelect]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -37,7 +37,7 @@ export default function RoomSelector({ control, onContractSelect }: RoomSelector
                                 const contract = bookingRequests.find(
                                     (c: BookingRequest) => c.id === parseInt(selectedKey)
                                 );
-                                setSelectedContract(contract || null);
+                                onContractSelect(contract || null);
                             }}
                         >
                             {bookingRequests.map((contract: BookingRequest) => (
@@ -62,22 +62,22 @@ export default function RoomSelector({ control, onContractSelect }: RoomSelector
                     <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
                             <span className="text-gray-500">Tên phòng:</span>
-                            <span className="ml-2 font-medium">{selectedContract.room.name}</span>
+                            <span className="ml-2 font-medium">{selectedContract?.room?.name}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Tòa nhà:</span>
                             <span className="ml-2 font-medium">
-                                {selectedContract.room.building}
+                                {selectedContract?.room?.building}
                             </span>
                         </div>
                         <div>
                             <span className="text-gray-500">Loại phòng:</span>
-                            <span className="ml-2 font-medium">{selectedContract.room.type}</span>
+                            <span className="ml-2 font-medium">{selectedContract?.room?.type}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Giá phòng:</span>
                             <span className="ml-2 font-medium">
-                                {formatVND(selectedContract.room.base_price)}
+                                {formatVND(selectedContract?.room?.base_price)}
                             </span>
                         </div>
                     </div>

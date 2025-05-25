@@ -31,7 +31,8 @@ export const BookingRequestSlice = createSlice({
       state.page = payload.page;
       state.total = payload.total;
       state.limit = payload.limit;
-    }
+    },
+    editRequest: (state, { payload }) => {},
   },
 });
 

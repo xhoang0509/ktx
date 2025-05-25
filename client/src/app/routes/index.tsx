@@ -21,6 +21,7 @@ const ContractPage = lazy(() => import("@features/Contract/"));
 const ContactPage = lazy(() => import("@features/Contact/pages"));
 const BlogView = lazy(() => import("@features/Blog/View"));
 const BlogIndex = lazy(() => import("@features/Blog/Index"));
+const PaymentPage = lazy(() => import("@features/Payment/pages/Index"));
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
@@ -102,7 +103,12 @@ function AppRouter() {
                             element: <BlogIndex />,
                             title: "Blog",
                         },
-
+                        // payment
+                        {
+                            path: ROUTE_PATHS.PAYMENT,
+                            element: <PaymentPage />,
+                            title: "Thanh toán",
+                        },
                     ],
                 },
             ],

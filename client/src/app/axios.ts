@@ -21,6 +21,7 @@ const registerInterceptorsRequest = (clientInstance: AxiosInstance) => {
             return config;
         },
         (error: any) => {
+            console.log(24, error)
             return Promise.reject(error);
         }
     );

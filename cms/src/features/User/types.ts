@@ -1,10 +1,10 @@
 export interface UserDetail {
   id: string;
   full_name: string;
-  username: string;
+  email: string;
   gender: "male" | "female" | "other";
-  phone: string;
   avatar: string;
+  class_code: string;
   status: UserStatus;
   student_id: string;
   role?: string;

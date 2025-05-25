@@ -6,7 +6,8 @@ html {
   overflow: hidden;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
 }
@@ -19,29 +20,12 @@ body {
   overflow-y: auto;
 }
 
-#root {
+#root {}
+
+div[data-slot='input-wrapper']:has(input[data-readonly="true"]) {
+  background-color: #ccc !important;
+  cursor: not-allowed;
 }
-
-
-@keyframes scrollBackground {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 100%;
-  }
+input[data-readonly="true"] {
+  cursor: not-allowed;
 }
-
-.bg-scroll {
-  background-image: url('../assets/images/login-background.jpg'), url('../assets/images/login-background.jpg'); /* Ảnh nền */
-  background-size: contain; /* Chiều cao mỗi ảnh */
-  background-repeat: repeat-y; /* Lặp theo chiều dọc */
-  animation: scrollBackground 5s linear infinite; /* Animation chạy mãi mãi */
-  background-position: 0 0, 0 100%;
-}
-
-/* .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
-} */

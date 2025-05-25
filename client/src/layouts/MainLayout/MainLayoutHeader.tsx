@@ -110,7 +110,15 @@ const MainLayoutHeader: React.FC = () => {
                                         navigate(`/${ROUTE_PATHS.CONTRACT}`);
                                     }}
                                 >
-                                    Lịch sử hợp đồng
+                                    Danh sách hợp đồng
+                                </DropdownItem>
+                                <DropdownItem
+                                    key={1}
+                                    onPress={() => {
+                                        navigate(`/${ROUTE_PATHS.PAYMENT}`);
+                                    }}
+                                >
+                                    Quản lý thanh toán
                                 </DropdownItem>
                                 <DropdownItem key={1} onPress={handleLogout}>
                                     Đăng xuất

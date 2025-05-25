@@ -32,7 +32,6 @@ export default function BillPage() {
             })
         );
     };
-    console.log({pagination});
 
     useEffect(() => {
         getBills(pagination, search);

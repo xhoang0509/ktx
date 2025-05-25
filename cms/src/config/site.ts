@@ -39,7 +39,7 @@ export const SITE_MENU = [
         icon: CubeIcon,
     },
     {
-        label: "Yêu cầu thuê phòng",
+        label: "Hợp đồng thuê phòng",
         path: "/request",
         icon: ReceiptPercentIcon,
     },
