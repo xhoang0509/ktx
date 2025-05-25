@@ -9,6 +9,8 @@ export const editUserSchema = yup.object().shape({
   phone: yup.string().matches(/^[0-9]{10}$/, "Số điện thoại không hợp lệ").required("Số điện thoại không được để trống"),
   student_id: yup.string().required("Mã số sinh viên không được để trống"),
   status: yup.string().oneOf(["active", "inactive", "graduated", "deleted"] as UserStatus[], "Trạng thái không hợp lệ").required("Trạng thái không được để trống"),
+  faculty_name: yup.string().required("Tên khoa không được để trống"),
+  class_code: yup.string().required("Mã lớp không được để trống"),
   role: yup.string(),
   avatar: yup.string(),
   createdAt: yup.string(),

@@ -2,6 +2,8 @@ const logger = require("../../logger");
 const UserService = require("../services/users.service");
 const jwt = require('jsonwebtoken');
 const { UserModel } = require("../models/db");
+const { error } = require("../logger");
+const { saveBase64Images } = require("../utils/fileUpload");
 
 const UserController = {
 
@@ -150,9 +152,15 @@ const UserController = {
     async findById(req, res) {
         try {
             const id = req.params.id;
+            const user = await UserModel.findOne({ where: { id: id } });
+            if (!user) {
+                return res.status(404).send({ status: 404, message: 'Không tìm thấy tài khoản' });
+            }
+            if (user.avatar) {
+                user.avatar = `${process.env.SERVER_URL}${user.avatar}`
+            }
 
-            const response = await UserService.detail(id);
-            return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: response });
+            return res.status(200).send({ status: 200, message: 'Lấy thông tin người dùng thành công', data: user });
         } catch (error) {
             return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
@@ -169,12 +177,49 @@ const UserController = {
 
     async modify(req, res) {
         try {
-            const userId = req.user?.sub;
+            const id = req.params.id;
+            const updateDto = req.body;
+            const user = await UserModel.findOne({ where: { id: id } });
+            if (!user) {
+                return res.status(404).send({ status: 404, message: 'Không tìm thấy tài khoản' });
+            }
 
-            const response = await UserService.modify(userId, req.body);
-            return res.status(200).send({ status: 200, message: 'Sửa thông tin thành công', data: response });
-        } catch (error) {
-            return res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+            const updateData = {}
+
+            if (updateDto.class_code) {
+                updateData.class_code = updateDto.class_code
+            }
+            if (updateDto.faculty_name) {
+                updateData.faculty_name = updateDto.faculty_name
+            }
+            if (updateDto.full_name) {
+                updateData.full_name = updateDto.full_name
+            }
+            if (updateDto.phone) {
+                updateData.phone = updateDto.phone
+            }
+
+            if (updateDto.avatar) {
+                if (typeof updateDto.avatar === 'string' && updateDto.avatar.includes('base64')) {
+                    const newImagePaths = await saveBase64Images([updateDto.avatar], "users");
+                    updateData.avatar = newImagePaths[0];
+                }
+            }
+
+            if (updateDto.status) {
+                updateData.status = updateDto.status
+            }
+
+            await UserModel.update({ id: id }, updateData);
+            const editUser = await UserModel.findOne({ where: { id: id } });
+            if (editUser.avatar) {
+                editUser.avatar = `${process.env.SERVER_URL}${editUser.avatar}`
+            }
+            return res.status(200).send({ status: 200, message: 'Sửa thông tin thành công', data: editUser });
+        } catch (e) {
+            console.log(e)
+            error(__filename, e.message)
+            return res.status(500).send({ status: 500, message: e.message || e || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
     }
 }

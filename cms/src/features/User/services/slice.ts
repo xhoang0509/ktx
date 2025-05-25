@@ -4,7 +4,7 @@ import { RootState } from "src/services/store";
 export interface IUser {
   id: string;
   fullname: string;
-  username: string;
+  email: string;
   phone: string;
   gender: string;
   role: string;

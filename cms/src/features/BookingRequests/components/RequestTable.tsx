@@ -1,3 +1,4 @@
+import { ROUTE_PATHS } from "@constants/route.const";
 import { CheckIcon, EyeIcon, NoSymbolIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
     Button,
@@ -28,12 +29,12 @@ import React, { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { BookingRequestActions } from "../services/slice";
 import { BookingRequest, BookingRequestPagination, BookingRequestStatus } from "../types";
-import { ROUTE_PATHS } from "@constants/route.const";
 
 interface BookingRequestListProps {
     bookingRequests: BookingRequest[];
     pagination?: BookingRequestPagination;
     onChangePagination?: (page: number) => void;
+    setRefresh: React.Dispatch<React.SetStateAction<boolean>>;
 }
 export const formatStatus = (status: BookingRequestStatus) => {
     switch (status) {
@@ -65,10 +66,11 @@ export function getColorStatus(status: BookingRequestStatus) {
     }
 }
 
-export default function BookingRequestList({
+export default function RequestTable({
     bookingRequests,
     pagination,
     onChangePagination,
+    setRefresh,
 }: BookingRequestListProps) {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
@@ -86,14 +88,28 @@ export default function BookingRequestList({
     };
     const handleApproveContract = () => {
         if (!selectedId) return;
-        dispatch(BookingRequestActions.approveBookingRequest({ id: selectedId, active: true }));
+        dispatch(
+            BookingRequestActions.approveBookingRequest({
+                id: selectedId,
+                active: true,
+                onSuccess: () => {
+                    setRefresh((prev) => !prev);
+                },
+            })
+        );
         setIsOpen(false);
     };
 
     const handleRejectContract = () => {
         if (!selectedIdReject) return;
         dispatch(
-            BookingRequestActions.rejectBookingRequest({ id: selectedIdReject, active: false })
+            BookingRequestActions.rejectBookingRequest({
+                id: selectedIdReject,
+                active: false,
+                onSuccess: () => {
+                    setRefresh((prev) => !prev);
+                },
+            })
         );
         setIsOpenReject(false);
     };

@@ -20,6 +20,8 @@ interface EditUserFormData {
     phone: string;
     student_id: string;
     avatar?: string;
+    faculty_name: string;
+    class_code: string;
     status: UserStatus;
     createdAt?: string;
     updatedAt?: string;
@@ -32,6 +34,8 @@ const defaultEditUserForm: EditUserFormData = {
     gender: "other",
     status: "active",
     student_id: "",
+    faculty_name: "",
+    class_code: "",
     createdAt: "",
     updatedAt: "",
 };
@@ -52,16 +56,16 @@ export default function EditUserPage() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams<{ id: string }>();
-    const [loading, setLoading] = useState(false);
     const [userData, setUserData] = useState<UserDetail | null>(null);
     const [editedData, setEditedData] = useState<Partial<UserDetail>>({});
     const [saveLoading, setSaveLoading] = useState(false);
 
     const onSubmit = (data: any) => {
+        delete data.id
         dispatch(
             UserActions.editUser({
                 id: id,
-                body: data,
+                data: data,
                 onSuccess: () => {
                     reset();
                     navigate(`/${ROUTE_PATHS.USER}`);
@@ -123,53 +127,46 @@ export default function EditUserPage() {
 
     return (
         <div>
-            <AppHeader
-                pageTitle="Chỉnh sửa người dùng"
-                rightMenu={
-                    <div className="flex gap-2">
-                        <Button color="default" variant="light" onClick={handleCancel}>
-                            Quay lại
-                        </Button>
-                        <Button color="primary" onClick={handleSave} isLoading={saveLoading}>
-                            Lưu thay đổi
-                        </Button>
-                    </div>
-                }
-            />
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <AppHeader
+                    pageTitle="Chỉnh sửa người dùng"
+                    rightMenu={
+                        <div className="flex gap-2">
+                            <Button color="default" variant="light" onClick={handleCancel}>
+                                Quay lại
+                            </Button>
+                            <Button color="primary" type="submit" onClick={handleSave} isLoading={saveLoading}>
+                                Lưu thay đổi
+                            </Button>
+                        </div>
+                    }
+                />
 
-            <div className="p-4 flex flex-col gap-4">
-                <div className="bg-white p-4 rounded-md shadow-sm">
-                    <div className="flex justify-between items-center">
-                        <h2 className="text-xl font-semibold">{userData.full_name}</h2>
-                        <div className="text-sm">Trạng thái: {getUserStatusLabel()}</div>
+                <div className="p-4 flex flex-col gap-4">
+                    <div className="bg-white p-4 rounded-md shadow-sm">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-xl font-semibold">{userData.full_name}</h2>
+                            <div className="text-sm">Trạng thái: {getUserStatusLabel()}</div>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                        <div className="lg:col-span-8">
+                            <UserInfoForm
+                                userData={userData}
+                                onChange={handleUserInfoChange}
+                                control={control}
+                            />
+                        </div>
+                        <div className="lg:col-span-4">
+                            <UserStatusSection
+                                status={editedData.status || userData.status}
+                                onChange={handleStatusChange}
+                            />
+                        </div>
                     </div>
                 </div>
-
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <div className="lg:col-span-8">
-                        <UserInfoForm
-                            userData={userData}
-                            onChange={handleUserInfoChange}
-                            control={control}
-                        />
-                    </div>
-                    <div className="lg:col-span-4">
-                        <UserStatusSection
-                            status={editedData.status || userData.status}
-                            onChange={handleStatusChange}
-                        />
-                    </div>
-                </div>
-
-                <div className="flex justify-end gap-2 mt-4">
-                    <Button color="default" variant="light" onClick={handleCancel}>
-                        Hủy bỏ
-                    </Button>
-                    <Button color="primary" onClick={handleSave} isLoading={saveLoading}>
-                        Lưu thay đổi
-                    </Button>
-                </div>
-            </div>
+            </form>
         </div>
     );
 }

@@ -8,7 +8,7 @@ const contractRouter = require("./contract.route");
 const requestRouter = require("./request.route");
 const paymentRouter = require("./payment.route");
 const notificationRouter = require("./notification.route");
-
+const analyticRouter = require("./analytic.route");
 const router = Router();
 
 router.use("/admin", adminRouter);
@@ -20,5 +20,6 @@ router.use("/contract", contractRouter);
 router.use("/request", requestRouter);
 router.use("/payment", paymentRouter);
 router.use("/notification", notificationRouter);
+router.use("/analytic", analyticRouter);
 
 module.exports = router; 

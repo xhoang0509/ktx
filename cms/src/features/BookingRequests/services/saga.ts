@@ -54,7 +54,7 @@ export function* getBookingRequestDetail({ payload: { onSuccess, id } }: any) {
     }
 }
 
-export function* approveBookingRequest({ payload: { onSuccess, id, active } }: any) {
+export function* approveBookingRequest({ payload: { id, active, onSuccess } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
@@ -76,7 +76,7 @@ export function* approveBookingRequest({ payload: { onSuccess, id, active } }: a
     }
 }
 
-export function* rejectBookingRequest({ payload: { onSuccess, id } }: any) {
+export function* rejectBookingRequest({ payload: { id, onSuccess } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);

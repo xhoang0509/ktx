@@ -160,7 +160,7 @@ const ContractController = {
             }
 
             await ContractModel.save(contract);
-            return res.status(200).json({ message: "Cập nhật hợp đồng thành công", data: contract });
+            return res.status(200).json({ status: 200, message: "Cập nhật hợp đồng thành công", data: contract });
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }
@@ -187,7 +187,7 @@ const ContractController = {
 
             await ContractModel.save(contract);
             await RoomModel.save(contract.room);
-            return res.status(200).json({ message: "Cập nhật hợp đồng thành công", });
+            return res.status(200).json({ status: 200, message: "Cập nhật hợp đồng thành công", });
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }

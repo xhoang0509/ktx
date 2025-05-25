@@ -2,7 +2,7 @@ import AppHeader from "@components/AppHeader";
 import { SearchForm } from "@components/SearchInput";
 import { ContractService } from "@services/contract.service";
 import { useCallback, useEffect, useState } from "react";
-import BookingRequestList from "../components/BookingRequestList";
+import RequestTable from "../components/RequestTable";
 import { BookingRequest } from "../types";
 
 const defaultPagination = {
@@ -16,7 +16,7 @@ export default function BookingRequestsPage() {
     const [bookingRequests, setBookingRequests] = useState<BookingRequest[]>([]);
     const [search, setSearch] = useState<string>("");
     const [pagination, setPagination] = useState(defaultPagination);
-
+    const [refresh, setRefresh] = useState(false);
     const fetchBookingRequests = async (search: string = "") => {
         const res = await ContractService.getContracts({ search });
         if (res.status === 200) {
@@ -26,7 +26,7 @@ export default function BookingRequestsPage() {
 
     useEffect(() => {
         fetchBookingRequests();
-    }, []);
+    }, [refresh]);
 
     const onSearch = useCallback(() => {
         fetchBookingRequests(search);
@@ -39,6 +39,7 @@ export default function BookingRequestsPage() {
     return (
         <div>
             <AppHeader pageTitle="Danh sách hợp đồng đặt phòng" />
+            <button onClick={() => setRefresh((prev) => !prev)}>test</button>
             <SearchForm
                 onSearch={onSearch}
                 onChangeInput={setSearch}
@@ -46,10 +47,11 @@ export default function BookingRequestsPage() {
                 placeholder="Tìm theo tên sinh viên"
             />
             <div className="bg-white rounded-2xl p-4 shadow-md m-4">
-                <BookingRequestList
+                <RequestTable
                     bookingRequests={bookingRequests}
                     pagination={pagination}
                     onChangePagination={onChangePagination}
+                    setRefresh={setRefresh}
                 />
             </div>
         </div>

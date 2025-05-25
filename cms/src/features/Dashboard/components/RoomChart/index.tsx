@@ -1,4 +1,3 @@
-import { FC } from "react";
 import {
     VictoryChart,
     VictoryLine,
@@ -7,7 +6,7 @@ import {
     VictoryVoronoiContainer,
 } from "victory";
 
-const UserStatistic: FC<any> = ({ data }) => {
+export default function RoomChart({ data }: any) {
     return (
         <VictoryChart
             domainPadding={{ x: 20 }}
@@ -29,6 +28,4 @@ const UserStatistic: FC<any> = ({ data }) => {
             <VictoryLine data={data} />
         </VictoryChart>
     );
-};
-
-export default UserStatistic;
+}

@@ -81,7 +81,7 @@ export default function UserTable({ users, pagination, onChangePagination }: IPr
                                 onClick={() => navigateEditUser(item.id)}
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
-                                <PencilIcon className="size-4 text-success" />
+                                <PencilIcon className="size-4 text-red-500" />
                             </span>
                         </Tooltip>
                     </div>

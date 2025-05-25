@@ -1,61 +1,53 @@
-import { FC } from "react";
-import useDashboard, { Props, ReceivedProps } from "./hook";
 import AppHeader from "@components/AppHeader";
-import UserStatistic from "@features/Dashboard/components/UserStatistic";
 import Container from "@features/Dashboard/components/Container";
-import ImportStatistic from "@features/Dashboard/components/ImportStatistic";
-import OrderStatistic from "@features/Dashboard/components/OrderStatistic";
-import ProductStatistic from "@features/Dashboard/components/ProductStatistic";
-import RevenueStatistic from "@features/Dashboard/components/RevenueStatistic";
-import ProductTable from "@features/Dashboard/components/ProductTable";
-import MonthPicker from "@components/common/MonthPicker";
+import GenderChart from "@features/Dashboard/components/GenderChart";
+import MonthlyChart from "@features/Dashboard/components/MonthlyChart";
+import RecentActivities from "@features/Dashboard/components/RecentActivities";
+import RoomStatusTable from "@features/Dashboard/components/RoomStatusTable";
+import SummaryCards from "@features/Dashboard/components/SummaryCards";
+import TopUsageRooms from "@features/Dashboard/components/TopUsageRooms";
+import {
+  mockActivities,
+  mockGenderData,
+  mockMonthlyBillData,
+  mockRooms,
+  mockSummaryData,
+  mockTopUsageRooms,
+} from "@features/Dashboard/mockData";
 
-const DashboardLayout: FC<Props> = ({
-  UserStatisticData,
-  ImportStatisticData,
-  OrderStatisticData,
-  RevenueStatisticData,
-  ProductStatisticData,
-  BestSellerData,
-  month,
-  setMonth,
-}) => {
-  return (
-    <div>
-      <AppHeader
-        pageTitle="Thống kê"
-        rightMenu={
-          <div className="w-[300px]">
-            <MonthPicker value={month} onChange={setMonth} />
-          </div>
-        }
-      />
-      <div className="grid grid-cols-4 gap-4 p-4">
-        <Container col={6} label="Thống kê sinh viên">
-          <UserStatistic data={UserStatisticData} />
-        </Container>
-        <Container col={6} label="Thống kê nhập">
-          <ImportStatistic data={ImportStatisticData} />
-        </Container>
-        <Container col={2} label="Thống kê thiết bị">
-          <OrderStatistic data={OrderStatisticData} />
-        </Container>
-        <Container col={2} label="Thống kê phòng">
-          <ProductStatistic data={ProductStatisticData} />
-        </Container>
-        <Container col={6} label="Thống kê doanh thu">
-          <RevenueStatistic data={RevenueStatisticData} />
-        </Container>
-        <Container col={6} label="Thống kê phòng bán chạy">
-          <ProductTable products={BestSellerData} />
-        </Container>
-      </div>
-    </div>
-  );
-};
+export default function DashboardLayout() {
+    return (
+        <div className="min-h-screen bg-gray-50">
+            <AppHeader
+                pageTitle="Hệ thống quản lý ký túc xá"
+                rightMenu={<div className="text-sm text-gray-600"></div>}
+            />
 
-const Dashboard: FC<ReceivedProps> = (props) => (
-  <DashboardLayout {...useDashboard(props)} />
-);
+            <div className="p-6">
+                <SummaryCards data={mockSummaryData} />
 
-export default Dashboard;
+                <div className="grid grid-cols-12 gap-6">
+                    <Container col={6} label="">
+                        <MonthlyChart data={mockMonthlyBillData} />
+                    </Container>
+
+                    <Container col={6} label="">
+                        <GenderChart data={mockGenderData} />
+                    </Container>
+
+                    <Container col={4} label="">
+                        <RoomStatusTable data={mockRooms} />
+                    </Container>
+
+                    <Container col={4} label="">
+                        <TopUsageRooms data={mockTopUsageRooms} />
+                    </Container>
+
+                    <Container col={4} label="">
+                        <RecentActivities data={mockActivities} />
+                    </Container>
+                </div>
+            </div>
+        </div>
+    );
+}

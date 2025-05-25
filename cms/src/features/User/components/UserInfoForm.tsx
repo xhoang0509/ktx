@@ -3,6 +3,7 @@ import { Card, CardBody, CardHeader, Divider, Input, Select, SelectItem } from "
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UserDetail, genderOptions } from "../types";
+import AppUploadImage from "@components/common/AppUploadImage";
 
 interface UserInfoFormProps {
     userData: Partial<UserDetail>;
@@ -49,6 +50,7 @@ export default function UserInfoForm({
             <CardBody>
                 <div className="flex flex-col gap-4">
                     <div className="flex justify-center mb-2 max-w-72">
+                        {/* <AppUploadImage control={control} name="avatar" /> */}
                         <Controller
                             name="avatar"
                             control={control}
@@ -64,7 +66,17 @@ export default function UserInfoForm({
                                         />
                                     );
                                 }
-                                return <></>;
+                                return (
+                                    <>
+                                        <UploadImage
+                                            maxItems={1}
+                                            imagesValue={field.value ? [field.value] : []}
+                                            onChangeImagesValue={(urls) =>
+                                                field.onChange(urls[0] || "")
+                                            }
+                                        />
+                                    </>
+                                );
                             }}
                         />
                     </div>
@@ -168,6 +180,8 @@ export default function UserInfoForm({
                                 {...field}
                                 label="Mã lớp"
                                 placeholder="Nhập mã lớp"
+                                isInvalid={!!fieldState.error}
+                                errorMessage={fieldState.error?.message}
                             />
                         )}
                     />

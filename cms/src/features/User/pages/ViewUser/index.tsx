@@ -13,12 +13,14 @@ import { convertGenderToVietnamese } from "@utils/gender.util";
 
 const defaultUserForm = {
     id: "",
-    username: "",
+    email: "",
     full_name: "",
     phone: "",
     gender: "",
     role: "",
     status: "",
+    faculty_name: "",
+    class_code: "",
     student_id: "",
     createdAt: "",
     updatedAt: "",
@@ -80,8 +82,8 @@ export default function ViewUserPage() {
                     <div className="grid grid-cols-4 gap-4">
                         <div className="bg-white rounded-2xl p-4 shadow-md grid grid-cols-12 gap-4 col-span-4">
                             <div className="col-span-6">
-                                <div className="mb-2">Username</div>
-                                <AppInput control={control} name="username" disabled={true} />
+                                <div className="mb-2">Email</div>
+                                <AppInput control={control} name="email" disabled={true} />
                             </div>
                             <div className="col-span-6">
                                 <div className="mb-2">Họ và tên</div>
@@ -101,17 +103,19 @@ export default function ViewUserPage() {
                             </div>
                             <div className="col-span-6">
                                 <div className="mb-2">Ngày tạo</div>
-                                <Input 
-                                    value={formattedCreatedAt} 
-                                    readOnly 
-                                />
+                                <Input value={formattedCreatedAt} readOnly />
+                            </div>
+                            <div className="col-span-6">
+                                <div className="mb-2">Tên khoa</div>
+                                <AppInput control={control} name="faculty_name" readOnly />
+                            </div>
+                            <div className="col-span-6">
+                                <div className="mb-2">Mã lớp</div>
+                                <AppInput control={control} name="class_code" readOnly />
                             </div>
                             <div className="col-span-6">
                                 <div className="mb-2">Lần cập nhật cuối cùng</div>
-                                <Input 
-                                    value={formattedUpdatedAt} 
-                                    readOnly 
-                                />
+                                <Input value={formattedUpdatedAt} readOnly />
                             </div>
                             <div className="col-span-6">
                                 <div className="mb-2">Trạng thái</div>

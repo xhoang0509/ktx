@@ -41,9 +41,11 @@ const User = new EntitySchema({
             enum: ["active", "inactive", "graduated", "deleted"],
             default: "active"
         },
+        // tên khoa
         faculty_name: {
             type: "varchar"
         },
+        // mã lớp
         class_code: {
             type: "varchar"
         },

@@ -1,10 +1,10 @@
 import { Dialog, Transition } from "@headlessui/react";
+import { Button } from "@heroui/button";
+import BillService from "@services/bill.service";
 import { format } from "date-fns";
 import { Fragment, useState } from "react";
 import { Bill, User } from "../types";
 import BillBreakdown from "./BillBreakdown";
-import BillService from "@services/bill.service";
-import { Button } from "@heroui/button";
 
 interface BillCardProps {
     bill: Bill;
@@ -111,12 +111,12 @@ export default function BillCard({ bill, user }: BillCardProps) {
                         >
                             Thanh toán ngay
                         </Button>
-                        <button
+                        {/* <button
                             onClick={() => setExpanded(!expanded)}
                             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                         >
                             {expanded ? "Ẩn chi tiết" : "Xem chi tiết"}
-                        </button>
+                        </button> */}
                     </div>
                 </div>
 

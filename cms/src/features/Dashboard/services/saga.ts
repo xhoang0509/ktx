@@ -5,136 +5,74 @@ import { AppActions } from "@app/slice";
 import qs from "qs";
 
 export function* StatisticSaga() {
-  yield takeLatest(StatisticActions.getImportStatistic, getImportStatistic);
-  yield takeLatest(StatisticActions.getOrderStatistic, getOrderStatistic);
-  yield takeLatest(StatisticActions.getProductStatistic, getProductStatistic);
-  yield takeLatest(StatisticActions.getRevenueStatistic, getRevenueStatistic);
-  yield takeLatest(StatisticActions.getUserStatistic, getUserStatistic);
-  yield takeLatest(StatisticActions.getBestSeller, getBestSeller);
+    yield takeLatest(StatisticActions.getUserStatistic, getUserStatistic);
+    yield takeLatest(StatisticActions.getRoomStatistic, getRoomStatistic);
+    yield takeLatest(StatisticActions.getDevice, getDevice);
+    // yield takeLatest(StatisticActions.getOrderStatistic, getOrderStatistic);
+    // yield takeLatest(StatisticActions.getProductStatistic, getProductStatistic);
+    // yield takeLatest(StatisticActions.getRevenueStatistic, getRevenueStatistic);
+    // yield takeLatest(StatisticActions.getBestSeller, getBestSeller);
 }
 
-export function* getImportStatistic({ payload: { onSuccess, query } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
+export function* getRoomStatistic({ payload: { onSuccess, query } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
 
-    yield delay(50);
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/statistical/product-statistics?${qs.stringify(query)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setImportStatistic(rs.data));
-      onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
+        const rs: { [x: string]: any } = yield SysFetch.get(
+            `/analytic/room?${qs.stringify(query)}`
+        );
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(StatisticActions.setRoomStatistic(rs.data));
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
 
-export function* getOrderStatistic({ payload: { onSuccess, query } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
+export function* getDevice({ payload: { onSuccess, query } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
 
-    yield delay(50);
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/statistical/status-order-statistics?${qs.stringify(query)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setOrderStatistic(rs.data));
-      onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
+        const rs: { [x: string]: any } = yield SysFetch.get(
+            `/analytic/device?${qs.stringify(query)}`
+        );
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(StatisticActions.setDevice(rs.data));
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
-}
-
-export function* getProductStatistic({ payload: { onSuccess, query } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-
-    yield delay(50);
-
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/statistical/total-product-statistics?${qs.stringify(query)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setProductStatistic(rs.data));
-      onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
-    }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
-}
-
-export function* getRevenueStatistic({ payload: { onSuccess, query } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-
-    yield delay(50);
-
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/statistical/revenue-statistics?${qs.stringify(query)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setRevenueStatistic(rs.data));
-      onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
-    }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
 
 export function* getUserStatistic({ payload: { onSuccess, query } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
+    try {
+        yield put(AppActions.setIsLoading(true));
 
-    yield delay(50);
+        yield delay(50);
 
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/statistical/user-statistics?${qs.stringify(query)}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setUserStatistic(rs.data));
-      // onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
+        const rs: { [x: string]: any } = yield SysFetch.get(
+            `/analytic/user?${qs.stringify(query)}`
+        );
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(StatisticActions.setUserStatistic(rs.data));
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
     }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
-}
-
-export function* getBestSeller({ payload: { onSuccess } }: any) {
-  try {
-    yield put(AppActions.setIsLoading(true));
-
-    yield delay(50);
-
-    const rs: { [x: string]: any } = yield SysFetch.get(
-      `/product/best-sellers?${qs.stringify({ limit: 10 })}`
-    );
-    yield put(AppActions.setIsLoading(false));
-    if (rs.status === 200) {
-      yield put(StatisticActions.setBestSeller(rs.data));
-      onSuccess?.(rs.data);
-    } else {
-      throw new Error(rs.message);
-    }
-  } catch (error) {
-    yield put(AppActions.setIsLoading(false));
-  }
 }
