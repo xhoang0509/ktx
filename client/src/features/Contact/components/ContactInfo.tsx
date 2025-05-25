@@ -8,7 +8,7 @@ export default function ContactInfo() {
       <div className="space-y-4">
         <div className="flex items-start">
           <MapPinIcon className="h-6 w-6 text-blue-500 mr-3 flex-shrink-0" />
-          <span className="text-gray-600">Địa chỉ: Số 123, Đường KTX, Quận Sinh Viên, TP. Học Tập</span>
+          <span className="text-gray-600">Địa chỉ: Mỹ Hào, Hưng Yên</span>
         </div>
         
         <div className="flex items-start">
