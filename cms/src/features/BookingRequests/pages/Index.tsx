@@ -39,7 +39,6 @@ export default function BookingRequestsPage() {
     return (
         <div>
             <AppHeader pageTitle="Danh sách hợp đồng đặt phòng" />
-            <button onClick={() => setRefresh((prev) => !prev)}>test</button>
             <SearchForm
                 onSearch={onSearch}
                 onChangeInput={setSearch}

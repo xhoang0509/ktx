@@ -210,7 +210,9 @@ export default function RequestTable({
                                 />
                             </span>
                         </Tooltip>
-                        {[BookingRequestStatus.PENDING].includes(item.status) && (
+                        {[BookingRequestStatus.PENDING, BookingRequestStatus.ACTIVE].includes(
+                            item.status
+                        ) && (
                             <Tooltip content="Sửa">
                                 <span
                                     onClick={() =>

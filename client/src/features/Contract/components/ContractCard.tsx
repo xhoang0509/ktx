@@ -100,13 +100,9 @@ const ContractCard: React.FC<ContractCardProps> = ({ contract, setIsRefetch }) =
                     </div>
                 </div>
 
-                {["pending", "active"].includes(contract.status) && (
+                {["pending",].includes(contract.status) && (
                     <div className="border-t border-gray-100 pt-4">
-                        <Button
-                            color="danger"
-                            onClick={handleCancelContract}
-                            // onClick={() => navigate(`/contract/${contract.id}`)}
-                        >
+                        <Button color="danger" onClick={handleCancelContract}>
                             Hủy hợp đồng
                         </Button>
                     </div>
