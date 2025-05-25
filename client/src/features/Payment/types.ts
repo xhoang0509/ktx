@@ -1,46 +1,47 @@
 export interface User {
-  id: string;
-  full_name: string;
-  student_id: string;
-  email: string;
+    id: string;
+    full_name: string;
+    student_id: string;
+    email: string;
 }
 
 export interface Room {
-  id: string;
-  name: string;
-  building: string;
-  price: number;
+    id: string;
+    name: string;
+    building: string;
+    price: number;
+    current_capacity: number;
 }
 
 export interface ServiceDetail {
-  id: string;
-  name: string;
-  initialReading?: number;
-  finalReading?: number;
-  quantity: number;
-  unitPrice: number;
-  total: number;
+    id: string;
+    name: string;
+    initialReading?: number;
+    finalReading?: number;
+    quantity: number;
+    unitPrice: number;
+    total: number;
 }
 
 export interface Bill {
-  id: string;
-  code: string;
-  room: Room;
-  user: User;
-  services: {
-    roomFee: number;
-    electricity: ServiceDetail;
-    water: ServiceDetail;
-    internet: ServiceDetail;
-    cleaning: ServiceDetail;
-  };
-  totalAmount: number;
-  createdAt: string;
-  status: 'pending' | 'paid' | 'overdue';
+    id: string;
+    code: string;
+    room: Room;
+    user: User;
+    services: {
+        roomFee: number;
+        electricity: ServiceDetail;
+        water: ServiceDetail;
+        internet: ServiceDetail;
+        cleaning: ServiceDetail;
+    };
+    totalAmount: number;
+    createdAt: string;
+    status: "pending" | "paid" | "overdue";
 }
 
 export interface BillsState {
-  bills: Bill[];
-  loading: boolean;
-  error: string | null;
-} 
+    bills: Bill[];
+    loading: boolean;
+    error: string | null;
+}

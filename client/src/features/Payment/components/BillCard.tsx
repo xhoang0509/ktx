@@ -15,6 +15,8 @@ export default function BillCard({ bill, user }: BillCardProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [expanded, setExpanded] = useState(false);
 
+    const currentCapacity =
+        Number(bill?.room?.current_capacity) >= 1 ? Number(bill?.room?.current_capacity) : 1;
     function closeModal() {
         setIsOpen(false);
     }
@@ -37,7 +39,7 @@ export default function BillCard({ bill, user }: BillCardProps) {
     const handleConfirmPayment = async () => {
         try {
             const payload = {
-                amount: bill.totalAmount,
+                amount: bill.totalAmount / currentCapacity,
                 bankCode: "",
                 orderDescription: bill.code,
                 orderType: "other",
@@ -85,7 +87,7 @@ export default function BillCard({ bill, user }: BillCardProps) {
                     </div>
                     <div className="text-right">
                         <p className="text-lg font-bold text-gray-900">
-                            {formatCurrency(bill.totalAmount)}
+                            {formatCurrency(bill.totalAmount / currentCapacity)}
                         </p>
                     </div>
                 </div>
