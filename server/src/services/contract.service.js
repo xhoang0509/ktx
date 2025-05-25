@@ -80,9 +80,20 @@ const ContractService = {
         return contract;
     },
 
-    async list(userId) {
+    async list(userId, query = {}) {
+        const where = {
+            user: {
+                id: userId
+            }
+        }
+        if (query.status) {
+            where.status = query.status;
+        }
+        if (query.search) {
+            where.user.name = Like(`%${query.search}%`);
+        }
         const contracts = await ContractModel.find({
-            where: { user: { id: userId } },
+            where,
             relations: ["room"],
             order: {
                 createdAt: "DESC"

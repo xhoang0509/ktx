@@ -33,7 +33,7 @@ const UserController = {
                 password: body.password,
                 full_name: body.full_name,
                 phone: "",
-                gender: "other",
+                gender: "male",
                 role: "user",
                 student_id: body.student_id,
                 avatar: "",

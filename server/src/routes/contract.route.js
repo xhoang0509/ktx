@@ -11,8 +11,9 @@ router.get("/view", authMiddleware, ContractController.view);
 router.post("/:id/cancel", authMiddleware, ContractController.cancel);
 router.post("/transfer-room", ContractController.transferRoom);
 router.get("/pending", ContractController.getPendingContracts);
-// admin
+
 router.post("/:id/approve", ContractController.approveContract);
 router.post("/:id/reject", ContractController.rejectContract);
 router.get("/:id", ContractController.adminGetContractDetail);
+router.put("/:id", ContractController.adminEditContract);
 module.exports = router; 

@@ -19,6 +19,11 @@ const Contract = new EntitySchema({
         status: {
             type: "enum",
             enum: ["pending", "active", "terminated", "expired", "cancelled"],
+            // pending: chờ duyệt
+            // active: đang hoạt động
+            // terminated: đã kết thúc
+            // expired: đã hết hạn
+            // cancelled: đã hủy
             default: "pending"
         },
         createdAt: {

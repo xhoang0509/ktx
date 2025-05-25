@@ -8,6 +8,7 @@ const router = Router();
 router.post("/admin-bill", PaymentController.addBill);
 router.get("/admin-list", PaymentController.getBillList);
 router.get("/admin-bill/:id", PaymentController.getBillById);
+router.put("/admin-bill/:id", PaymentController.editBill);
 router.post("/admin-utility", PaymentController.addUtilityCost);
 router.post("/admin-debts", PaymentController.getStudentDebts);
 router.post("/admin-report", PaymentController.getFinancialReport);
@@ -18,7 +19,7 @@ router.post("/student-my-payments", authMiddleware, PaymentController.getStudent
 router.post("/student-pay", PaymentController.completePayment);
 router.get("/student-history", authMiddleware, PaymentController.getPaymentHistory);
 
-router.post('/', authMiddleware, PaymentController.createPaymentUrl);
-router.get('/', authMiddleware, PaymentController.getCodeIpnUrl);
+router.post('/vnpay-create', PaymentController.createPaymentUrl);
+router.get('/ipn-url', PaymentController.getCodeIpnUrl);
 
 module.exports = router; 
