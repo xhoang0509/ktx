@@ -115,6 +115,9 @@ const UserController = {
                 return res.status(500).send({ status: 500, message: 'Username không tồn tại' });
 
             }
+            if (user.avatar) {
+                user.avatar = `${process.env.SERVER_URL}${user.avatar}`
+            }
             res.status(200).send({ status: 200, message: 'Get user info success', data: user });
         } catch (e) {
             if (e.message === "jwt expired") {

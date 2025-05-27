@@ -1,11 +1,41 @@
+const { RoomModel } = require("../models/db");
 const RoomService = require("../services/room.service");
+const { saveBase64Images } = require("../utils/fileUpload");
 
 const RoomController = {
     async create(req, res) {
         try {
-            const response = await RoomService.create(req.body);
+            const data = req.body;
+            const existingRoom = await RoomModel.findOne({
+                where: {
+                    name: data.name
+                }
+            });
+            if (existingRoom) {
+                throw new Error("Tên phòng đã tồn tại! Vui lòng chọn tên khác");
+            }
 
-            res.status(200).send({ status: 200, message: 'Tạo phòng thành công', data: response });
+            if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+                const imagePaths = await saveBase64Images(data.images);
+                data.images = imagePaths;
+            } else {
+                data.images = [];
+            }
+
+            if (data.base_price) {
+                data.base_price = Number(data.base_price);
+            }
+
+            if (data.devices?.length && Array.isArray(data.devices)) {
+                data.devices = data.devices
+            } else {
+                data.devices = [];
+            }
+
+            const room = RoomModel.create(data);
+            await RoomModel.save(room);
+
+            res.status(200).send({ status: 200, message: 'Tạo phòng thành công', data: room });
         } catch (error) {
             res.status(500).send({ status: 500, message: error.message || 'Có lỗi trong quá trình xử lý', error: error.message });
         }

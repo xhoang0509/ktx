@@ -1,5 +1,9 @@
 const { UserModel, RoomModel, ContractModel } = require("../models/db");
 const { In } = require("typeorm");
+const { sendEmail } = require("./email.service");
+const fs = require("fs");
+const path = require("path");
+const { formatVND } = require("../utils/format");
 
 const ContractService = {
     async create(userId, data) {
@@ -38,6 +42,7 @@ const ContractService = {
         if (contracts.length > 0) {
             throw new Error("Bạn đang trong 1 hợp đồng khác, không thể tạo mới!");
         }
+
         if (room.current_capacity >= room.max_capacity) {
             throw new Error("Phòng đã đầy");
         }
@@ -61,14 +66,30 @@ const ContractService = {
         });
         await ContractModel.save(contract);
 
-        room.current_capacity += 1;
-        if (!room.users) {
-            room.users = [];
-        }
-        if (!room.users.some((u) => u.id === user.id)) {
-            room.users.push(user);
-        }
-        await RoomModel.save(room);
+        const templatePath = path.join(__dirname, "../templates/booking-confirmation.html");
+        let emailTemplate = fs.readFileSync(templatePath, "utf8");
+
+        emailTemplate = emailTemplate.replace(/\${contract\.id}/g, contract.id)
+            .replace(/\${contract\.user\.full_name}/g, contract.user.full_name)
+            .replace(/\${contract\.user\.email}/g, contract.user.email)
+            .replace(/\${contract\.user\.phone}/g, contract.user.phone)
+            .replace(/\${contract\.user\.student_id}/g, contract.user.student_id)
+            .replace(/\${contract\.user\.faculty_name}/g, contract.user.faculty_name)
+            .replace(/\${contract\.user\.class_code}/g, contract.user.class_code)
+            .replace(/\${contract\.room\.name}/g, contract.room.name)
+            .replace(/\${contract\.start_date}/g, contract.start_date)
+            .replace(/\${contract\.end_date}/g, contract.end_date)
+            .replace(/\${contract\.duration}/g, contract.duration)
+            .replace(/\${contract\.room\.price}/g, formatVND(contract.room.base_price))
+            .replace(/\${contract\.room\.building}/g, contract.room.building)
+            .replace(/\${contract\.room\.floor}/g, contract.room.floor)
+
+        await sendEmail(
+            contract.user.email,
+            "Xác nhận đặt phòng KTX",
+            "",
+            emailTemplate
+        );
 
         return contract;
     },

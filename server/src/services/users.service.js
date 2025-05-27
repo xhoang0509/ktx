@@ -71,6 +71,9 @@ const UserService = {
         const token = jwt.sign(payload, process.env.USER_SECRET_KEY, {
             expiresIn: '1h'
         });
+        if (user.avatar) {
+            user.avatar = `${process.env.SERVER_URL}/${user.avatar}`;
+        }
         return {
             token: token,
             id: user.id,
@@ -78,6 +81,7 @@ const UserService = {
             full_name: user.full_name,
             phone: user.phone,
             student_id: user.student_id,
+            avatar: user.avatar,
         };
     },
 

@@ -14,6 +14,7 @@ router.get("/pending", ContractController.getPendingContracts);
 
 router.post("/:id/approve", ContractController.approveContract);
 router.post("/:id/reject", ContractController.rejectContract);
+router.post("/:id/terminate", ContractController.terminateContract);
 router.get("/:id", ContractController.adminGetContractDetail);
 router.put("/:id", ContractController.adminEditContract);
 module.exports = router; 

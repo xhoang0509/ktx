@@ -1,10 +1,13 @@
+const { DeviceModel } = require("../models/db");
 const DeviceService = require("../services/device.service");
 
 const DeviceController = {
     async create(req, res) {
         try {
-            const response = await DeviceService.create(req.body);
-            res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data: response });
+            const device = DeviceModel.create(data);
+            await DeviceModel.save(device);
+
+            res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data: device });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

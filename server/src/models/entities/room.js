@@ -51,6 +51,10 @@ const Room = new EntitySchema({
             type: "varchar",
             nullable: true,
         },
+        devices: {
+            type: "json",
+            nullable: true,
+        },
         createdAt: {
             type: "datetime",
             default: () => "CURRENT_TIMESTAMP"

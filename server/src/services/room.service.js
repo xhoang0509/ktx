@@ -1,7 +1,6 @@
-const { RoomModel, UserModel } = require("../models/db");
+const { RoomModel, UserModel, DeviceModel } = require("../models/db");
 const { Like, Not } = require("typeorm");
 const { saveBase64Images } = require("../utils/fileUpload");
-const { SEMESTERS } = require("../constants/app.const");
 
 const RoomService = {
 
@@ -47,7 +46,13 @@ const RoomService = {
                 const newImagePaths = await saveBase64Images(newBase64Images);
                 data.images = [...existingImages, ...newImagePaths];
             } else {
-                data.images = existingImages;
+                const processImage = existingImages.map(img => {
+                    if (img.includes(process.env.SERVER_URL)) {
+                        return img.replace(process.env.SERVER_URL, '');
+                    }
+                    return img;
+                });
+                data.images = processImage;
             }
         }
 
@@ -82,8 +87,20 @@ const RoomService = {
         } else {
             room.students = [];
         }
-        room.semesters = SEMESTERS;
-        room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
+        if (room.devices && Array.isArray(room.devices)) {
+           const devices = []
+           for(const device of room.devices) {
+            const result = await DeviceModel.findOne({ where: { id: device.deviceId } });
+            if (result) {
+                devices.push({
+                    ...result,
+                    ...device
+                });
+            }
+           }
+           room.devices = devices;
+        }
+        room.images = room.images.map(image => `${process.env.SERVER_URL}${image}`);
         return room;
     },
 
