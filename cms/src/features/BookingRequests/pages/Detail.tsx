@@ -4,7 +4,6 @@ import { Button, Spinner } from "@heroui/react";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import AdminDecisionBox from "../components/AdminDecisionBox";
 import BookingRequestInfo from "../components/BookingRequestInfo";
 import { BookingRequestActions } from "../services/slice";
 import { BookingRequestDetail, BookingRequestStatus } from "../types";
@@ -82,14 +81,6 @@ const BookingRequestDetailPage = () => {
             <div className="p-4 flex-1">
                 <div className="grid grid-cols-1 gap-4">
                     <BookingRequestInfo bookingRequest={bookingRequest} />
-
-                    {bookingRequest.status === BookingRequestStatus.PENDING && (
-                        <AdminDecisionBox
-                            onApprove={handleApprove}
-                            onReject={handleReject}
-                            initialNotes={bookingRequest.adminNotes}
-                        />
-                    )}
                 </div>
             </div>
         </div>

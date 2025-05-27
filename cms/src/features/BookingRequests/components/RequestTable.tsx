@@ -1,5 +1,12 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { CheckIcon, EyeIcon, NoSymbolIcon, PencilIcon } from "@heroicons/react/24/solid";
+import {
+    CheckIcon,
+    ExclamationCircleIcon,
+    EyeIcon,
+    NoSymbolIcon,
+    PencilIcon,
+    PrinterIcon,
+} from "@heroicons/react/24/solid";
 import {
     Button,
     Chip,
@@ -43,7 +50,7 @@ export const formatStatus = (status: BookingRequestStatus) => {
         case BookingRequestStatus.ACTIVE:
             return "Đã duyệt";
         case BookingRequestStatus.TERMINATED:
-            return "Từ chối";
+            return "Đã chấm dứt";
         case BookingRequestStatus.CANCELLED:
             return "Đã hủy";
         default:
@@ -76,8 +83,11 @@ export default function RequestTable({
     const dispatch = useAppDispatch();
     const [isOpen, setIsOpen] = useState(false);
     const [isOpenReject, setIsOpenReject] = useState(false);
+    const [isOpenTerminate, setIsOpenTerminate] = useState(false);
     const [selectedId, setSelectedId] = useState<any>(null);
     const [selectedIdReject, setSelectedIdReject] = useState<any>(null);
+    const [selectedIdTerminate, setSelectedIdTerminate] = useState<any>(null);
+
     const handleApprove = (id: any) => {
         setIsOpen(true);
         setSelectedId(id);
@@ -86,6 +96,11 @@ export default function RequestTable({
         setIsOpenReject(true);
         setSelectedIdReject(id);
     };
+    const handleTerminate = (id: any) => {
+        setIsOpenTerminate(true);
+        setSelectedIdTerminate(id);
+    };
+
     const handleApproveContract = () => {
         if (!selectedId) return;
         dispatch(
@@ -114,8 +129,21 @@ export default function RequestTable({
         setIsOpenReject(false);
     };
 
+    const handleTerminateContract = () => {
+        if (!selectedIdTerminate) return;
+        dispatch(
+            BookingRequestActions.terminateBookingRequest({
+                id: selectedIdTerminate,
+                onSuccess: () => {
+                    setRefresh((prev) => !prev);
+                },
+            })
+        );
+        setIsOpenTerminate(false);
+    };
+
     const columns = [
-        { name: "STT", uid: "indexNumber", align: "center", width: "60px" },
+        { name: "Mã hợp đồng", uid: "id", align: "center", width: "60px" },
         { name: "Tên sinh viên", uid: "studentName" },
         { name: "Ngày yêu cầu", uid: "createdAt" },
         { name: "Ngày bắt đầu", uid: "start_date" },
@@ -123,6 +151,7 @@ export default function RequestTable({
         { name: "Phòng", uid: "room_name" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Hành động", uid: "actions", align: "center" },
+        { name: "Xem hợp đồng", uid: "view", align: "center" },
     ];
 
     const renderPagination = useMemo(() => {
@@ -224,7 +253,31 @@ export default function RequestTable({
                                 </span>
                             </Tooltip>
                         )}
+                        {[BookingRequestStatus.ACTIVE].includes(item.status) && (
+                            <Tooltip content="Chấm dứt hợp đồng">
+                                <span
+                                    onClick={() => {
+                                        handleTerminate(item.id);
+                                    }}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <ExclamationCircleIcon className="size-4 text-purple-500" />
+                                </span>
+                            </Tooltip>
+                        )}
                     </div>
+                );
+            case "view":
+                return (
+                    <Button
+                        onClick={() => {
+                            navigate(`/request/print/${item.id}`);
+                        }}
+
+                    >
+                        <PrinterIcon className="size-4 text-default-400" />
+                        In hợp đồng
+                    </Button>
                 );
             default:
                 return cellValue;
@@ -308,6 +361,31 @@ export default function RequestTable({
                                     Hủy
                                 </Button>
                                 <Button color="primary" onPress={handleRejectContract}>
+                                    Xác nhận
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
+            <Modal isOpen={isOpenTerminate} onOpenChange={setIsOpenTerminate}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader className="flex flex-col gap-1">
+                                Chấm dứt hợp đồng
+                            </ModalHeader>
+                            <ModalBody>
+                                <div>
+                                    <strong>Hành động này không thể hoàn tác!</strong> Bạn có chắc
+                                    chắn muốn chấm dứt hợp đồng này không?
+                                </div>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Hủy
+                                </Button>
+                                <Button color="primary" onPress={handleTerminateContract}>
                                     Xác nhận
                                 </Button>
                             </ModalFooter>

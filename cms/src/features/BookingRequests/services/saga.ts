@@ -11,6 +11,7 @@ export function* BookingRequestSaga() {
     yield takeLatest(BookingRequestActions.approveBookingRequest, approveBookingRequest);
     yield takeLatest(BookingRequestActions.rejectBookingRequest, rejectBookingRequest);
     yield takeLatest(BookingRequestActions.editRequest, editRequest);
+    yield takeLatest(BookingRequestActions.terminateBookingRequest, terminateBookingRequest);
 }
 
 export function* getBookingRequests({ payload: { onSuccess, data } }: any) {
@@ -92,6 +93,32 @@ export function* rejectBookingRequest({ payload: { id, onSuccess } }: any) {
             onSuccess?.(rs.data);
         } else {
             throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+
+export function* terminateBookingRequest({ payload: { id, onSuccess } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+
+        const rs: { [x: string]: any } = yield SysFetch.post(`/contract/${id}/terminate`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            addToast({
+                title: "Thông báo",
+                description: "Chấm dứt hợp đồng thành công",
+                color: "success",
+            });
+            onSuccess?.(rs.data);
+        } else {
+            addToast({
+                title: "Thông báo",
+                description: rs.message || "Chấm dứt hợp đồng thất bại",
+                color: "danger",
+            });
         }
     } catch (error) {
         yield put(AppActions.setIsLoading(false));

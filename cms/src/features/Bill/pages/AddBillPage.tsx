@@ -1,20 +1,20 @@
+import { AppSelectors } from "@app/slice";
 import AppHeader from "@components/AppHeader";
 import AppNumberInput from "@components/common/AppNumberInput";
 import { ROUTE_PATHS } from "@constants/route.const";
+import { BookingRequestActions } from "@features/BookingRequests/services/slice";
 import { Button } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "@services/store";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import RoomSelector from "../components/RoomSelector";
+import RoomSelectorAdd from "../components/RoomSelectorAdd";
 import ServiceFeeInput from "../components/ServiceFeeInput";
 import TotalAmount from "../components/TotalAmount";
 import { addBillSchema } from "../services/schema";
 import { BillActions } from "../services/slice";
 import { Contract, defaultBillForm } from "../types";
-import { AppSelectors } from "@app/slice";
-import { BookingRequestActions } from "@features/BookingRequests/services/slice";
 
 export default function AddBillPage() {
     const {
@@ -105,7 +105,7 @@ export default function AddBillPage() {
                                 {/* Room selection */}
                                 <div className="bg-white rounded-lg p-4 shadow-sm">
                                     <h3 className="text-lg font-medium mb-4">Phòng thuê</h3>
-                                    <RoomSelector
+                                    <RoomSelectorAdd
                                         control={control}
                                         onContractSelect={handleContractSelect}
                                     />

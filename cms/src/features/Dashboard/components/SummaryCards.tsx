@@ -1,51 +1,60 @@
 import { Card, CardBody } from "@heroui/react";
-import { SummaryData } from "../types";
 
+export interface AnalyticData {
+    totalRoom: number;
+    totalUser: number;
+    totalUserInRoom: number;
+    totalDevice: number;
+    totalPriceElectric: number;
+    totalPriceWater: number;
+    totalPaid: number;
+    totalUnpaid: number;
+}
 interface SummaryCardsProps {
-    data: SummaryData;
+    data: AnalyticData;
 }
 
 const SummaryCards = ({ data }: SummaryCardsProps) => {
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('vi-VN').format(amount);
+        return new Intl.NumberFormat("vi-VN").format(amount);
     };
 
     const summaryItems = [
         {
             title: "Sinh viên đang ở",
-            value: `${data.totalStudents}/${data.maxCapacity}`,
+            value: `${data.totalUserInRoom}/${data.totalUser}`,
             color: "text-blue-600",
             bgColor: "bg-blue-50",
-            icon: "👥"
+            icon: "👥",
         },
         {
             title: "Tổng hóa đơn điện",
-            value: `${formatCurrency(data.totalElectricityBill)} VND`,
+            value: `${formatCurrency(data.totalPriceElectric)} VND`,
             color: "text-yellow-600",
             bgColor: "bg-yellow-50",
-            icon: "⚡"
+            icon: "⚡",
         },
         {
             title: "Tổng hóa đơn nước",
-            value: `${formatCurrency(data.totalWaterBill)} VND`,
+            value: `${formatCurrency(data.totalPriceWater)} VND`,
             color: "text-cyan-600",
             bgColor: "bg-cyan-50",
-            icon: "💧"
+            icon: "💧",
         },
         {
             title: "Đã thanh toán",
-            value: `${formatCurrency(data.totalPaidBills)} VND`,
+            value: `${formatCurrency(data.totalPaid)} VND`,
             color: "text-green-600",
             bgColor: "bg-green-50",
-            icon: "✅"
+            icon: "✅",
         },
         {
             title: "Chưa thanh toán",
-            value: `${formatCurrency(data.totalUnpaidBills)} VND`,
+            value: `${formatCurrency(data.totalUnpaid)} VND`,
             color: "text-red-600",
             bgColor: "bg-red-50",
-            icon: "❌"
-        }
+            icon: "❌",
+        },
     ];
 
     return (
@@ -53,7 +62,9 @@ const SummaryCards = ({ data }: SummaryCardsProps) => {
             {summaryItems.map((item, index) => (
                 <Card key={index} className="shadow-sm hover:shadow-md transition-shadow">
                     <CardBody className="p-4">
-                        <div className={`w-12 h-12 rounded-lg ${item.bgColor} flex items-center justify-center mb-3`}>
+                        <div
+                            className={`w-12 h-12 rounded-lg ${item.bgColor} flex items-center justify-center mb-3`}
+                        >
                             <span className="text-xl">{item.icon}</span>
                         </div>
                         <h3 className="text-sm font-medium text-gray-600 mb-1">{item.title}</h3>
@@ -65,4 +76,4 @@ const SummaryCards = ({ data }: SummaryCardsProps) => {
     );
 };
 
-export default SummaryCards; 
+export default SummaryCards;

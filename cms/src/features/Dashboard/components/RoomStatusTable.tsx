@@ -1,4 +1,13 @@
-import { Chip, Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
+import {
+    Chip,
+    Table,
+    TableBody,
+    TableCell,
+    TableColumn,
+    TableHeader,
+    TableRow,
+} from "@heroui/react";
+import { formatVND } from "@utils/fomart.util";
 import { Room } from "../types";
 
 interface RoomStatusTableProps {
@@ -6,8 +15,8 @@ interface RoomStatusTableProps {
 }
 
 const RoomStatusTable = ({ data }: RoomStatusTableProps) => {
-    const getOccupancyStatus = (current: number, capacity: number) => {
-        const percentage = (current / capacity) * 100;
+    const getOccupancyStatus = (current_capacity: number, max_capacity: number) => {
+        const percentage = (current_capacity / max_capacity) * 100;
         if (percentage === 0) return { color: "default" as const, text: "Trống" };
         if (percentage < 50) return { color: "success" as const, text: "Còn chỗ" };
         if (percentage < 100) return { color: "warning" as const, text: "Gần đầy" };
@@ -21,18 +30,23 @@ const RoomStatusTable = ({ data }: RoomStatusTableProps) => {
                 <Table aria-label="Room status table" className="min-w-full">
                     <TableHeader>
                         <TableColumn>Phòng</TableColumn>
+                        <TableColumn>Giá</TableColumn>
                         <TableColumn>Sức chứa</TableColumn>
                         <TableColumn>Đang ở</TableColumn>
                         <TableColumn>Tình trạng</TableColumn>
                     </TableHeader>
                     <TableBody>
                         {data.map((room) => {
-                            const status = getOccupancyStatus(room.currentOccupancy, room.capacity);
+                            const status = getOccupancyStatus(
+                                room.current_capacity,
+                                room.max_capacity
+                            );
                             return (
                                 <TableRow key={room.id}>
                                     <TableCell className="font-medium">{room.name}</TableCell>
-                                    <TableCell>{room.capacity}</TableCell>
-                                    <TableCell>{room.currentOccupancy}</TableCell>
+                                    <TableCell>{formatVND(room.base_price)} / tháng</TableCell>
+                                    <TableCell>{room.max_capacity}</TableCell>
+                                    <TableCell>{room.current_capacity}</TableCell>
                                     <TableCell>
                                         <Chip color={status.color} size="sm" variant="flat">
                                             {status.text}
@@ -48,4 +62,4 @@ const RoomStatusTable = ({ data }: RoomStatusTableProps) => {
     );
 };
 
-export default RoomStatusTable; 
+export default RoomStatusTable;

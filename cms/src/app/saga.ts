@@ -6,6 +6,7 @@ import { addToast } from "@heroui/react";
 
 export function* AppSaga() {
     yield takeLatest(AppActions.getUserInfo, getUserInfo);
+    yield takeLatest(AppActions.getAnalytic, getAnalytic);
     yield takeLatest(AppActions.login, login);
     yield takeLatest(AppActions.logout, logout);
 }
@@ -95,6 +96,21 @@ export function* logout({ payload: { onSuccess } }: any) {
                     role: "guest",
                 })
             );
+            onSuccess?.(rs.data);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+
+export function* getAnalytic({ payload: { onSuccess } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+        const rs: { [x: string]: any } = yield SysFetch.get(`/admin/analytic`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(AppActions.setAnalytic(rs.data));
             onSuccess?.(rs.data);
         }
     } catch (error) {

@@ -1,7 +1,7 @@
 import demoRoomImage from "@assets/images/demo_room.png";
 import { PAGINATION } from "@constants/pagination.const";
 import { ROUTE_PATHS } from "@constants/route.const";
-import { ArrowRightIcon } from "@heroicons/react/24/solid";
+import { ArrowRightIcon, BuildingOfficeIcon } from "@heroicons/react/24/solid";
 import {
     Button,
     Card,
@@ -13,6 +13,7 @@ import {
     Image,
     Input,
     Spinner,
+    Tooltip,
 } from "@heroui/react";
 import { useDebounceSearch } from "@hooks/useDebounceSearch";
 import { RoomService } from "@services/room.service";
@@ -21,6 +22,18 @@ import { formatMoney } from "@utils/money.util";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 
+interface Device {
+    id: number;
+    name: string;
+    type: string;
+    status: string;
+    deviceId: number;
+    quantity: number;
+    year_of_manufacture: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
 interface Room {
     id: number;
     name: string;
@@ -28,10 +41,15 @@ interface Room {
     max_capacity: number;
     current_capacity: number;
     images: string[];
-    base_price: number;
+    base_price: number | string;
     status: string;
-    createdAt: Date;
-    updatedAt: Date;
+    building: string;
+    floor: number;
+    type: string;
+    note: string;
+    devices: Device[];
+    createdAt: Date | string;
+    updatedAt: Date | string;
 }
 
 export default function RoomRegistration() {
@@ -61,6 +79,7 @@ export default function RoomRegistration() {
     const onChangeInput = (value: string) => {
         setValueInput(value);
     };
+
     const getChipColor = (current_capacity: number, max_capacity: number) => {
         if (current_capacity <= Math.floor(max_capacity / 2)) return "success";
         if (current_capacity === max_capacity) return "danger";
@@ -68,98 +87,299 @@ export default function RoomRegistration() {
         return "secondary";
     };
 
+    const getDeviceStatusColor = (status: string) => {
+        switch (status) {
+            case "good":
+                return "success";
+            case "damaged":
+                return "warning";
+            case "deleted":
+                return "danger";
+            default:
+                return "default";
+        }
+    };
+
+    const getDeviceStatusText = (status: string) => {
+        switch (status) {
+            case "good":
+                return "Tốt";
+            case "damaged":
+                return "Hỏng";
+            case "deleted":
+                return "Đã xóa";
+            default:
+                return status;
+        }
+    };
+
     const handleLinkClick = (id: number) => {
         navigate(`/${ROUTE_PATHS.ROOM_REGISTRATION}/${id}`);
     };
 
-    const handleSearch = () => {
-        console.log("search", valueInput);
+    const getActiveDevices = (devices: Device[]) => {
+        return devices.filter((device) => device.status !== "deleted");
+    };
+
+    const getRoomStatusChip = (status: string) => {
+        const color = status === "active" ? "success" : "danger";
+        const text = status === "active" ? "Hoạt động" : "Không hoạt động";
+        return (
+            <Chip color={color} size="sm" variant="flat">
+                {text}
+            </Chip>
+        );
     };
 
     return (
-        <div className="mt-4">
-            <div className="mb-5 flex gap-3 border-2 border-gray-300 rounded-md p-2">
-                <Input
-                    placeholder="Tìm kiếm phòng"
-                    value={valueInput}
-                    onChange={(e) => onChangeInput(e.target.value)}
-                />
+        <div className="mt-4 mx-auto">
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">Đăng Ký Phòng Ký Túc Xá</h1>
+                <div className="flex gap-3 bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                    <Input
+                        placeholder="Tìm kiếm theo tên phòng, tòa nhà..."
+                        value={valueInput}
+                        onChange={(e) => onChangeInput(e.target.value)}
+                        className="flex-1"
+                        size="lg"
+                    />
+                </div>
             </div>
+
             {loading ? (
-                <div className="flex justify-center items-center h-screen">
-                    <Spinner />
+                <div className="flex justify-center items-center h-96">
+                    <Spinner size="lg" />
                 </div>
             ) : (
-                <div className="grid grid-cols-4 gap-4">
-                    {rooms?.length &&
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {rooms?.length > 0 ? (
                         rooms.map((room) => {
-                            const image = room?.images?.[0]
-                                ? `${import.meta.env.VITE_API_BASE}${room?.images?.[0]}`
+                            const imageUrl = room?.images?.[0]?.startsWith("http")
+                                ? room.images[0]
+                                : room?.images?.[0]
+                                ? `${import.meta.env.VITE_API_BASE}${room.images[0]}`
                                 : demoRoomImage;
+
+                            const activeDevices = getActiveDevices(room.devices || []);
+                            const priceValue =
+                                typeof room.base_price === "string"
+                                    ? parseFloat(room.base_price)
+                                    : room.base_price;
+
                             return (
-                                <Card key={room.id} className="max-w-[400px]">
-                                    <CardHeader className="flex gap-3">
-                                        <Image
-                                            alt="heroui logo"
-                                            height={40}
-                                            radius="sm"
-                                            src={image}
-                                            width={40}
-                                        />
-                                        <div className="flex flex-col">
-                                            <p className="text-md">{room.name}</p>
-                                            <p className="text-small text-default-500">
-                                                Giới tính: {getGender(room.gender)}
-                                            </p>
-                                        </div>
-                                    </CardHeader>
-                                    <Divider />
-                                    <CardBody>
-                                        <Chip
-                                            color={getChipColor(
-                                                room.current_capacity,
-                                                room.max_capacity
-                                            )}
-                                            className="text-white"
-                                        >
-                                            Số lượng: {room.current_capacity}/{room.max_capacity}
-                                        </Chip>
-                                        <div className="mt-5 text-sm">
-                                            <div className="mb-5">Hình ảnh phòng:</div>
-                                            <div className="flex justify-start flex-wrap gap-3">
-                                                {room?.images?.length &&
-                                                    room.images.map((image, index) => {
-                                                        if (index >= 4) return null;
-                                                        return (
-                                                            <Image
-                                                                key={index}
-                                                                src={image}
-                                                                alt="room"
-                                                                className="object-cover"
-                                                                height={100}
-                                                                width={100}
-                                                            />
-                                                        );
-                                                    })}
+                                <Card
+                                    key={room.id}
+                                    className="w-full w-[300px] hover:shadow-lg transition-shadow duration-300"
+                                >
+                                    <CardHeader className="pb-0">
+                                        <div className="flex justify-between items-start w-full">
+                                            <div className="flex gap-3 items-center">
+                                                <div className="relative">
+                                                    <Image
+                                                        alt={room.name}
+                                                        height={50}
+                                                        radius="md"
+                                                        src={imageUrl}
+                                                        width={50}
+                                                        className="object-cover mt-6"
+                                                    />
+                                                    {room.status && (
+                                                        <div className="absolute -top-3 -right-3">
+                                                            {getRoomStatusChip(room.status)}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <h3 className="text-lg font-semibold">
+                                                        {room.name}
+                                                    </h3>
+                                                    <div className="flex items-center gap-2 text-sm text-gray-600">
+                                                        <BuildingOfficeIcon className="h-4 w-4" />
+                                                        <span>
+                                                            Tòa {room.building} - Tầng {room.floor}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <p className="text-small mt-5 text-default-500">
-                                            Giá: {formatMoney(room.base_price)} / tháng
-                                        </p>
+                                    </CardHeader>
+
+                                    <CardBody className="pt-3">
+                                        <div className="space-y-3">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-600">
+                                                    Loại phòng:
+                                                </span>
+                                                <Chip size="sm" variant="flat" color="primary">
+                                                    {room.type}
+                                                </Chip>
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-600">
+                                                    Giới tính:
+                                                </span>
+                                                <Chip
+                                                    size="sm"
+                                                    variant="flat"
+                                                    color={
+                                                        room.gender === "male"
+                                                            ? "primary"
+                                                            : "secondary"
+                                                    }
+                                                >
+                                                    {getGender(room.gender)}
+                                                </Chip>
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-600">
+                                                    Sức chứa:
+                                                </span>
+                                                <Chip
+                                                    color={getChipColor(
+                                                        room.current_capacity,
+                                                        room.max_capacity
+                                                    )}
+                                                    size="sm"
+                                                    variant="flat"
+                                                >
+                                                    {room.current_capacity}/{room.max_capacity}{" "}
+                                                    người
+                                                </Chip>
+                                            </div>
+
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-gray-600">
+                                                    Giá thuê:
+                                                </span>
+                                                <span className="font-semibold text-green-600">
+                                                    {formatMoney(priceValue)}/tháng
+                                                </span>
+                                            </div>
+
+                                            {activeDevices.length > 0 && (
+                                                <div>
+                                                    <span className="text-sm text-gray-600 block mb-2">
+                                                        Thiết bị:
+                                                    </span>
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {activeDevices
+                                                            .slice(0, 3)
+                                                            .map((device, index) => (
+                                                                <Tooltip
+                                                                    key={index}
+                                                                    content={`${device.name} - ${
+                                                                        device.type
+                                                                    } (${
+                                                                        device.quantity
+                                                                    } cái) - ${getDeviceStatusText(
+                                                                        device.status
+                                                                    )}`}
+                                                                >
+                                                                    <Chip
+                                                                        size="sm"
+                                                                        variant="bordered"
+                                                                        color={getDeviceStatusColor(
+                                                                            device.status
+                                                                        )}
+                                                                        className="text-xs"
+                                                                    >
+                                                                        {device.name} (
+                                                                        {device.quantity})
+                                                                    </Chip>
+                                                                </Tooltip>
+                                                            ))}
+                                                        {activeDevices.length > 3 && (
+                                                            <Chip
+                                                                size="sm"
+                                                                variant="flat"
+                                                                color="default"
+                                                                className="text-xs"
+                                                            >
+                                                                +{activeDevices.length - 3} khác
+                                                            </Chip>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {room.images && room.images.length > 1 && (
+                                                <div>
+                                                    <span className="text-sm text-gray-600 block mb-2">
+                                                        Hình ảnh:
+                                                    </span>
+                                                    <div className="grid grid-cols-3 gap-2">
+                                                        {room.images
+                                                            .slice(1, 4)
+                                                            .map((image, index) => {
+                                                                const displayImage =
+                                                                    image.startsWith("http")
+                                                                        ? image
+                                                                        : `${
+                                                                              import.meta.env
+                                                                                  .VITE_API_BASE
+                                                                          }${image}`;
+                                                                return (
+                                                                    <Image
+                                                                        key={index}
+                                                                        src={displayImage}
+                                                                        alt={`Room ${room.name} ${
+                                                                            index + 1
+                                                                        }`}
+                                                                        className="object-cover rounded-md"
+                                                                        height={60}
+                                                                        width="100%"
+                                                                    />
+                                                                );
+                                                            })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {room.note && (
+                                                <div className="bg-gray-50 p-2 rounded-md">
+                                                    <span className="text-xs text-gray-500">
+                                                        Ghi chú: {room.note}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
                                     </CardBody>
+
                                     <Divider />
-                                    <CardFooter>
+
+                                    <CardFooter className="pt-3">
                                         <Button
                                             color="primary"
-                                            endContent={<ArrowRightIcon className="size-6" />}
+                                            variant="solid"
+                                            endContent={<ArrowRightIcon className="h-4 w-4" />}
                                             onClick={() => handleLinkClick(room.id)}
+                                            className="w-full font-medium"
+                                            disabled={
+                                                room.current_capacity >= room.max_capacity ||
+                                                room.status !== "active"
+                                            }
                                         >
-                                            Đặt phòng
+                                            {room.current_capacity >= room.max_capacity
+                                                ? "Phòng đã đầy"
+                                                : room.status !== "active"
+                                                ? "Phòng không khả dụng"
+                                                : "Đăng ký phòng"}
                                         </Button>
                                     </CardFooter>
                                 </Card>
                             );
-                        })}
+                        })
+                    ) : (
+                        <div className="col-span-full text-center py-12">
+                            <div className="text-gray-500">
+                                <BuildingOfficeIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                                <p className="text-lg">Không tìm thấy phòng nào</p>
+                                <p className="text-sm">Thử thay đổi từ khóa tìm kiếm</p>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

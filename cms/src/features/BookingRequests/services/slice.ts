@@ -23,6 +23,7 @@ export const BookingRequestSlice = createSlice({
     getBookingRequestDetail: (state, { payload }) => {},
     approveBookingRequest: (state, { payload }) => {},
     rejectBookingRequest: (state, { payload }) => {},
+    terminateBookingRequest: (state, { payload }) => {},
     setBookingRequests: (state, { payload }) => {
       state.bookingRequests = payload;
     },

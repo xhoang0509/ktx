@@ -6,38 +6,43 @@ export interface User {
 }
 
 export interface Room {
-    id: string;
+    id: number;
     name: string;
-    building: string;
-    price: number;
+    gender: string;
+    max_capacity: number;
     current_capacity: number;
+    base_price: string;
+    images: string[];
+    status: string;
+    building: string;
+    floor: number;
+    type: string;
+    note: string;
+    devices: any;
+    createdAt: string;
+    updatedAt: string;
 }
 
-export interface ServiceDetail {
-    id: string;
-    name: string;
-    initialReading?: number;
-    finalReading?: number;
-    quantity: number;
+export interface ServiceUsage {
+    usage: number;
+    amount: number;
     unitPrice: number;
-    total: number;
+    endReading: number;
+    startReading: number;
 }
 
 export interface Bill {
-    id: string;
+    id: number;
     code: string;
-    room: Room;
-    user: User;
-    services: {
-        roomFee: number;
-        electricity: ServiceDetail;
-        water: ServiceDetail;
-        internet: ServiceDetail;
-        cleaning: ServiceDetail;
-    };
+    electricity: ServiceUsage;
+    water: ServiceUsage;
+    internet: number;
+    cleaning: number;
     totalAmount: number;
-    createdAt: string;
     status: "pending" | "paid" | "overdue";
+    createdAt: string;
+    updatedAt: string;
+    room: Room;
 }
 
 export interface BillsState {

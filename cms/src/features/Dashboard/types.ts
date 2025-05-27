@@ -9,11 +9,9 @@ export interface Student {
 export interface Room {
     id: string;
     name: string;
-    capacity: number;
-    currentOccupancy: number;
-    electricityBill: number;
-    waterBill: number;
-    totalBill: number;
+    current_capacity: number;
+    max_capacity: number;
+    base_price: number;
 }
 
 export interface Bill {

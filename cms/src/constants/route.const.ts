@@ -21,6 +21,7 @@ export const ROUTE_PATHS = {
     REQUEST_DETAIL: "request/detail/:id",
     EDIT_REQUEST_BASE: "request/edit",
     EDIT_REQUEST: "request/edit/:id",
+    REQUEST_PRINT: "request/print/:id",
 
     // room: phòng
     ROOM: "room",

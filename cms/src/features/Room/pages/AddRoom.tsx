@@ -12,38 +12,38 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "@services/store";
 import { useEffect } from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { addRoomSchema, defaultAddRoomForm, genderOptions, statusOptions } from "../services/const";
 import { RoomActions } from "../services/slice";
 
-export default function EditRoomPage() {
-    const { id } = useParams();
-
+export default function AddRoom() {
     const {
         handleSubmit,
         control,
         reset,
         formState: { errors },
-        watch,
     } = useForm({
         defaultValues: defaultAddRoomForm,
         resolver: yupResolver(addRoomSchema),
     });
-
-    const navigate = useNavigate();
-    const dispatch = useAppDispatch();
-    const devices = useAppSelector(DeviceSelectors.devices);
 
     const { fields, append, remove } = useFieldArray({
         control,
         name: "devices",
     });
 
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const devices = useAppSelector(DeviceSelectors.devices);
+
+    useEffect(() => {
+        dispatch(DeviceActions.getDevices({ onSuccess: () => {} }));
+    }, []);
+
     const onSubmit = (data: any) => {
         dispatch(
-            RoomActions.editRoom({
+            RoomActions.addRoom({
                 body: data,
-                id,
                 onSuccess: () => {
                     reset();
                     navigate(`/${ROUTE_PATHS.ROOM}`);
@@ -52,32 +52,17 @@ export default function EditRoomPage() {
         );
     };
 
-    useEffect(() => {
-        dispatch(DeviceActions.getDevices({ onSuccess: () => {} }));
-    }, []);
-
     const addDevice = () => {
         append({ deviceId: 0, quantity: 1 });
     };
 
-    useEffect(() => {
-        if (id) {
-            dispatch(
-                RoomActions.getDetailRoom({
-                    id,
-                    onSuccess: (data: any) => {
-                        reset(data);
-                    },
-                })
-            );
-        }
-    }, [dispatch]);
+    console.log(devices);
 
     return (
         <div className="h-full flex flex-col">
             <form onSubmit={handleSubmit(onSubmit)}>
                 <AppHeader
-                    pageTitle="Sửa phòng"
+                    pageTitle="Thêm mới phòng"
                     rightMenu={
                         <Button color="primary" type="submit">
                             Lưu
@@ -164,7 +149,7 @@ export default function EditRoomPage() {
                                 <div className="mb-2">Loại phòng</div>
                                 <AppInput control={control} name="type" />
                                 <div className="text-danger text-xs mt-1">
-                                    {errors.building?.message}
+                                    {errors.type?.message}
                                 </div>
                             </div>
 
@@ -282,7 +267,7 @@ export default function EditRoomPage() {
                                 </div>
                             </div>
 
-                            <div className="col-span-6">
+                            <div className="col-span-12">
                                 <div className="mb-2">Ghi chú</div>
                                 <AppTextarea control={control} name="note" />
                                 <div className="text-danger text-xs mt-1">

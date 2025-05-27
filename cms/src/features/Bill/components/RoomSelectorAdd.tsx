@@ -6,23 +6,20 @@ import { useAppSelector } from "@services/store";
 import { formatVND } from "@utils/fomart.util";
 import { Control, Controller } from "react-hook-form";
 import { Contract } from "../types";
+import { useEffect, useState } from "react";
 
 interface RoomSelectorProps {
     control: Control<any>;
     onContractSelect: (contract: Contract | null) => void;
-    selectedContract: Contract | null;
 }
 
-export default function RoomSelector({
-    control,
-    onContractSelect,
-    selectedContract,
-}: RoomSelectorProps) {
+export default function RoomSelectorAdd({ control, onContractSelect }: RoomSelectorProps) {
     const bookingRequests = useAppSelector(BookingRequestSelectors.bookingRequests);
+    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
 
-    // useEffect(() => {
-    //     onContractSelect(selectedContract);
-    // }, [selectedContract, onContractSelect]);
+    useEffect(() => {
+        onContractSelect(selectedContract);
+    }, [selectedContract, onContractSelect]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -40,7 +37,7 @@ export default function RoomSelector({
                                 const contract = bookingRequests.find(
                                     (c: BookingRequest) => c.id === parseInt(selectedKey)
                                 );
-                                onContractSelect(contract || null);
+                                setSelectedContract(contract || null);
                             }}
                         >
                             {bookingRequests.map((contract: BookingRequest) => (

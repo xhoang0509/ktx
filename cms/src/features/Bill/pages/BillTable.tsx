@@ -126,14 +126,14 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
             case "actions":
                 return (
                     <div className="relative flex items-center gap-2 justify-center">
-                        <Tooltip content="Xuất hóa đơn">
+                        {/* <Tooltip content="Xuất hóa đơn">
                             <span
                                 onClick={() => navigate(`/${ROUTE_PATHS.BILL}/contract/${item.id}`)}
                                 className="text-lg text-default-400 cursor-pointer active:opacity-50"
                             >
                                 <DocumentIcon className="size-4 text-yellow-700" />
                             </span>
-                        </Tooltip>
+                        </Tooltip> */}
                         {["pending"].includes(item.status) && (
                             <Tooltip content="Sửa">
                                 <span

@@ -1,21 +1,30 @@
+import { AppActions, AppSelectors } from "@app/slice";
 import AppHeader from "@components/AppHeader";
 import Container from "@features/Dashboard/components/Container";
-import GenderChart from "@features/Dashboard/components/GenderChart";
-import MonthlyChart from "@features/Dashboard/components/MonthlyChart";
 import RecentActivities from "@features/Dashboard/components/RecentActivities";
 import RoomStatusTable from "@features/Dashboard/components/RoomStatusTable";
 import SummaryCards from "@features/Dashboard/components/SummaryCards";
 import TopUsageRooms from "@features/Dashboard/components/TopUsageRooms";
 import {
-  mockActivities,
-  mockGenderData,
-  mockMonthlyBillData,
-  mockRooms,
-  mockSummaryData,
-  mockTopUsageRooms,
+    mockActivities
 } from "@features/Dashboard/mockData";
+import { useAppDispatch, useAppSelector } from "@services/store";
+import { useEffect } from "react";
 
 export default function DashboardLayout() {
+    const dispatch = useAppDispatch();
+    const analytic = useAppSelector(AppSelectors.analytic);
+
+    useEffect(() => {
+        dispatch(
+            AppActions.getAnalytic({
+                onSuccess: (data: any) => {
+                    console.log(data);
+                },
+            })
+        );
+    }, []);
+
     return (
         <div className="min-h-screen bg-gray-50">
             <AppHeader
@@ -24,23 +33,23 @@ export default function DashboardLayout() {
             />
 
             <div className="p-6">
-                <SummaryCards data={mockSummaryData} />
+                <SummaryCards data={analytic} />
 
                 <div className="grid grid-cols-12 gap-6">
-                    <Container col={6} label="">
+                    {/* <Container col={6} label="">
                         <MonthlyChart data={mockMonthlyBillData} />
                     </Container>
 
                     <Container col={6} label="">
                         <GenderChart data={mockGenderData} />
+                    </Container> */}
+
+                    <Container col={4} label="">
+                        <RoomStatusTable data={analytic.rooms} />
                     </Container>
 
                     <Container col={4} label="">
-                        <RoomStatusTable data={mockRooms} />
-                    </Container>
-
-                    <Container col={4} label="">
-                        <TopUsageRooms data={mockTopUsageRooms} />
+                        <TopUsageRooms data={analytic.bills} />
                     </Container>
 
                     <Container col={4} label="">

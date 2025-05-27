@@ -30,6 +30,8 @@ const AddBillPage = lazy(() => import("@features/Bill/pages/AddBillPage"));
 const EditBillPage = lazy(() => import("@features/Bill/pages/EditBillPage"));
 const ContractPage = lazy(() => import("@features/Bill/pages/ContractPage"));
 const EditRequest = lazy(() => import("@features/BookingRequests/pages/Edit"));
+const PrintContract = lazy(() => import("@features/BookingRequests/components/PrintContract"));
+
 export interface RoutesRendererProps {
     routes: RouteObject[];
 }
@@ -141,6 +143,11 @@ function AppRouter() {
                             path: ROUTE_PATHS.EDIT_REQUEST,
                             element: <EditRequest />,
                             title: "Chi tiết yêu cầu",
+                        },
+                        {
+                            path: ROUTE_PATHS.REQUEST_PRINT,
+                            element: <PrintContract />,
+                            title: "In hợp đồng",
                         },
                         {
                             path: ROUTE_PATHS.LOGOUT,

@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
-    "build": "tsc -b && vite build",
+    "dev": "vite --port 3001",
+    "build": "vite build",
+    "start": "npx serve -s dist -l 3001",
     "lint": "eslint .",
     "preview": "vite preview"
   },
