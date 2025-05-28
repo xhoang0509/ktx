@@ -36,7 +36,7 @@ export default function UserTable({ users, pagination, onChangePagination }: IPr
 
     const columns = [
         { name: "Số thứ tự", uid: "indexNumber", align: "center", with: "80px" },
-        { name: "Username", uid: "username" },
+        { name: "Email", uid: "email" },
         { name: "Họ và tên", uid: "full_name" },
         { name: "Số điện thoại", uid: "phone" },
         { name: "Giới tính", uid: "gender" },
