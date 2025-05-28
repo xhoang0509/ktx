@@ -9,12 +9,12 @@ import {
 
 export const SITE_NAME = import.meta.env.VITE_APP_SITE_NAME || "{empty-site-name}";
 
-export const SITE_DESCRIPTION = "Nội thất Kadi House - đẳng cấp là mãi mãi!";
+export const SITE_DESCRIPTION = "Room Tracking";
 
 export const SITE_CONTACT = {
     ADDRESS: "Đường 123 - Hà Nội",
     PHONE: "0123456789",
-    EMAIL: "dankkap@gmail.com",
+    EMAIL: "roomtracking@gmail.com",
 };
 
 export const SITE_MENU = [
