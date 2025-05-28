@@ -285,10 +285,6 @@ const ContractController = {
                 return res.status(400).json({ message: `Hóa đơn ${checkCode.id} chưa được thanh toán. Vui lòng thanh toán hóa đơn trước khi chấm dứt hợp đồng!` });
             }
 
-            if (checkCode.month !== new Date().getMonth() + 1) {
-                return res.status(400).json({ message: `Hóa đơn ${checkCode.id} không phải là hóa đơn tháng này. Vui lòng chọn hóa đơn tháng này!` });
-            }
-
             contract.status = "terminated";
             if (contract.room.current_capacity < 0) {
                 return res.status(400).json({ message: `Lỗi hệ thống` })
