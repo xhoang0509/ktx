@@ -1,5 +1,6 @@
 import { convertGenderToVietnamese } from "@utils/gender.util";
 import { ContractData } from "../types/contract";
+import { formatVND } from "@utils/fomart.util";
 
 interface ContractPreviewProps {
     data: ContractData;
@@ -45,11 +46,10 @@ export default function ContractPreview({ data }: ContractPreviewProps) {
                             <p className="text-sm mb-1">
                                 Giới tính: {convertGenderToVietnamese(data.student.gender)}
                             </p>
-                            <p className="text-sm mb-1">Năm sinh: {data.student.birth_year}</p>
+                            <p className="text-sm mb-1">Ngày sinh: {data.student.birth_date}</p>
                             <p className="text-sm mb-1">Mã SV: {data.student.student_id}</p>
-                            <p className="text-sm mb-1">Lớp: {data.student.class_name}</p>
-                            <p className="text-sm mb-1">Khoa: {data.student.faculty}</p>
-                            <p className="text-sm mb-1">Khóa: {data.student.course}</p>
+                            <p className="text-sm mb-1">Lớp: {data.student.class_code}</p>
+                            <p className="text-sm mb-1">Khoa: {data.student.faculty_name}</p>
                         </div>
                         <p className="text-sm mb-1">Số điện thoại: {data.student.phone}</p>
                         <p className="text-sm mb-1">Email: {data.student.email}</p>
@@ -72,9 +72,11 @@ export default function ContractPreview({ data }: ContractPreviewProps) {
                 <div className="mb-6">
                     <h2 className="font-bold mb-2">ĐIỀU KHOẢN THUÊ:</h2>
                     <div className="pl-8">
-                        <p className="text-sm mb-1">Đơn giá: {data.rental.price}đ/tháng</p>
                         <p className="text-sm mb-1">
-                            Thời gian thuê: Từ {data.rental.startDate} đến {data.rental.endDate}
+                            Đơn giá: {formatVND(data.room.base_price)} / tháng
+                        </p>
+                        <p className="text-sm mb-1">
+                            Thời gian thuê: Từ {data.room.start_date} đến {data.room.end_date}
                         </p>
                     </div>
                 </div>

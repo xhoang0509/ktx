@@ -12,10 +12,10 @@ export interface SchoolInfo {
 export interface StudentInfo {
     full_name: string;
     gender: string;
-    birth_year: string;
+    birth_date: string;
     student_id: string;
-    class_name: string;
-    faculty: string;
+    class_code: string;
+    faculty_name: string;
     course: string;
     phone: string;
     email: string;
@@ -24,10 +24,12 @@ export interface StudentInfo {
 
 export interface RoomInfo {
     name: string;
-    floor: number;
+    floor: string;
     building: string;
     type: string;
-    base_price: number;
+    base_price: string;
+    start_date: string;
+    end_date: string;
 }
 
 export interface RentalInfo {
@@ -40,7 +42,6 @@ export interface ContractData {
     school: SchoolInfo;
     student: StudentInfo;
     room: RoomInfo;
-    rental: RentalInfo;
 }
 
 export const defaultContractData: ContractData = {
@@ -54,10 +55,10 @@ export const defaultContractData: ContractData = {
     student: {
         full_name: "Nguyễn Văn B",
         gender: "male",
-        birth_year: "2002",
+        birth_date: "2002-01-01",
         student_id: "20201234",
-        class_name: "K65CNTT",
-        faculty: "Công nghệ thông tin",
+        class_code: "K65CNTT",
+        faculty_name: "Công nghệ thông tin",
         course: "65",
         phone: "0912345678",
         email: "nguyenvanb@gmail.com",
@@ -66,13 +67,10 @@ export const defaultContractData: ContractData = {
     room: {
         name: "203",
         building: "B2",
-        floor: 1,
+        floor: "1",
         type: "single",
-        base_price: 120000,
-    },
-    rental: {
-        price: "120.000",
-        startDate: "01/09/2024",
-        endDate: "31/01/2025",
+        base_price: "120000",
+        start_date: "01/09/2024",
+        end_date: "31/01/2025",
     },
 };

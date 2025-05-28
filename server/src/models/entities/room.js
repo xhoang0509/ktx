@@ -65,11 +65,6 @@ const Room = new EntitySchema({
         }
     },
     relations: {
-        roomDevices: {
-            type: "one-to-many",
-            target: "RoomDevice",
-            inverseSide: "room"
-        },
         users: {
             type: "one-to-many",
             target: "User",

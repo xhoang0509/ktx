@@ -9,10 +9,6 @@ router.post("/admin-bill", PaymentController.addBill);
 router.get("/admin-list", PaymentController.getBillList);
 router.get("/admin-bill/:id", PaymentController.getBillById);
 router.put("/admin-bill/:id", PaymentController.editBill);
-router.post("/admin-utility", PaymentController.addUtilityCost);
-router.post("/admin-debts", PaymentController.getStudentDebts);
-router.post("/admin-report", PaymentController.getFinancialReport);
-router.get("/admin-late-payments", PaymentController.getLatePayments);
 
 //Sinh viên
 router.post("/student-my-payments", authMiddleware, PaymentController.getStudentPayments);

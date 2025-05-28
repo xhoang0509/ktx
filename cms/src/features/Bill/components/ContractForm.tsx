@@ -1,13 +1,14 @@
 import AppInput from "@components/common/AppInput";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { convertGenderToVietnamese } from "@utils/gender.util";
+import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { ContractData, defaultContractData } from "../types/contract";
-import { convertGenderToVietnamese } from "@utils/gender.util";
 
 interface ContractFormProps {
     onDataChange: (data: ContractData) => void;
+    student: any;
+    contractData: ContractData;
 }
 
 const contractSchema = yup.object().shape({
@@ -22,35 +23,44 @@ const contractSchema = yup.object().shape({
         full_name: yup.string().required("Vui lòng nhập họ tên sinh viên"),
         gender: yup.string().required("Vui lòng chọn giới tính"),
         student_id: yup.string().required("Vui lòng nhập mã sinh viên"),
-        class_name: yup.string().required("Vui lòng nhập lớp"),
-        faculty: yup.string().required("Vui lòng nhập khoa"),
-        course: yup.string().required("Vui lòng nhập khóa"),
+        class_code: yup.string().required("Vui lòng nhập lớp"),
+        faculty_name: yup.string().required("Vui lòng nhập khoa"),
         phone: yup.string().required("Vui lòng nhập số điện thoại"),
         email: yup.string().email("Email không hợp lệ").required("Vui lòng nhập email"),
         address: yup.string().required("Vui lòng nhập hộ khẩu thường trú"),
+        brith_date: yup.string().required("Vui lòng nhập năm sinh"),
     }),
     room: yup.object().shape({
         name: yup.string().required("Vui lòng nhập số phòng"),
         building: yup.string().required("Vui lòng nhập nhà"),
         type: yup.string().required("Vui lòng nhập loại phòng"),
-    }),
-    rental: yup.object().shape({
-        price: yup.string().required("Vui lòng nhập đơn giá"),
-        startDate: yup.string().required("Vui lòng nhập ngày bắt đầu"),
-        endDate: yup.string().required("Vui lòng nhập ngày kết thúc"),
+        base_price: yup.string().required("Vui lòng nhập giá phòng"),
+        start_date: yup.string().required("Vui lòng nhập ngày bắt đầu"),
+        end_date: yup.string().required("Vui lòng nhập ngày kết thúc"),
     }),
 });
 
-export default function ContractForm({ onDataChange }: ContractFormProps) {
-    const [data, setData] = useState<ContractData>(defaultContractData);
+export default function ContractForm({ onDataChange, student, contractData }: ContractFormProps) {
+    const initData = useMemo(() => {
+        if (contractData) {
+            return {
+                ...defaultContractData,
+                ...contractData,
+            };
+        }
+        return defaultContractData;
+    }, [contractData]);
 
+    const [data, setData] = useState<ContractData>(initData);
+
+    console.log(initData);
     const {
         control,
         handleSubmit,
         formState: { errors },
     } = useForm<ContractData>({
-        defaultValues: defaultContractData,
-        resolver: yupResolver(contractSchema),
+        defaultValues: initData,
+        // resolver: yupResolver(contractSchema),
     });
 
     const updateData = (newData: ContractData) => {
@@ -250,7 +260,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         <label className="block text-sm font-medium mb-1">Năm sinh</label>
                         <Controller
                             control={control}
-                            name="student.birth_year"
+                            name="student.birth_date"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -260,16 +270,16 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                             ...data,
                                             student: {
                                                 ...data.student,
-                                                birth_year: e.target.value,
+                                                birth_date: e.target.value,
                                             },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.student?.birth_year && (
+                        {errors.student?.birth_date && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.student.birth_year.message}
+                                {errors.student.birth_date.message}
                             </p>
                         )}
                     </div>
@@ -304,7 +314,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         <label className="block text-sm font-medium mb-1">Lớp</label>
                         <Controller
                             control={control}
-                            name="student.class_name"
+                            name="student.class_code"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -314,16 +324,16 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                             ...data,
                                             student: {
                                                 ...data.student,
-                                                class_name: e.target.value,
+                                                class_code: e.target.value,
                                             },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.student?.class_name && (
+                        {errors.student?.class_code && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.student.class_name.message}
+                                {errors.student.class_code.message}
                             </p>
                         )}
                     </div>
@@ -331,7 +341,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         <label className="block text-sm font-medium mb-1">Khoa</label>
                         <Controller
                             control={control}
-                            name="student.faculty"
+                            name="student.faculty_name"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -339,42 +349,19 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                         field.onChange(e);
                                         updateData({
                                             ...data,
-                                            student: { ...data.student, faculty: e.target.value },
+                                            student: { ...data.student, faculty_name: e.target.value },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.student?.faculty && (
+                        {errors.student?.faculty_name && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.student.faculty.message}
+                                {errors.student.faculty_name.message}
                             </p>
                         )}
                     </div>
-                    <div>
-                        <label className="block text-sm font-medium mb-1">Khóa</label>
-                        <Controller
-                            control={control}
-                            name="student.course"
-                            render={({ field }) => (
-                                <AppInput
-                                    value={field.value}
-                                    onChange={(e) => {
-                                        field.onChange(e);
-                                        updateData({
-                                            ...data,
-                                            student: { ...data.student, course: e.target.value },
-                                        });
-                                    }}
-                                />
-                            )}
-                        />
-                        {errors.student?.course && (
-                            <p className="text-danger text-xs mt-1">
-                                {errors.student.course.message}
-                            </p>
-                        )}
-                    </div>
+                   
                     <div>
                         <label className="block text-sm font-medium mb-1">Số điện thoại</label>
                         <Controller
@@ -555,7 +542,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         <label className="block text-sm font-medium mb-1">Đơn giá (đ/tháng)</label>
                         <Controller
                             control={control}
-                            name="rental.price"
+                            name="room.base_price"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -563,15 +550,15 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                         field.onChange(e);
                                         updateData({
                                             ...data,
-                                            rental: { ...data.rental, price: e.target.value },
+                                            room: { ...data.room, base_price: e.target.value },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.rental?.price && (
+                        {errors.room?.base_price && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.rental.price.message}
+                                {errors.room.base_price.message}
                             </p>
                         )}
                     </div>
@@ -581,7 +568,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         </label>
                         <Controller
                             control={control}
-                            name="rental.startDate"
+                            name="room.start_date"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -589,15 +576,15 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                         field.onChange(e);
                                         updateData({
                                             ...data,
-                                            rental: { ...data.rental, startDate: e.target.value },
+                                            room: { ...data.room, start_date: e.target.value },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.rental?.startDate && (
+                        {errors.room?.start_date && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.rental.startDate.message}
+                                {errors.room.start_date.message}
                             </p>
                         )}
                     </div>
@@ -607,7 +594,7 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                         </label>
                         <Controller
                             control={control}
-                            name="rental.endDate"
+                            name="room.end_date"
                             render={({ field }) => (
                                 <AppInput
                                     value={field.value}
@@ -615,15 +602,15 @@ export default function ContractForm({ onDataChange }: ContractFormProps) {
                                         field.onChange(e);
                                         updateData({
                                             ...data,
-                                            rental: { ...data.rental, endDate: e.target.value },
+                                            room: { ...data.room, end_date: e.target.value },
                                         });
                                     }}
                                 />
                             )}
                         />
-                        {errors.rental?.endDate && (
+                        {errors.room?.end_date && (
                             <p className="text-danger text-xs mt-1">
-                                {errors.rental.endDate.message}
+                                {errors.room.end_date.message}
                             </p>
                         )}
                     </div>

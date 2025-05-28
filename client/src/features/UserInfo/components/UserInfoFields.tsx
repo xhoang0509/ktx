@@ -37,7 +37,8 @@ const UserInfoFields: React.FC<UserInfoFieldsProps> = ({ user }) => {
       <InfoField label="Số điện thoại" value={user.phone || 'Chưa có thông tin'} />
       <InfoField label="Khoa" value={user.faculty_name} />
       <InfoField label="Lớp" value={user.class_code} />
-      <InfoField 
+      <InfoField label="Ngày sinh" value={formatDate(user.birth_date)} />
+      <InfoField
         label="Trạng thái" 
         value={
           <span className={`px-2 py-1 text-xs font-medium rounded-full ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>

@@ -241,7 +241,7 @@ const ContractController = {
                 .replace(/\${contract\.start_date}/g, contract.start_date)
                 .replace(/\${contract\.end_date}/g, contract.end_date)
                 .replace(/\${contract\.duration}/g, contract.duration)
-                .replace(/\${contract\.room\.price}/g, formatVND(contract.room.base_price))
+                .replace(/\${contract\.room\.base_price}/g, formatVND(contract.room.base_price))
                 .replace(/\${contract\.room\.building}/g, contract.room.building)
                 .replace(/\${contract\.room\.floor}/g, contract.room.floor)
 

@@ -180,10 +180,10 @@ const UserController = {
 
     async modify(req, res) {
         try {
-            const id = req.params.id;
+            const id = req.user?.userId;
             const updateDto = req.body;
             const user = await UserModel.findOne({ where: { id: id } });
-            if (!user) {
+            if (!user || !id) {
                 return res.status(404).send({ status: 404, message: 'Không tìm thấy tài khoản' });
             }
 
@@ -213,6 +213,10 @@ const UserController = {
                 updateData.status = updateDto.status
             }
 
+            if (updateDto.birth_date) {
+                updateData.birth_date = updateDto.birth_date
+            }
+
             await UserModel.update({ id: id }, updateData);
             const editUser = await UserModel.findOne({ where: { id: id } });
             if (editUser.avatar) {
@@ -220,7 +224,6 @@ const UserController = {
             }
             return res.status(200).send({ status: 200, message: 'Sửa thông tin thành công', data: editUser });
         } catch (e) {
-            console.log(e)
             error(__filename, e.message)
             return res.status(500).send({ status: 500, message: e.message || e || 'Có lỗi trong quá trình xử lý', error: e.message });
         }
