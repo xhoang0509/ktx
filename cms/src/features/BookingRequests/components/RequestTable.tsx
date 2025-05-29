@@ -187,6 +187,8 @@ export default function RequestTable({
                 return <div className="line-clamp-2">{formatDateTimeDetail(item.start_date)}</div>;
             case "end_date":
                 return <div className="line-clamp-2">{formatDateTimeDetail(item.end_date)}</div>;
+            case "createdAt":
+                return <div className="line-clamp-2">{formatDateTimeDetail(item.createdAt)}</div>;
             case "status":
                 return (
                     <Chip color={getColorStatus(item.status)} size="sm" variant="bordered">
