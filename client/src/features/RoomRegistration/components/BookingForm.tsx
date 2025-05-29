@@ -3,7 +3,7 @@ import { DateRangePicker, Textarea } from "@heroui/react";
 import { getLocalTimeZone, today } from "@internationalized/date";
 import { addMonths } from "@utils/date.util";
 import { FC, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { BookingPayload, RoomDetail } from "../types";
 
 interface BookingFormProps {
@@ -21,7 +21,7 @@ const BookingForm: FC<BookingFormProps> = ({ room, roomId, onSubmit, isDisabled 
         register,
         handleSubmit,
         formState: { errors },
-        watch,
+        control,
     } = useForm<BookingPayload>({
         defaultValues: {
             roomId,
@@ -42,9 +42,6 @@ const BookingForm: FC<BookingFormProps> = ({ room, roomId, onSubmit, isDisabled 
         }
     };
 
-    const startDate = watch("startDate");
-    const endDate = watch("endDate");
-
     return (
         <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold mb-4">Gửi yêu cầu đặt phòng</h2>
@@ -52,35 +49,55 @@ const BookingForm: FC<BookingFormProps> = ({ room, roomId, onSubmit, isDisabled 
             <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
                 <div>
                     <label
-                        htmlFor="semesterId"
+                        htmlFor="dateRange"
                         className="block text-sm font-medium text-gray-700 mb-1"
                     >
                         Thời gian đăng ký
                     </label>
-                    <DateRangePicker
-                        defaultValue={{
-                            start: today(getLocalTimeZone()),
-                            end: addMonths(today(getLocalTimeZone()), 6),
-                        }}
-                        minValue={today(getLocalTimeZone())}
-                        maxValue={addMonths(today(getLocalTimeZone()), 6)}
-                        className="max-w-xs"
-                        label="Thời gian đăng ký phòng"
-                        errorMessage={(error) => {
-                            const errorMessage = error.validationErrors.map((error) => {
-                                if (error.includes("or later.")) {
-                                    return "Ngày bắt đầu phải là ngày trước ngày hiện tại.";
-                                }
-                                if (error.includes("before end date.")) {
-                                    return "Ngày bắt đầu phải trước ngày kết thúc.";
-                                }
-                            });
-                            return errorMessage.join(" ");
-                        }}
-                        value={{
-                            start: startDate,
-                            end: endDate,
-                        }}
+                    <Controller
+                        name="startDate"
+                        control={control}
+                        render={({ field: startField }) => (
+                            <Controller
+                                name="endDate"
+                                control={control}
+                                render={({ field: endField }) => (
+                                    <DateRangePicker
+                                        minValue={today(getLocalTimeZone())}
+                                        maxValue={addMonths(today(getLocalTimeZone()), 6)}
+                                        className="max-w-xs"
+                                        label="Thời gian đăng ký phòng"
+                                        isDisabled={isDisabled || isSubmitting}
+                                        errorMessage={(error) => {
+                                            if (!error?.validationErrors) return "";
+                                            const errorMessages = error.validationErrors.map((error) => {
+                                                if (error.includes("or later")) {
+                                                    return "Ngày bắt đầu phải từ ngày hiện tại trở đi.";
+                                                }
+                                                if (error.includes("before end date")) {
+                                                    return "Ngày bắt đầu phải trước ngày kết thúc.";
+                                                }
+                                                return error;
+                                            }).filter(Boolean);
+                                            return errorMessages.join(" ");
+                                        }}
+                                        onChange={(range) => {
+                                            if (range?.start && range?.end) {
+                                                startField.onChange(range.start);
+                                                endField.onChange(range.end);
+                                            }
+                                        }}
+                                        value={startField.value && endField.value ? {
+                                            start: startField.value,
+                                            end: endField.value
+                                        } : {
+                                            start: today(getLocalTimeZone()),
+                                            end: addMonths(today(getLocalTimeZone()), 6)
+                                        }}
+                                    />
+                                )}
+                            />
+                        )}
                     />
                 </div>
 
