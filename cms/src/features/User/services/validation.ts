@@ -11,6 +11,8 @@ export const editUserSchema = yup.object().shape({
   status: yup.string().oneOf(["active", "inactive", "graduated", "deleted"] as UserStatus[], "Trạng thái không hợp lệ").required("Trạng thái không được để trống"),
   faculty_name: yup.string().required("Tên khoa không được để trống"),
   class_code: yup.string().required("Mã lớp không được để trống"),
+  birth_date: yup.string().required("Ngày tháng năm sinh không được để trống"),
+  address: yup.string().required("Địa chỉ không được để trống"),
   role: yup.string(),
   avatar: yup.string(),
   createdAt: yup.string(),

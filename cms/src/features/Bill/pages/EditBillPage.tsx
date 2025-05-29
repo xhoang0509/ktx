@@ -163,7 +163,7 @@ export default function EditBillPage() {
                                                 render={({ field }) => (
                                                     <AppNumberInput
                                                         value={field.value}
-                                                        onChange={field.onChange}
+                                                        onValueChange={field.onChange}
                                                         min={0}
                                                     />
                                                 )}
@@ -183,7 +183,7 @@ export default function EditBillPage() {
                                                 render={({ field }) => (
                                                     <AppNumberInput
                                                         value={field.value}
-                                                        onChange={field.onChange}
+                                                        onValueChange={field.onChange}
                                                         min={0}
                                                     />
                                                 )}

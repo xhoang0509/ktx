@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const router = require('./routes');
 const { AppDataSource, RoomModel } = require('./models/db');
+const Schedule = require('./schedules');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ AppDataSource.initialize().then(async () => {
 
     app.listen(PORT, () => {
         console.log(`Server is running on port: http://localhost:${PORT}`);
+        Schedule.initial();
     });
 })
     .catch((err) => {

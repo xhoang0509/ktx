@@ -81,7 +81,7 @@ export default function Edit() {
     if (!bookingRequest) {
         return <div className="p-8 text-center">Không tìm thấy yêu cầu đặt phòng</div>;
     }
-    console.log({ errors });
+
     return (
         <div className="h-full flex flex-col">
             <form onSubmit={handleSubmit(onSubmit)}>

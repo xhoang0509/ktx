@@ -355,7 +355,12 @@ export default function RoomRegistration() {
                                             variant="solid"
                                             endContent={<ArrowRightIcon className="h-4 w-4" />}
                                             onClick={() => handleLinkClick(room.id)}
-                                            className="w-full font-medium"
+                                            className={`w-full font-medium ${
+                                                room.current_capacity >= room.max_capacity ||
+                                                room.status !== "active"
+                                                    ? "opacity-50 cursor-not-allowed"
+                                                    : ""
+                                            }`}
                                             disabled={
                                                 room.current_capacity >= room.max_capacity ||
                                                 room.status !== "active"

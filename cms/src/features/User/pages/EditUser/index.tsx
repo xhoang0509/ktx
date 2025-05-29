@@ -22,6 +22,8 @@ interface EditUserFormData {
     avatar?: string;
     faculty_name: string;
     class_code: string;
+    birth_date: string;
+    address: string;
     status: UserStatus;
     createdAt?: string;
     updatedAt?: string;
@@ -36,6 +38,8 @@ const defaultEditUserForm: EditUserFormData = {
     student_id: "",
     faculty_name: "",
     class_code: "",
+    birth_date: "",
+    address: "",
     createdAt: "",
     updatedAt: "",
 };

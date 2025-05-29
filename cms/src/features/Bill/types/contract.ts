@@ -46,7 +46,7 @@ export interface ContractData {
 
 export const defaultContractData: ContractData = {
     school: {
-        schoolName: "Trường Đại học Kỹ thuật Công nghiệp Thái Nguyên",
+        schoolName: "Trường Đại học Trường Đại học Sư phạm Kỹ thuật Hưng Yên",
         representative: "Nguyễn Văn A",
         department: "Phòng Công tác HSSV",
         position: "Trưởng phòng",

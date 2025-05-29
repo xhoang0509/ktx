@@ -22,6 +22,8 @@ const defaultUserForm = {
     faculty_name: "",
     class_code: "",
     student_id: "",
+    birth_date: "",
+    address: "",
     createdAt: "",
     updatedAt: "",
 };
@@ -100,6 +102,14 @@ export default function ViewUserPage() {
                             <div className="col-span-6">
                                 <div className="mb-2">Mã sinh viên</div>
                                 <AppInput control={control} name="student_id" readOnly />
+                            </div>
+                            <div className="col-span-6">
+                                <div className="mb-2">Ngày sinh</div>
+                                <AppInput control={control} name="birth_date" readOnly />
+                            </div>
+                            <div className="col-span-6">
+                                <div className="mb-2">Hộ khẩu thường trú</div>
+                                <AppInput control={control} name="address" readOnly />
                             </div>
                             <div className="col-span-6">
                                 <div className="mb-2">Ngày tạo</div>

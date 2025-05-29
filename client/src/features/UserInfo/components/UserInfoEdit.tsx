@@ -23,6 +23,7 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
         full_name: user.full_name,
         phone: user.phone || "",
         birth_date: user.birth_date || "",
+        address: user.address || "",
         faculty_name: user.faculty_name,
         class_code: user.class_code,
     });
@@ -46,6 +47,7 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
                 full_name: user.full_name,
                 phone: user.phone || "",
                 birth_date: user.birth_date || "",
+                address: user.address || "",
                 faculty_name: user.faculty_name,
                 class_code: user.class_code,
             });
@@ -110,6 +112,20 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
                         />
                     ) : (
                         <p className="text-base font-medium">{user.birth_date}</p>
+                    )}
+                </div>
+                <div className="space-y-2">
+                    <label className="block text-sm text-gray-500">Hộ khẩu thường trú</label>
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleInputChange}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    ) : (
+                        <p className="text-base font-medium">{user.address}</p>
                     )}
                 </div>
 

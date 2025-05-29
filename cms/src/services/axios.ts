@@ -9,7 +9,6 @@ const AxiosClient = axios.create({
     timeout,
 });
 
-
 AxiosClient.interceptors.request.use(
     function (config) {
         const accessToken = getAccessToken();
@@ -26,15 +25,19 @@ AxiosClient.interceptors.request.use(
 
 AxiosClient.interceptors.response.use(
     function (response) {
-        if (response?.data?.errors) {
-            addToast({
-                title: response?.data.message,
-                description: response?.data?.errors?.join(", "),
-                color: "danger",
-            });
+        const data = response.data || response;
+        if (data.success) {
+            return response.data || response;
+        } else {
+            if (data?.message && data?.noti) {
+                addToast({
+                    title: "Lỗi",
+                    description: data?.message.toString() || "Truy cập thất bại",
+                    color: "danger",
+                });
+            }
+            return response.data || response;
         }
-
-        return response.data || response;
     },
     function (error) {
         if (error.response?.status === 401 || error.response?.status === 403) {
@@ -50,6 +53,7 @@ AxiosClient.interceptors.response.use(
             if (description === "Request failed with status code 404") {
                 description = "Không tìm thấy dữ liệu";
             }
+            console.log({description})
             addToast({
                 title: "Lỗi",
                 description: description,

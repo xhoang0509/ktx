@@ -9,6 +9,7 @@ export interface UserDetail {
     class_code: string;
     status: "active" | "inactive";
     birth_date: string;
+    address: string;
     createdAt: string;
     updatedAt: string;
 }

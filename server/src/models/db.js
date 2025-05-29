@@ -4,7 +4,6 @@ const dotenv = require("dotenv");
 const { Admin } = require("./entities/admin");
 const { Contract } = require("./entities/contracts");
 const { Device } = require("./entities/device");
-const { Request } = require("./entities/requests");
 const { User } = require("./entities/user");
 const { Room } = require("./entities/room");
 const { Bill } = require("./entities/bill");
@@ -25,7 +24,6 @@ const AppDataSource = new DataSource({
         Admin,
         Contract,
         Device,
-        Request,
         Room,
         User,
         Bill
@@ -40,7 +38,6 @@ module.exports = {
     AdminModel: AppDataSource.getRepository(Admin),
     ContractModel: AppDataSource.getRepository(Contract),
     DeviceModel: AppDataSource.getRepository(Device),
-    RequestModel: AppDataSource.getRepository(Request),
     RoomModel: AppDataSource.getRepository(Room),
     UserModel: AppDataSource.getRepository(User),
     BillModel: AppDataSource.getRepository(Bill),

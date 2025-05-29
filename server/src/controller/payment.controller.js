@@ -168,7 +168,6 @@ const PaymentController = {
     },
 
     async getCodeIpnUrl(req, res) {
-        console.log('get code ipn url');
         try {
             var vnp_Params = req.query;
             var secureHash = vnp_Params['vnp_SecureHash'];
@@ -183,18 +182,23 @@ const PaymentController = {
             var signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
             if (secureHash === signed) {
-                var orderId = vnp_Params['vnp_TxnRef'];
-                var rspCode = vnp_Params['vnp_ResponseCode'];
+                const orderId = vnp_Params['vnp_TxnRef'];
+                const rspCode = vnp_Params['vnp_ResponseCode'];
                 let billdCode = vnp_Params['vnp_OrderInfo'];
                 billdCode = decodeURIComponent(billdCode);
-                const bill = await BillModel.findOne({ where: { code: billdCode } });
-                if (!bill) {
-                    return res.status(200).json({ RspCode: '97', Message: 'Bill not found' });
+
+                if (rspCode === '00') {
+                    const bill = await BillModel.findOne({ where: { code: billdCode } });
+                    if (!bill) {
+                        return res.status(200).json({ RspCode: '97', Message: 'Bill not found' });
+                    }
+                    if (bill.status === 'paid') {
+                        return res.status(200).json({ RspCode: '97', Message: 'Bill already paid' });
+                    }
+                    await BillModel.update({ id: bill.id }, { status: 'paid' });
+                } else {
+                    console.log(`Giao dịch thất bại: ${orderId} - ${rspCode} - ${billdCode}`)
                 }
-                if (bill.status === 'paid') {
-                    return res.status(200).json({ RspCode: '97', Message: 'Bill already paid' });
-                }
-                await BillModel.update({ id: bill.id }, { status: 'paid' });
                 return res.redirect(`${process.env.CLIENT_URL}/payment`);
             } else {
                 error(__filename, 'Fail checksum');

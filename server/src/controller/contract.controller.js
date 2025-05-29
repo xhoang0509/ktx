@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const { sendEmail } = require("../services/email.service");
 const { formatVND } = require("../utils/format");
-
+const { isValidDate } = require("../utils/checkdate");
 const ContractController = {
     async create(req, res) {
         try {
@@ -320,10 +320,28 @@ const ContractController = {
             if (!contract) {
                 return res.status(400).json({ message: "Hợp đồng không tồn tại" });
             }
+
+            if (!body.start_date || !body.end_date) {
+                return res.status(400).json({ message: "Ngày bắt đầu và ngày kết thúc không được để trống" });
+            }
+
+
+            if (!isValidDate(new Date(body.start_date)) || !isValidDate(new Date(body.end_date))) {
+                return res.status(400).json({ message: "Ngày bắt đầu và ngày kết thúc không hợp lệ" });
+            }
+
             if (new Date(body.start_date) > new Date(body.end_date)) {
                 return res.status(400).json({ message: "Ngày bắt đầu không thể lớn hơn ngày kết thúc" });
             }
-            await ContractModel.update({ id }, body);
+
+            const updateData = {
+                start_date: body.start_date,
+                end_date: body.end_date,
+                duration: body.duration,
+                room_id: body.room_id,
+                user_id: body.user_id
+            }
+            await ContractModel.update({ id }, updateData);
             return res.status(200).json({ status: 200, message: "Cập nhật hợp đồng thành công", data: contract });
         } catch (error) {
             return res.status(400).json({ message: error.message });

@@ -13,14 +13,14 @@ export default function ContractPreview({ data }: ContractPreviewProps) {
                 <p className="text-sm mb-1">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</p>
                 <p className="text-sm mb-4">Độc lập - Tự do - Hạnh phúc</p>
                 <h1 className="text-xl font-bold uppercase mb-2">HỢP ĐỒNG THUÊ CHỖ Ở NỘI TRÚ</h1>
-                <p className="text-sm italic">Năm học 2024 - 2025</p>
+                {/* <p className="text-sm italic">Năm học 2024 - 2025</p> */}
             </div>
 
             <div className="mb-6">
                 <p className="text-sm mb-4">
                     Hôm nay, ngày {new Date().getDate()} tháng {new Date().getMonth() + 1} năm{" "}
-                    {new Date().getFullYear()}, tại Ký túc xá Trường Đại học Kỹ thuật Công nghiệp
-                    Thái Nguyên, chúng tôi gồm:
+                    {new Date().getFullYear()}, tại Ký túc xá Trường Đại học Sư phạm Kỹ thuật Hưng
+                    Yên, chúng tôi gồm:
                 </p>
 
                 {/* Party A information */}
@@ -50,10 +50,12 @@ export default function ContractPreview({ data }: ContractPreviewProps) {
                             <p className="text-sm mb-1">Mã SV: {data.student.student_id}</p>
                             <p className="text-sm mb-1">Lớp: {data.student.class_code}</p>
                             <p className="text-sm mb-1">Khoa: {data.student.faculty_name}</p>
+                            <p className="text-sm mb-1">Số điện thoại: {data.student.phone}</p>
+                            <p className="text-sm mb-1">Email: {data.student.email}</p>
+                            <p className="text-sm mb-1">
+                                Hộ khẩu thường trú: {data.student.address}
+                            </p>
                         </div>
-                        <p className="text-sm mb-1">Số điện thoại: {data.student.phone}</p>
-                        <p className="text-sm mb-1">Email: {data.student.email}</p>
-                        <p className="text-sm mb-1">Hộ khẩu thường trú: {data.student.address}</p>
                     </div>
                 </div>
 

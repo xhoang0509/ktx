@@ -52,6 +52,9 @@ const User = new EntitySchema({
         birth_date: {
             type: "varchar"
         },
+        address: {
+            type: "varchar"
+        },
         createdAt: {
             type: "datetime",
             default: () => "CURRENT_TIMESTAMP"
@@ -70,11 +73,6 @@ const User = new EntitySchema({
         contracts: {
             type: "one-to-many",
             target: "Contract",
-            inverseSide: "user"
-        },
-        requests: {
-            type: "one-to-many",
-            target: "Request",
             inverseSide: "user"
         },
     }

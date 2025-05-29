@@ -38,6 +38,7 @@ const UserInfoFields: React.FC<UserInfoFieldsProps> = ({ user }) => {
       <InfoField label="Khoa" value={user.faculty_name} />
       <InfoField label="Lớp" value={user.class_code} />
       <InfoField label="Ngày sinh" value={formatDate(user.birth_date)} />
+      <InfoField label="Hộ khẩu thường trú" value={user.address} />
       <InfoField
         label="Trạng thái" 
         value={

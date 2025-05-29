@@ -3,7 +3,6 @@ import { Card, CardBody, CardHeader, Divider, Input, Select, SelectItem } from "
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { UserDetail, genderOptions } from "../types";
-import AppUploadImage from "@components/common/AppUploadImage";
 
 interface UserInfoFormProps {
     userData: Partial<UserDetail>;
@@ -50,7 +49,6 @@ export default function UserInfoForm({
             <CardBody>
                 <div className="flex flex-col gap-4">
                     <div className="flex justify-center mb-2 max-w-72">
-                        {/* <AppUploadImage control={control} name="avatar" /> */}
                         <Controller
                             name="avatar"
                             control={control}
@@ -145,6 +143,20 @@ export default function UserInfoForm({
                     />
 
                     <Controller
+                        name="birth_date"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Input
+                                {...field}
+                                label="Ngày tháng năm sinh"
+                                placeholder="Nhập ngày tháng năm sinh"
+                                isInvalid={!!fieldState.error}
+                                errorMessage={fieldState.error?.message}
+                            />
+                        )}
+                    />
+
+                    <Controller
                         name="phone"
                         control={control}
                         render={({ field, fieldState }) => (
@@ -152,6 +164,19 @@ export default function UserInfoForm({
                                 {...field}
                                 label="Số điện thoại"
                                 placeholder="Nhập số điện thoại"
+                                isInvalid={!!fieldState.error}
+                                errorMessage={fieldState.error?.message}
+                            />
+                        )}
+                    />
+                    <Controller
+                        name="address"
+                        control={control}
+                        render={({ field, fieldState }) => (
+                            <Input
+                                {...field}
+                                label="Địa chỉ"
+                                placeholder="Nhập địa chỉ"
                                 isInvalid={!!fieldState.error}
                                 errorMessage={fieldState.error?.message}
                             />

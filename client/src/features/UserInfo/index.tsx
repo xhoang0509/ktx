@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import AvatarUpload from "./components/AvatarUpload";
 import UserInfoEdit from "./components/UserInfoEdit";
 import { UserDetail } from "./types";
+
 const UserInfo: React.FC = () => {
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = useState(false);

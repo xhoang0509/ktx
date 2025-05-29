@@ -180,7 +180,7 @@ const UserController = {
 
     async modify(req, res) {
         try {
-            const id = req.user?.userId;
+            const id = req?.user?.userId || req?.params?.id;
             const updateDto = req.body;
             const user = await UserModel.findOne({ where: { id: id } });
             if (!user || !id) {
@@ -200,6 +200,13 @@ const UserController = {
             }
             if (updateDto.phone) {
                 updateData.phone = updateDto.phone
+            }
+
+            if (updateDto.birth_date) {
+                updateData.birth_date = updateDto.birth_date
+            }
+            if (updateDto.address) {
+                updateData.address = updateDto.address
             }
 
             if (updateDto.avatar) {

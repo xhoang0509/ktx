@@ -528,7 +528,7 @@ export default function ContractForm({ onDataChange, student, contractData }: Co
                             )}
                         />
                         {errors.room?.type && (
-                            <p className="text-danger text-xs mt-1">{errors.room.type.message}</p>
+                            <p className="text-danger text-xs mt-1">{errors?.room?.type?.message}</p>
                         )}
                     </div>
                 </div>
