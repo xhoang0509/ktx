@@ -184,7 +184,7 @@ export default function RoomRegistration() {
                                                         className="object-cover mt-6"
                                                     />
                                                     {room.status && (
-                                                        <div className="absolute -top-3 -right-3">
+                                                        <div className="absolute -top-2 left-0">
                                                             {getRoomStatusChip(room.status)}
                                                         </div>
                                                     )}
