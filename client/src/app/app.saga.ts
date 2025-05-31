@@ -34,7 +34,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
                     role: rs.data.role,
                     full_name: rs.data.full_name,
                     avatar: rs.data.avatar,
-                }
+                };
                 onSuccess?.(userInfo);
             }
         } catch (error) {
@@ -52,7 +52,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
     }
 }
 
-export function* login({ payload: { onSuccess, body } }: any) {
+export function* login({ payload: { onSuccess, body, onError } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
@@ -83,13 +83,15 @@ export function* login({ payload: { onSuccess, body } }: any) {
                 description: "Vui lòng kiểm tra lại thông tin",
                 color: "danger",
             });
+            onError?.();
         }
     } catch (error) {
         yield put(AppActions.setIsLoading(false));
+        onError?.();
     }
 }
 
-export function* register({ payload: { onSuccess, body } }: any) {
+export function* register({ payload: { onSuccess, body, onError } }: any) {
     try {
         yield put(AppActions.setIsLoading(true));
         yield delay(50);
@@ -112,9 +114,11 @@ export function* register({ payload: { onSuccess, body } }: any) {
                 description: "Vui lòng kiểm tra lại thông tin",
                 color: "danger",
             });
+            onError?.();
         }
     } catch (error) {
         yield put(AppActions.setIsLoading(false));
+        onError?.();
     }
 }
 export function* logout({ payload: { onSuccess } }: any) {

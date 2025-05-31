@@ -5,7 +5,7 @@ import { ToastContainer } from "react-toastify";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <HeroUIProvider>
+    <HeroUIProvider locale="vi-VN">
        <ToastContainer />
       <Provider store={store}>{children}</Provider>
     </HeroUIProvider>

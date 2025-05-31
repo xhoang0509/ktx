@@ -1,5 +1,5 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import {
     Chip,
     Pagination,
@@ -35,8 +35,15 @@ export type Props = {
     pagination: Pagination;
     onChangePagination: (page: number) => void;
     onDelete: (id: string) => void;
+    onShow: (id: string) => void;
 };
-export default function DeviceTable({ devices, pagination, onChangePagination, onDelete }: Props) {
+export default function DeviceTable({
+    devices,
+    pagination,
+    onChangePagination,
+    onDelete,
+    onShow,
+}: Props) {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
@@ -51,6 +58,10 @@ export default function DeviceTable({ devices, pagination, onChangePagination, o
     const handleDelete = (id: string) => {
         onDelete(id);
     };
+    const handleShow = (id: string) => {
+        onShow(id);
+    };
+
     const renderCell = useCallback((item: any, columnKey: React.Key) => {
         const cellValue = item[columnKey as keyof any];
 
@@ -63,7 +74,7 @@ export default function DeviceTable({ devices, pagination, onChangePagination, o
                 case "under_maintenance":
                     return "Đang bảo trì";
                 case "deleted":
-                    return "Đã xóa";
+                    return "Đã ẩn";
             }
         };
         switch (columnKey) {
@@ -97,14 +108,26 @@ export default function DeviceTable({ devices, pagination, onChangePagination, o
                                 <PencilIcon className="size-4 text-secondary" />
                             </span>
                         </Tooltip>
-                        <Tooltip content="Xóa">
-                            <span
-                                onClick={() => handleDelete(item.id)}
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                                <TrashIcon className="size-4 text-secondary" />
-                            </span>
-                        </Tooltip>
+                        {item.status !== "deleted" && (
+                            <Tooltip content="Ẩn">
+                                <span
+                                    onClick={() => handleDelete(item.id)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <EyeSlashIcon className="size-4 text-red-500" />
+                                </span>
+                            </Tooltip>
+                        )}
+                        {item.status == "deleted" && (
+                            <Tooltip content="Hiện">
+                                <span
+                                    onClick={() => handleShow(item.id)}
+                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                >
+                                    <EyeIcon className="size-4 text-green-500" />
+                                </span>
+                            </Tooltip>
+                        )}
                     </div>
                 );
             default:

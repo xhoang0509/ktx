@@ -4,6 +4,10 @@ export const formatDateTime = (date: string) => {
     return moment(date).utc().format("hh:mm:ss DD-MM-YYYY");
 };
 
+export const formatDate = (date: string) => {
+    return moment(date).utc().format("DD-MM-YYYY");
+};
+
 export function formatVND(amount: number | any): string {
     if (isNaN(amount) || amount === null) {
         return "Số tiền không hợp lệ";

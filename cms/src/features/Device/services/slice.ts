@@ -16,6 +16,7 @@ export const DeviceSlice = createSlice({
     login: (state, { payload }) => {},
     logout: (state, { payload }) => {},
     getDevices: (state, { payload }) => {},
+    getDevicesActive: (state, { payload }) => {},
     setDevices: (state, { payload }) => {
       state.devices = payload;
     },
@@ -23,6 +24,7 @@ export const DeviceSlice = createSlice({
     editDevice: (state, { payload }) => {},
     getDeviceDetail: (state, { payload }) => {},
     deleteDevice: (state, { payload }) => {},
+    showDevice: (state, { payload }) => {},
   },
 });
 const DeviceReducer = DeviceSlice.reducer;

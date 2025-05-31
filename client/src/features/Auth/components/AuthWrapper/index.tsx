@@ -36,7 +36,7 @@ const AuthWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
 
                         {/* Footer */}
                         <div className="text-center mt-4 lg:mt-6 text-xs text-gray-500">
-                            <p>© 2024 {SITE_NAME}. Tất cả quyền được bảo lưu.</p>
+                            <p>© 2025 {SITE_NAME}. Tất cả quyền được bảo lưu.</p>
                         </div>
                     </CardBody>
                 </Card>

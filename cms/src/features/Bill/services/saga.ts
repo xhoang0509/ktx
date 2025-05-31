@@ -18,14 +18,18 @@ export function* getBills({ payload: { onSuccess, pagination, search } }: any) {
     try {
         yield delay(50);
 
-        const rs: { [x: string]: any } = yield SysFetch.get(`/payment/admin-list?${qs.stringify(body)}`);
-        
+        const rs: { [x: string]: any } = yield SysFetch.get(
+            `/payment/admin-list?${qs.stringify(body)}`
+        );
+
         if (rs.status === 200) {
             yield put(BillActions.setBills(rs.data.bills));
             onSuccess?.(rs.data);
         }
     } catch (error: any) {
-        yield put(BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi tải danh sách hóa đơn"));
+        yield put(
+            BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi tải danh sách hóa đơn")
+        );
     }
 }
 
@@ -40,7 +44,9 @@ export function* getBillDetail({ payload: { onSuccess, id } }: any) {
             onSuccess?.(rs.data);
         }
     } catch (error: any) {
-        yield put(BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi tải chi tiết hóa đơn"));
+        yield put(
+            BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi tải chi tiết hóa đơn")
+        );
     }
 }
 
@@ -49,7 +55,7 @@ export function* addBill({ payload: { onSuccess, body } }: any) {
         yield delay(50);
 
         const rs: { [x: string]: any } = yield SysFetch.post(`/payment/admin-bill`, body);
-        
+
         if (rs.status === 200) {
             yield put(BillActions.addBillSuccess(rs.data));
             addToast({
@@ -58,16 +64,13 @@ export function* addBill({ payload: { onSuccess, body } }: any) {
                 color: "success",
             });
             onSuccess?.(rs.data);
-        } else {
-            throw new Error(rs.message);
         }
     } catch (error: any) {
-        yield put(BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi thêm hóa đơn"));
-        addToast({
-            title: "Lỗi",
-            description: error.message || "Có lỗi xảy ra khi thêm hóa đơn",
-            color: "danger",
-        });
+        // addToast({
+        //     title: "Lỗi",
+        //     description: error.message || "Có lỗi xảy ra khi thêm hóa đơn",
+        //     color: "danger",
+        // });
     }
 }
 
@@ -76,7 +79,7 @@ export function* editBill({ payload: { onSuccess, body, id } }: any) {
         yield delay(50);
 
         const rs: { [x: string]: any } = yield SysFetch.put(`/payment/admin-bill/${id}`, body);
-        
+
         if (rs.status === 200) {
             yield put(BillActions.editBillSuccess(rs.data));
             addToast({
@@ -89,7 +92,9 @@ export function* editBill({ payload: { onSuccess, body, id } }: any) {
             throw new Error(rs.message);
         }
     } catch (error: any) {
-        yield put(BillActions.editBillFailure(error.message || "Có lỗi xảy ra khi cập nhật hóa đơn"));
+        yield put(
+            BillActions.editBillFailure(error.message || "Có lỗi xảy ra khi cập nhật hóa đơn")
+        );
         addToast({
             title: "Lỗi",
             description: error.message || "Có lỗi xảy ra khi cập nhật hóa đơn",
@@ -102,7 +107,7 @@ export function* deleteBill({ payload: { onSuccess, id } }: any) {
     try {
         yield delay(50);
         const rs: { [x: string]: any } = yield SysFetch.delete(`/payment/admin-bill/${id}`);
-        
+
         if (rs.status === 200) {
             onSuccess?.(rs.data);
         } else {
@@ -112,4 +117,3 @@ export function* deleteBill({ payload: { onSuccess, id } }: any) {
         yield put(BillActions.addBillFailure(error.message || "Có lỗi xảy ra khi xóa hóa đơn"));
     }
 }
-

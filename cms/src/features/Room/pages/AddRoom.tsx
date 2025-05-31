@@ -37,7 +37,7 @@ export default function AddRoom() {
     const devices = useAppSelector(DeviceSelectors.devices);
 
     useEffect(() => {
-        dispatch(DeviceActions.getDevices({ onSuccess: () => {} }));
+        dispatch(DeviceActions.getDevicesActive({ onSuccess: () => {} }));
     }, []);
 
     const onSubmit = (data: any) => {

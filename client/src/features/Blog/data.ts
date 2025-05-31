@@ -5,7 +5,7 @@ export const blogPosts: BlogPost[] = [
     id: "1",
     title: "Cuộc sống nội trú: Hành trình trưởng thành",
     image: "https://cdn.chuyennguyenhue.com/cnhspl/2018/11/11EDCE27-3824-4B2F-BC99-B3D780393853.jpeg",
-    createdAt: "2024-08-01",
+    createdAt: "2025-08-01",
     content: [
       "Ký túc xá là môi trường giúp sinh viên rèn luyện sự tự lập và tính kỷ luật. Khi sống xa nhà, bạn sẽ phải tự quản lý thời gian, tài chính và học tập của mình. Đây là cơ hội tuyệt vời để bạn trưởng thành hơn trước khi bước vào đời.",
       "Bạn sẽ học cách sống chan hòa với bạn bè từ nhiều vùng miền khác nhau. Điều này không chỉ giúp bạn mở rộng các mối quan hệ xã hội mà còn hiểu thêm về văn hóa, phong tục của các vùng miền khác nhau trong cả nước. Những tình bạn ở ký túc xá thường là những tình bạn bền vững nhất thời sinh viên.",
@@ -18,7 +18,7 @@ export const blogPosts: BlogPost[] = [
     id: "2",
     title: "Ký túc xá - Nơi gắn bó của thời sinh viên",
     image: "https://vluwebmedia.s3.ap-southeast-1.amazonaws.com/medium_vlu_ky_tuc_xa_khong_gian_song_ly_tuong_danh_cho_tan_sinh_vien_thumbnail_cd8099f67c.jpg",
-    createdAt: "2024-07-28",
+    createdAt: "2025-07-28",
     content: [
       "Những năm tháng sống trong ký túc xá đã để lại trong tôi biết bao kỷ niệm khó quên. Từ những buổi nấu ăn cùng nhau vào những ngày cuối tháng cháy túi, đến những đêm thức khuya ôn thi cùng bạn bè, tất cả đều trở thành những khoảnh khắc đáng nhớ.",
       "Chúng tôi đã cùng nhau trải qua những thử thách của cuộc sống sinh viên nơi xứ người. Từ việc thích nghi với môi trường mới, học cách tự chăm sóc bản thân, đến việc đối mặt với áp lực học tập. Tuy vất vả nhưng nhờ có nhau mà mọi khó khăn đều được vượt qua một cách nhẹ nhàng hơn.",
@@ -31,7 +31,7 @@ export const blogPosts: BlogPost[] = [
     id: "3",
     title: "Những hoạt động ngoại khóa thú vị tại KTX",
     image: "https://kenh14cdn.com/k:thumb_w/600/5OVorSFiN3GtS5UvEDmgphSlHBZK6x/Image/2014/12/image001-6f92f/sinh-vien-tphcm-hao-hung-voi-hoat-dong-ngoai-khoa-tu-honda-viet-nam.jpg",
-    createdAt: "2024-07-15",
+    createdAt: "2025-07-15",
     content: [
       "Ký túc xá sinh viên không chỉ là nơi để ở mà còn là trung tâm của nhiều hoạt động ngoại khóa thú vị. Mỗi học kỳ, ban quản lý KTX thường tổ chức các sự kiện văn hóa, thể thao và giải trí để tạo sân chơi lành mạnh cho sinh viên sau những giờ học căng thẳng.",
       "Các câu lạc bộ tại KTX là nơi lý tưởng để sinh viên phát triển sở thích cá nhân. Từ CLB âm nhạc, nhiếp ảnh đến CLB sách, mỗi sinh viên đều có thể tìm thấy không gian phù hợp để thể hiện đam mê của mình. Thông qua các hoạt động này, nhiều bạn đã khám phá ra tài năng tiềm ẩn mà trước đây chưa từng biết đến.",
@@ -44,7 +44,7 @@ export const blogPosts: BlogPost[] = [
     id: "4",
     title: "Làm sao để thích nghi với cuộc sống KTX?",
     image: "https://bekind.vn/wp-content/uploads/2016/03/ktx-sinh-vien-1024x566.png",
-    createdAt: "2024-06-25",
+    createdAt: "2025-06-25",
     content: [
       "Bước vào cuộc sống ký túc xá có thể là một thử thách lớn đối với nhiều tân sinh viên. Việc phải sống xa nhà, ở chung với những người bạn mới trong một không gian hạn chế đòi hỏi khả năng thích nghi và linh hoạt. Tuy nhiên, với một số bí quyết đơn giản, bạn có thể nhanh chóng làm quen và tận hưởng trọn vẹn cuộc sống KTX.",
       "Đầu tiên, hãy cởi mở và chủ động làm quen với bạn cùng phòng ngay từ những ngày đầu tiên. Một cuộc trò chuyện chân thành, chia sẻ về sở thích, thói quen sinh hoạt sẽ giúp các bạn hiểu nhau hơn và thiết lập những quy tắc chung cho cuộc sống tập thể. Đừng ngại ngùng khi bày tỏ mong muốn và cả những điều khiến bạn không thoải mái, nhưng hãy làm điều đó một cách tôn trọng và thấu hiểu.",

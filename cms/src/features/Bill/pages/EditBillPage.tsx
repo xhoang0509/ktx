@@ -140,6 +140,7 @@ export default function EditBillPage() {
                                     type="electricity"
                                     label="Tiền điện"
                                     unitLabel="VNĐ/số"
+                                    errors={errors}
                                 />
 
                                 <ServiceFeeInput
@@ -149,6 +150,7 @@ export default function EditBillPage() {
                                     type="water"
                                     label="Tiền nước"
                                     unitLabel="VNĐ/m³"
+                                    errors={errors}
                                 />
 
                                 {/* Other services */}

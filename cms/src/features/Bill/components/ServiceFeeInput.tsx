@@ -1,6 +1,6 @@
 import AppNumberInput from "@components/common/AppNumberInput";
 import { BeakerIcon, BoltIcon } from "@heroicons/react/24/outline";
-import { Control, Controller, UseFormSetValue, UseFormWatch } from "react-hook-form";
+import { Control, Controller, FieldErrors, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import { BillForm } from "../types";
 
 interface ServiceFeeInputProps {
@@ -11,6 +11,7 @@ interface ServiceFeeInputProps {
     icon?: React.ReactNode;
     label: string;
     unitLabel: string;
+    errors: any | FieldErrors<BillForm>;
 }
 
 export default function ServiceFeeInput({
@@ -21,6 +22,7 @@ export default function ServiceFeeInput({
     icon,
     label,
     unitLabel,
+    errors,
 }: ServiceFeeInputProps) {
     const startReading = watch(`${type}.startReading`);
     const endReading = watch(`${type}.endReading`);
@@ -31,18 +33,13 @@ export default function ServiceFeeInput({
         newEndReading?: number,
         newUnitPrice?: number
     ) => {
-        const startReadingValue = newStartReading !== undefined 
-            ? newStartReading 
-            : (startReading || 0);
-        
-        const endReadingValue = newEndReading !== undefined 
-            ? newEndReading 
-            : (endReading || 0);
-        
-        const unitPriceValue = newUnitPrice !== undefined 
-            ? newUnitPrice 
-            : (unitPrice || 0);
-        
+        const startReadingValue =
+            newStartReading !== undefined ? newStartReading : startReading || 0;
+
+        const endReadingValue = newEndReading !== undefined ? newEndReading : endReading || 0;
+
+        const unitPriceValue = newUnitPrice !== undefined ? newUnitPrice : unitPrice || 0;
+
         const usage = Math.max(0, endReadingValue - startReadingValue);
         const amount = usage * unitPriceValue;
 
@@ -101,6 +98,11 @@ export default function ServiceFeeInput({
                             />
                         )}
                     />
+                    {errors[`${type}`] && (
+                        <div className="text-danger text-xs mt-1">
+                            {errors[`${type}`]?.endReading?.message as string}
+                        </div>
+                    )}
                 </div>
 
                 <div>

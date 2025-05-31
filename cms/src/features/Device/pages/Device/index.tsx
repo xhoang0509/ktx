@@ -14,6 +14,7 @@ export default function DevicePage() {
     const devices = useAppSelector(DeviceSelectors.devices);
     const [pagination, setPagination] = useState(defaultPagination);
     const [search, setSearch] = useState("");
+    const [refresh, setRefresh] = useState(false);
 
     const getDevices = (pagination: any, search: string) => {
         dispatch(
@@ -34,7 +35,7 @@ export default function DevicePage() {
 
     useEffect(() => {
         getDevices(pagination, search);
-    }, [pagination.page]);
+    }, [pagination.page, refresh]);
 
     const onChangePagination = (page: number) => {
         setPagination((prev) => ({ ...prev, page }));
@@ -46,6 +47,12 @@ export default function DevicePage() {
     
     const onDelete = (id: string) => {
         dispatch(DeviceActions.deleteDevice({ id }));
+        setRefresh((prev) => !prev);
+    };
+
+    const onShow = (id: string) => {
+        dispatch(DeviceActions.showDevice({ id }));
+        setRefresh((prev) => !prev);
     };
 
     return (
@@ -70,6 +77,7 @@ export default function DevicePage() {
                     pagination={pagination}
                     onChangePagination={onChangePagination}
                     onDelete={onDelete}
+                    onShow={onShow}
                 />
             </div>
         </div>

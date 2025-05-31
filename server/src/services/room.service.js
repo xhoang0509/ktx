@@ -32,7 +32,7 @@ const RoomService = {
     },
 
     async modify(roomId, data) {
-        const room = await RoomModel.findOneById(roomId);
+        const room = await RoomModel.findOne({ where: { id: roomId } });
         if (!room) {
             throw 'Không thấy phòng';
         }
@@ -56,8 +56,21 @@ const RoomService = {
             }
         }
 
-        Object.assign(room, data);
-        const updateRoom = await RoomModel.save(room);
+        if (data.devices && Array.isArray(data.devices) && data.devices.length > 0) {
+            const devices = data.devices.map(device => {
+                return {
+                    deviceId: device.id,
+                    quantity: device.quantity,
+                }
+            })
+            room.devices = devices;
+        }
+
+        const update = {
+            ...room,
+            ...data
+        }
+        const updateRoom = await RoomModel.save(update);
         if (!updateRoom) {
             throw 'Không thể cập nhập';
         }
@@ -88,17 +101,17 @@ const RoomService = {
             room.students = [];
         }
         if (room.devices && Array.isArray(room.devices)) {
-           const devices = []
-           for(const device of room.devices) {
-            const result = await DeviceModel.findOne({ where: { id: device.deviceId } });
-            if (result) {
-                devices.push({
-                    ...result,
-                    ...device
-                });
+            const devices = []
+            for (const device of room.devices) {
+                const result = await DeviceModel.findOne({ where: { id: device.deviceId } });
+                if (result) {
+                    devices.push({
+                        ...result,
+                        ...device
+                    });
+                }
             }
-           }
-           room.devices = devices;
+            room.devices = devices;
         }
         room.images = room.images.map(image => `${process.env.SERVER_URL}${image}`);
         return room;
@@ -119,10 +132,23 @@ const RoomService = {
             order: { id: "DESC" },
         });
 
-        rooms = rooms.map(room => {
+        rooms = await Promise.all(rooms.map(async (room) => {
             room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
+            if (room.devices && Array.isArray(room.devices)) {
+                const devices = []
+                for (const device of room.devices) {
+                    const result = await DeviceModel.findOne({ where: { id: device.deviceId } });
+                    if (result) {
+                        devices.push({
+                            ...device,
+                            ...result,
+                        });
+                    }
+                }
+                room.devices = devices;
+            }
             return room;
-        });
+        }));
         const totalPages = Math.ceil(total / limit);
         return { totalItems: total, page, limit, totalPages, rooms };
     },

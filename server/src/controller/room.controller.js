@@ -1,4 +1,4 @@
-const { RoomModel } = require("../models/db");
+const { RoomModel, UserModel } = require("../models/db");
 const RoomService = require("../services/room.service");
 const { saveBase64Images } = require("../utils/fileUpload");
 
@@ -78,8 +78,18 @@ const RoomController = {
     async delete(req, res) {
         try {
             const roomId = req.params.roomId;
-            const response = await RoomService.delete(Number(roomId));
-            res.status(200).send({ status: 200, message: "Xoá phòng thành công", data: response });
+            const room = await RoomModel.findOne({ where: { id: roomId } });
+            if (!room) {
+                throw 'Không thấy phòng';
+            }
+
+            const users = await UserModel.find({ where: { room: { id: roomId } } });
+            if (users.length > 0) {
+                res.status(400).send({ status: 400, message: "Phòng có người ở, không thể xoá!", data: { status: false } });
+            } else {
+                await RoomModel.delete(roomId);
+                res.status(200).send({ status: 200, message: "Xoá phòng thành công", data: { status: true } });
+            }
         } catch (error) {
             res.status(500).send({ status: 500, message: "Có lỗi trong quá trình xử lý", error: error.message });
         }

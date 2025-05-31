@@ -1,5 +1,5 @@
 import { Chip, Input } from "@heroui/react";
-import { formatDateTime } from "@utils/fomart.util";
+import { formatDate, formatDateTime } from "@utils/fomart.util";
 import { BookingRequestDetail, BookingRequestStatus } from "../types";
 
 interface BookingRequestInfoProps {
@@ -86,12 +86,12 @@ const BookingRequestInfo = ({ bookingRequest }: BookingRequestInfoProps) => {
                 <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Ngày bắt đầu</div>
-                        <Input value={`${start_date}`} readOnly />
+                        <Input value={`${formatDate(start_date)}`} readOnly />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
                         <div className="mb-2">Ngày kết thúc</div>
-                        <Input value={`${end_date}`} readOnly />
+                        <Input value={`${formatDate(end_date)}`} readOnly />
                     </div>
 
                     <div className="col-span-6 md:col-span-6">
@@ -108,7 +108,6 @@ const BookingRequestInfo = ({ bookingRequest }: BookingRequestInfoProps) => {
                         <div className="mb-2">Loại phòng</div>
                         <Input value={`${room.type}`} readOnly />
                     </div>
-
 
                     <div className="col-span-12">
                         <div className="mb-2">Ghi chú</div>

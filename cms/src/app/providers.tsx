@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <HeroUIProvider>
+    <HeroUIProvider locale="vi-VN">
       <ToastProvider  toastProps={{
         timeout: 3000,
       }}/>

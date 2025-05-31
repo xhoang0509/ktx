@@ -7,10 +7,12 @@ import { DeviceActions } from "./slice";
 
 export function* DeviceSaga() {
     yield takeLatest(DeviceActions.getDevices, getDevices);
+    yield takeLatest(DeviceActions.getDevicesActive, getDevicesActive);
     yield takeLatest(DeviceActions.getDeviceDetail, getDeviceDetail);
     yield takeLatest(DeviceActions.addDevice, addDevice);
     yield takeLatest(DeviceActions.editDevice, editDevice);
     yield takeLatest(DeviceActions.deleteDevice, deleteDevice);
+    yield takeLatest(DeviceActions.showDevice, showDevice);
 }
 
 export function* getDevices({ payload: { onSuccess, pagination, search } }: any) {
@@ -20,6 +22,23 @@ export function* getDevices({ payload: { onSuccess, pagination, search } }: any)
         yield delay(50);
 
         const rs: { [x: string]: any } = yield SysFetch.get(`/device?${qs.stringify(body)}`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(DeviceActions.setDevices(rs.data.devices));
+            onSuccess?.(rs.data);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+
+export function* getDevicesActive({ payload: { onSuccess, pagination, search } }: any) {
+    const body = { ...pagination, search };
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+
+        const rs: { [x: string]: any } = yield SysFetch.get(`/device/list-active?${qs.stringify(body)}`);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             yield put(DeviceActions.setDevices(rs.data.devices));
@@ -106,3 +125,18 @@ export function* deleteDevice({ payload: { onSuccess, id } }: any) {
     }
 }
 
+export function* showDevice({ payload: { onSuccess, id } }: any) {
+    try {
+        yield put(AppActions.setIsLoading(true));
+        yield delay(50);
+        const rs: { [x: string]: any } = yield SysFetch.put(`/device/${id}/show`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}

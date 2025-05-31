@@ -35,6 +35,36 @@ const DeviceController = {
         }
     },
 
+    async listActive(req, res) {
+        try {
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const search = req.query.search || "";
+            const skip = (page - 1) * limit;
+
+            const filterDevice = search ? [
+                { status: 'good' },
+                { name: Like(`%${search}%`) },
+            ] : { status: 'good' };
+
+            const [devices, total] = await DeviceModel.findAndCount({
+                where: filterDevice,
+                take: limit,
+                skip: skip,
+                order: { id: "DESC" },
+            });
+            const data = {
+                total,
+                page,
+                limit,
+                devices
+            };
+            res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data });
+        } catch (error) {
+            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        }
+    },
+
     async detail(req, res) {
         try {
             const deviceId = req.params.deviceId;
@@ -54,6 +84,22 @@ const DeviceController = {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }
     },
+
+    async show(req, res) {
+        try {
+            const deviceId = req.params.deviceId;
+            const device = await DeviceModel.findOne({ where: { id: deviceId } });
+            if (!device) {
+                throw 'Không tìm thấy thiết bị';
+            }
+            device.status = 'good';
+            await DeviceModel.save(device);
+            res.status(200).send({ status: 200, message: 'Hiện thiết bị thành công', data: device });
+        } catch (error) {
+            console.log(error)
+            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        }
+    }
 };
 
 module.exports = DeviceController; 
