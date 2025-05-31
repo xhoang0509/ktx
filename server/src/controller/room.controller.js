@@ -91,7 +91,13 @@ const RoomController = {
                 res.status(200).send({ status: 200, message: "Xoá phòng thành công", data: { status: true } });
             }
         } catch (error) {
-            res.status(500).send({ status: 500, message: "Có lỗi trong quá trình xử lý", error: error.message });
+            let message = "Có lỗi trong quá trình xử lý";
+            if (error.message.includes("Cannot delete or update a parent row: a foreign key constraint fails") && error.message.includes("contract")) {
+                message = "Phòng này đã được đăng ký hợp đồng, không thể xoá!";
+            } else if (error.message.includes("Cannot delete or update a parent row: a foreign key constraint fails") && error.message.includes("user")) {
+                message = "Phòng có người ở, không thể xoá!";
+            }
+            res.status(500).send({ status: 500, message: message, error: error.message });
         }
     },
 
