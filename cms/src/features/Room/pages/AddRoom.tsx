@@ -34,7 +34,7 @@ export default function AddRoom() {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const devices = useAppSelector(DeviceSelectors.devices);
+    const devices = useAppSelector(DeviceSelectors.devicesActive);
 
     useEffect(() => {
         dispatch(DeviceActions.getDevicesActive({ onSuccess: () => {} }));

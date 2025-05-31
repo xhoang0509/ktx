@@ -32,7 +32,7 @@ export default function EditRoomPage() {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const devices = useAppSelector(DeviceSelectors.devices);
+    const devices = useAppSelector(DeviceSelectors.devicesActive);
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -53,7 +53,7 @@ export default function EditRoomPage() {
     };
 
     useEffect(() => {
-        dispatch(DeviceActions.getDevices({ onSuccess: () => {} }));
+        dispatch(DeviceActions.getDevicesActive({ onSuccess: () => {} }));
     }, []);
 
     const addDevice = () => {

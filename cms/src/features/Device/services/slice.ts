@@ -3,10 +3,12 @@ import { RootState } from "src/services/store";
 
 interface DeviceState {
   devices: any[];
+  devicesActive: any[];
 }
 
 const initialState: DeviceState = {
   devices: [],
+  devicesActive: [],
 };
 
 export const DeviceSlice = createSlice({
@@ -19,6 +21,9 @@ export const DeviceSlice = createSlice({
     getDevicesActive: (state, { payload }) => {},
     setDevices: (state, { payload }) => {
       state.devices = payload;
+    },
+    setDevicesActive: (state, { payload }) => {
+      state.devicesActive = payload;
     },
     addDevice: (state, { payload }) => {},
     editDevice: (state, { payload }) => {},
@@ -33,4 +38,5 @@ export const DeviceActions = DeviceSlice.actions;
 
 export const DeviceSelectors = {
   devices: (state: RootState) => state.device.devices,
+  devicesActive: (state: RootState) => state.device.devicesActive,
 };

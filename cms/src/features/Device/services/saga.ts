@@ -41,7 +41,7 @@ export function* getDevicesActive({ payload: { onSuccess, pagination, search } }
         const rs: { [x: string]: any } = yield SysFetch.get(`/device/list-active?${qs.stringify(body)}`);
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
-            yield put(DeviceActions.setDevices(rs.data.devices));
+            yield put(DeviceActions.setDevicesActive(rs.data.devices));
             onSuccess?.(rs.data);
         }
     } catch (error) {
