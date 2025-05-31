@@ -31,8 +31,6 @@ const DeviceService = {
 
         const [devices, total] = await DeviceModel.findAndCount({
             where: filterDevice,
-            take: limit,
-            skip: skip,
             order: { id: "DESC" },
         });
         return {
