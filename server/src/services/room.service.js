@@ -3,7 +3,6 @@ const { Like, Not } = require("typeorm");
 const { saveBase64Images } = require("../utils/fileUpload");
 
 const RoomService = {
-
     async create(data) {
         const existingRoom = await RoomModel.findOne({
             where: {
@@ -159,45 +158,6 @@ const RoomService = {
             throw 'Không thấy phòng';
         }
         await RoomModel.delete(roomId);
-    },
-
-    async getRoommates(userId) {
-        const user = await this.userRepository.findOne({
-            where: { id: userId },
-            relations: ["room"],
-        });
-        if (!user || !user.room) {
-            throw new Error("User không có phòng hoặc không tồn tại");
-        }
-
-        return this.userRepository.find({
-            where: {
-                room: user.room,
-                id: Not(userId),
-            },
-            select: ["id", "full_name", "phone"]
-        })
-    },
-
-    async getRoomChangeHistory(userId) {
-        const contracts = await this.contractRepo.find({
-            where: { user: { id: userId } },
-            relations: ["room"],
-            order: { start_date: "ASC" },
-        });
-        if (!contracts.length) {
-            throw new Error("Bạn chưa có lịch sử chuyển phòng");
-        }
-
-        return contracts.map((c) => ({
-            id: c.id,
-            user: c.user,
-            room: c.room,
-            duration: c.duration,
-            status: c.status,
-            start_date: c.start_date,
-            end_date: c.end_date
-        }));
     },
 }
 

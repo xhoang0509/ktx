@@ -7,6 +7,7 @@ const path = require("path");
 const { sendEmail } = require("../services/email.service");
 const { formatVND } = require("../utils/format");
 const { isValidDate } = require("../utils/checkdate");
+
 const ContractController = {
     async create(req, res) {
         try {

@@ -12,24 +12,33 @@ export function* AppSaga() {
 }
 
 export function* getUserInfo({ payload: { onSuccess } }: any) {
-    // try {
-    //   yield put(AppActions.setIsLoading(true));
-    //   yield delay(50);
-    //   const rs: { [x: string]: any } = yield SysFetch.get(`/admin/user-info`);
-    //   yield put(AppActions.setIsLoading(false));
-    //   if (rs.status === 200) {
-    //     onSuccess?.(rs.data);
-    //   }
-    // } catch (error) {
-    //   yield put(AppActions.setIsLoading(false));
-    // }
     const isLogin: [string: any] = yield getAccessToken();
     if (isLogin) {
-        onSuccess?.({
-            id: "1",
-            username: "admin",
-            role: "admin",
-        });
+        try {
+            yield put(AppActions.setIsLoading(true));
+            yield delay(50);
+            const rs: { [x: string]: any } = yield SysFetch.get(`/admin/info`);
+            yield put(AppActions.setIsLoading(false));
+            if (rs.status === 200) {
+                yield put(AppActions.setUserInfo({
+                    id: rs.data.id,
+                    username: rs.data.username,
+                    role: rs.data.role,
+                }));
+                onSuccess?.({
+                    id: rs.data.id,
+                    username: rs.data.username,
+                    role: rs.data.role,
+                });
+            }
+        } catch (error) {
+            yield put(AppActions.setIsLoading(false));
+            onSuccess?.({
+                id: null,
+                username: null,
+                role: "guest",
+            });
+        }
     } else {
         onSuccess?.({
             id: null,

@@ -1,7 +1,5 @@
 const crypto = require('crypto');
 const querystring = require('qs');
-
-const PaymentService = require("../services/payment.service");
 const { UserModel, ContractModel, BillModel, RoomModel } = require('../models/db');
 const { Like } = require('typeorm');
 const { generateCode } = require('../utils/random');
@@ -12,45 +10,6 @@ const { vnp_Version, vnp_Url, vnp_TmnCode, vnp_HashSecret } = process.env;
 const secretKey = vnp_HashSecret;
 
 const PaymentController = {
-    async addUtilityCost(req, res) {
-        try {
-            const { roomId, utilityAmount, month, year } = req.body;
-            const response = await PaymentService.addUtilityCost(roomId, utilityAmount, month, year);
-
-            return res.status(200).json({ message: "Đã cập nhật tiền điện nước", response });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi nhập tiền điện nước", error: error.message });
-        }
-    },
-
-    async getStudentDebts(req, res) {
-        try {
-            const response = await PaymentService.getStudentDebts();
-            return res.status(200).json({ response });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi lấy danh sách công nợ", error: error.message });
-        }
-    },
-
-    async getFinancialReport(req, res) {
-        try {
-            const { month, year } = req.query;
-            const response = await PaymentService.getFinancialReport(Number(month), Number(year));
-            return res.status(200).json({ response });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi xuất báo cáo", error: error.message });
-        }
-    },
-
-    async getLatePayments(req, res) {
-        try {
-            const latePayments = await PaymentService.getLatePayments();
-            return res.status(200).json({ latePayments });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi lấy danh sách thanh toán trễ hạn", error: error.message });
-        }
-    },
-
     //Sinh viên
     async getStudentPayments(req, res) {
         try {
@@ -78,26 +37,6 @@ const PaymentController = {
             return res.status(200).json({ status: 200, message: "Lấy danh sách hóa đơn thành công", data: { bills, user } });
         } catch (error) {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy danh sách hóa đơn", error: error.message });
-        }
-    },
-
-    async completePayment(req, res) {
-        try {
-            const { paymentId, paymentMethod } = req.body;
-            const response = await PaymentService.completePayment(paymentId, paymentMethod);
-            return res.status(200).json({ message: "Thanh toán thành công", response });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi thanh toán", error: error.message });
-        }
-    },
-
-    async getPaymentHistory(req, res) {
-        try {
-            const userId = req.user?.sub;
-            const payments = await PaymentService.getPaymentHistory(userId);
-            return res.status(200).json({ payments });
-        } catch (error) {
-            return res.status(500).json({ message: "Lỗi khi lấy lịch sử thanh toán", error: error.message });
         }
     },
 
@@ -309,6 +248,7 @@ const PaymentController = {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy danh sách hóa đơn", error: error.message });
         }
     },
+
     async getBillById(req, res) {
         try {
             const { id } = req.params;
@@ -326,6 +266,7 @@ const PaymentController = {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy hóa đơn", error: error.message });
         }
     },
+
     async editBill(req, res) {
         try {
             const { id } = req.params;

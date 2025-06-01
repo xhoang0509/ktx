@@ -12,8 +12,6 @@ router.put("/admin-bill/:id", PaymentController.editBill);
 
 //Sinh viên
 router.post("/student-my-payments", authMiddleware, PaymentController.getStudentPayments);
-router.post("/student-pay", PaymentController.completePayment);
-router.get("/student-history", authMiddleware, PaymentController.getPaymentHistory);
 
 router.post('/vnpay-create', PaymentController.createPaymentUrl);
 router.get('/ipn-url', PaymentController.getCodeIpnUrl);

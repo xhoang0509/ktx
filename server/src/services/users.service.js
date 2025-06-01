@@ -124,7 +124,7 @@ const UserService = {
 
 
     async remove(userId) {
-        const user = await UserModel.findOneById(userId);
+        const user = await UserModel.findOne({ where: { id: userId } });
         if (!user) {
             throw 'Không tìm thấy tài khoản';
         }

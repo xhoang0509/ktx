@@ -53,7 +53,11 @@ export default function ListContract() {
                     {contracts.length > 0 ? (
                         <div className="grid grid-cols-1 gap-6">
                             {contracts.map((contract) => (
-                                <ContractCard key={contract.id} contract={contract} setIsRefetch={setIsRefetch} />
+                                <ContractCard
+                                    key={contract.id}
+                                    contract={contract}
+                                    setIsRefetch={setIsRefetch}
+                                />
                             ))}
                         </div>
                     ) : (

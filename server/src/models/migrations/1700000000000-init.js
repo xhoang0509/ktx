@@ -24,8 +24,13 @@ class InitMigration {
                 max_capacity INT NOT NULL,
                 current_capacity INT DEFAULT 0,
                 base_price DECIMAL(10,2) NOT NULL,
-                images JSON DEFAULT ('[]'),
+                images JSON,
                 status VARCHAR(255) DEFAULT 'active',
+                building VARCHAR(255),
+                floor INT,
+                type VARCHAR(255),
+                note VARCHAR(255),
+                devices JSON,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
             )
@@ -36,7 +41,9 @@ class InitMigration {
             CREATE TABLE IF NOT EXISTS device (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(255) NOT NULL,
-                status ENUM('good', 'broken', 'deleted') DEFAULT 'good',
+                type VARCHAR(255) NOT NULL,
+                year_of_manufacture INT NOT NULL,
+                status ENUM('good', 'broken', 'under_maintenance', 'deleted') DEFAULT 'good',
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
             )
@@ -47,32 +54,21 @@ class InitMigration {
             CREATE TABLE IF NOT EXISTS user (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 full_name VARCHAR(255) NOT NULL,
-                username VARCHAR(255) NOT NULL UNIQUE,
+                email VARCHAR(255) NOT NULL UNIQUE,
                 gender ENUM('male', 'female', 'other') DEFAULT 'other',
-                password VARCHAR(255) NOT NULL,
+                password VARCHAR(1000) NOT NULL,
                 phone VARCHAR(20),
                 student_id VARCHAR(20) NOT NULL UNIQUE,
-                avatar VARCHAR(255),
+                avatar VARCHAR(255) NOT NULL,
                 status ENUM('active', 'inactive', 'graduated', 'deleted') DEFAULT 'active',
+                faculty_name VARCHAR(255) NOT NULL,
+                class_code VARCHAR(255) NOT NULL,
+                birth_date VARCHAR(255) NOT NULL,
+                address VARCHAR(255) NOT NULL,
                 room_id INT,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE SET NULL
-            )
-        `);
-
-        // Tạo bảng RoomDevice
-        await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS room_device (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                quantity INT NOT NULL,
-                condition ENUM('good', 'broken', 'under_maintenance') NOT NULL,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                room_id INT,
-                device_id INT,
-                FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE CASCADE,
-                FOREIGN KEY (device_id) REFERENCES device(id) ON DELETE CASCADE
             )
         `);
 
@@ -83,105 +79,41 @@ class InitMigration {
                 start_date DATE NOT NULL,
                 end_date DATE NOT NULL,
                 duration INT NOT NULL,
-                status ENUM('pending', 'active', 'terminated', 'expired') DEFAULT 'pending',
+                status ENUM('pending', 'active', 'terminated', 'expired', 'cancelled') DEFAULT 'pending',
                 user_id INT,
                 room_id INT,
+                createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
                 FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE SET NULL
             )
         `);
 
-        // Tạo bảng Payment
+        // Tạo bảng Bill
         await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS payment (
+            CREATE TABLE IF NOT EXISTS bill (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                rent_amount DECIMAL(10,2) NOT NULL,
-                utility_amount DECIMAL(10,2) DEFAULT 0,
-                total_amount DECIMAL(10,2) NOT NULL,
-                payment_method ENUM('VNPay', 'cash', 'bank_transfer'),
-                status ENUM('pending', 'completed', 'failed') DEFAULT 'pending',
-                payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                month INT NOT NULL,
-                year INT NOT NULL,
-                is_settled BOOLEAN DEFAULT false,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                user_id INT,
+                code VARCHAR(255) NOT NULL,
+                electricity JSON,
+                water JSON,
+                internet INT,
+                cleaning INT,
+                totalAmount INT,
+                status ENUM('pending', 'paid', 'overdue') DEFAULT 'pending',
                 room_id INT,
-                FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-                FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE SET NULL
-            )
-        `);
-
-        // Tạo bảng Request
-        await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS request (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                category ENUM('repair', 'complaint', 'suggestion', 'leave_dorm', 'guest_visit') NOT NULL,
-                description TEXT NOT NULL,
-                status ENUM('pending', 'in_progress', 'resolved', 'approved', 'rejected') DEFAULT 'pending',
+                contract_id INT,
                 createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                user_id INT,
-                FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-            )
-        `);
-
-        // Tạo bảng Violation
-        await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS violation (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type ENUM('reward', 'punishment') NOT NULL,
-                description TEXT NOT NULL,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                user_id INT,
-                FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-            )
-        `);
-
-        // Tạo bảng Notification
-        await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS notification (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                type ENUM('all', 'personal') DEFAULT 'all',
-                title VARCHAR(255) NOT NULL,
-                message TEXT NOT NULL,
-                is_read BOOLEAN DEFAULT false,
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                sender_id INT,
-                receiver_id INT,
-                FOREIGN KEY (sender_id) REFERENCES admin(id) ON DELETE SET NULL,
-                FOREIGN KEY (receiver_id) REFERENCES user(id) ON DELETE CASCADE
-            )
-        `);
-
-        // Tạo bảng MaintenanceRequest
-        await queryRunner.query(`
-            CREATE TABLE IF NOT EXISTS maintenance_request (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                description VARCHAR(255) NOT NULL,
-                status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-                createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-                room_device_id INT,
-                user_id INT,
-                FOREIGN KEY (room_device_id) REFERENCES room_device(id) ON DELETE CASCADE,
-                FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+                FOREIGN KEY (room_id) REFERENCES room(id) ON DELETE SET NULL,
+                FOREIGN KEY (contract_id) REFERENCES contract(id) ON DELETE SET NULL
             )
         `);
     }
 
     async down(queryRunner) {
         // Xóa bảng theo thứ tự ngược lại để tránh vi phạm ràng buộc khóa ngoại
-        await queryRunner.query(`DROP TABLE IF EXISTS maintenance_request`);
-        await queryRunner.query(`DROP TABLE IF EXISTS notification`);
-        await queryRunner.query(`DROP TABLE IF EXISTS violation`);
-        await queryRunner.query(`DROP TABLE IF EXISTS request`);
-        await queryRunner.query(`DROP TABLE IF EXISTS payment`);
+        await queryRunner.query(`DROP TABLE IF EXISTS bill`);
         await queryRunner.query(`DROP TABLE IF EXISTS contract`);
-        await queryRunner.query(`DROP TABLE IF EXISTS room_device`);
         await queryRunner.query(`DROP TABLE IF EXISTS user`);
         await queryRunner.query(`DROP TABLE IF EXISTS device`);
         await queryRunner.query(`DROP TABLE IF EXISTS room`);

@@ -13,7 +13,6 @@ import { ContractService } from "@services/contract.service";
 import { getGender, getGenderColor } from "@utils/gender.util";
 import moment from "moment";
 import React from "react";
-import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 import { Contract } from "../types";
 import ContractStatusBadge from "./ContractStatusBadge";
@@ -24,7 +23,6 @@ interface ContractCardProps {
 }
 
 const ContractCard: React.FC<ContractCardProps> = ({ contract, setIsRefetch }) => {
-    const navigate = useNavigate();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
     const formatDate = (dateString: string) => {
         return moment(dateString).format("DD/MM/YYYY");
@@ -100,7 +98,7 @@ const ContractCard: React.FC<ContractCardProps> = ({ contract, setIsRefetch }) =
                     </div>
                 </div>
 
-                {["pending",].includes(contract.status) && (
+                {["pending"].includes(contract.status) && (
                     <div className="border-t border-gray-100 pt-4">
                         <Button color="danger" onClick={handleCancelContract}>
                             Hủy hợp đồng

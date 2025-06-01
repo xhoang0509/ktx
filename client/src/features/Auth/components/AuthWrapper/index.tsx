@@ -3,12 +3,8 @@ import schoolLogo from "@assets/images/school_logo.jpg";
 import { SITE_NAME } from "@config/site";
 import { Card, CardBody } from "@heroui/react";
 import React, { ReactNode } from "react";
-import { useLocation } from "react-router";
 
 const AuthWrapper: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const location = useLocation();
-    const isRegister = location.pathname === "/register";
-
     return (
         <div className="min-h-screen flex flex-col lg:flex-row">
             {/* Left side - Form */}

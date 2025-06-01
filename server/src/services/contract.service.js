@@ -144,65 +144,6 @@ const ContractService = {
         return newContract;
     },
 
-    async transferRoom(userId, newRoomId) {
-        const user = await UserModel.findOne({
-            where: { id: userId },
-            relations: ["room", "contracts"],
-        });
-
-        if (!user || !user.room) {
-            throw new Error("User không có phòng để chuyển");
-        }
-
-        const oldRoom = user.room;
-        const newRoom = await RoomModel.findOne({ where: { id: newRoomId } });
-
-        if (!newRoom) {
-            throw new Error("Phòng mới không tồn tại");
-        }
-
-        if (newRoom.current_capacity >= newRoom.max_capacity) {
-            throw new Error("Phòng mới đã đầy");
-        }
-
-        // Tìm hợp đồng hiện tại và cập nhật trạng thái
-        const currentContract = await ContractModel.findOne({
-            where: { user: { id: userId }, status: "active" },
-        });
-
-        if (currentContract) {
-            currentContract.status = "terminated";
-            await ContractModel.save(currentContract);
-        }
-
-        // Giảm số lượng người ở phòng cũ
-        oldRoom.current_capacity -= 1;
-        await RoomModel.save(oldRoom);
-
-        // Tạo hợp đồng mới
-        const startDate = new Date();
-        const duration = currentContract ? currentContract.duration : 6; // Giữ nguyên thời hạn cũ
-        const endDate = new Date();
-        endDate.setMonth(startDate.getMonth() + duration);
-
-        const newContract = ContractModel.create({
-            user,
-            room: newRoom,
-            start_date: startDate.toISOString().split("T")[0],
-            end_date: endDate.toISOString().split("T")[0],
-            duration,
-            status: "pending",
-        });
-
-        await ContractModel.save(newContract);
-
-        // Tăng số lượng người ở phòng mới
-        newRoom.current_capacity += 1;
-        await RoomModel.save(newRoom);
-
-        return newContract;
-    },
-
     async approveContract(contractId, approve) {
         const contract = await ContractModel.findOne({
             where: { id: contractId },

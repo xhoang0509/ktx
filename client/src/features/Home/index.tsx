@@ -1,7 +1,7 @@
-import React from "react";
 import { SITE_NAME } from "@config/site";
-import ReasonCard from "./components/ReasonCard";
+import React from "react";
 import ArticleCard from "./components/ArticleCard";
+import ReasonCard from "./components/ReasonCard";
 import { dormitoryReasons, featuredArticles } from "./data";
 
 const Home: React.FC = () => {

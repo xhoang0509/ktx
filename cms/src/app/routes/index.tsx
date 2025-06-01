@@ -181,11 +181,6 @@ function AppRouter() {
         },
 
         { path: "*", title: "", element: <NotFoundPage /> },
-        // {
-        //   path: ROUTE_PATHS.PERMISSION_DENIED,
-        //   title: "Không có quyền truy cập",
-        //   element: <PermissionDeniedPage />,
-        // },
     ];
 
     return (

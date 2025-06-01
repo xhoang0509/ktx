@@ -6,7 +6,8 @@ html {
   overflow: hidden;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   width: 100%;
 }
@@ -18,30 +19,3 @@ body {
   background-color: #f9f9f9;
   overflow-y: auto;
 }
-
-#root {
-}
-
-
-@keyframes scrollBackground {
-  from {
-    background-position: 0 0;
-  }
-  to {
-    background-position: 0 100%;
-  }
-}
-
-.bg-scroll {
-  background-image: url('../assets/images/background.jpg'), url('../assets/images/background.jpg'); /* Ảnh nền */
-  background-size: contain; /* Chiều cao mỗi ảnh */
-  background-repeat: repeat-y; /* Lặp theo chiều dọc */
-  animation: scrollBackground 5s linear infinite; /* Animation chạy mãi mãi */
-  background-position: 0 0, 0 100%;
-}
-
-/* .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
-} */
