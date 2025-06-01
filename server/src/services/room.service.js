@@ -146,6 +146,17 @@ const RoomService = {
                 }
                 room.devices = devices;
             }
+
+            const students = await UserModel.find({
+                where: { room: { id: room.id } },
+                select: ["id", "full_name", "phone", "gender", "student_id", "class_code", "faculty_name"]
+            });
+            if (students.length > 0) {
+                room.students = students;
+            } else {
+                room.students = [];
+            }
+
             return room;
         }));
         const totalPages = Math.ceil(total / limit);

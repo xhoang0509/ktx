@@ -43,12 +43,13 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
         { name: "Tên phòng", uid: "name" },
         { name: "Giới tính", uid: "gender" },
         { name: "Sức chứa", uid: "capacity", align: "center" },
+        { name: "Sinh viên", uid: "students", align: "center" },
         { name: "Giá cơ bản", uid: "price", align: "right" },
         { name: "Tầng", uid: "floor", align: "center" },
         { name: "Tòa nhà", uid: "building" },
         { name: "Loại phòng", uid: "type" },
         { name: "Hình ảnh", uid: "images", align: "center" },
-        { name: "Cập nhật lần cuối", uid: "updatedAt" },
+        // { name: "Cập nhật lần cuối", uid: "updatedAt" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Thao tác", uid: "actions", align: "center" },
     ];
@@ -109,6 +110,52 @@ export default function RoomTable({ rooms, pagination, onChangePagination }: Roo
                     return (
                         <div className={capacityColor}>
                             {item.current_capacity}/{item.max_capacity}
+                        </div>
+                    );
+                case "students":
+                    return (
+                        <div className="flex flex-col gap-1 max-w-[120px]">
+                            {item.students && item.students.length > 0 ? (
+                                <>
+                                    {item.students
+                                        .slice(0, 2)
+                                        .map((student: any, index: number) => (
+                                            <Tooltip
+                                                key={index}
+                                                content={`${
+                                                    student.full_name || `SV ${student.id}`
+                                                }`}
+                                            >
+                                                <div className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-center truncate cursor-help">
+                                                    {student.full_name || `SV ${student.id}`}
+                                                </div>
+                                            </Tooltip>
+                                        ))}
+                                    {item.students.length > 2 && (
+                                        <Tooltip
+                                            content={`Tổng cộng ${
+                                                item.students.length
+                                            } sinh viên: ${item.students
+                                                .map(
+                                                    (s: any) => s.full_name || `SV ${s.id}`
+                                                )
+                                                .join(", ")}`}
+                                        >
+                                            <div className="text-xs text-gray-500 text-center cursor-help">
+                                                +{item.students.length - 2} khác
+                                            </div>
+                                        </Tooltip>
+                                    )}
+                                </>
+                            ) : item.current_capacity > 0 ? (
+                                <div className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded-full text-center">
+                                    {item.current_capacity} sinh viên
+                                </div>
+                            ) : (
+                                <div className="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full text-center">
+                                    Trống
+                                </div>
+                            )}
                         </div>
                     );
                 case "price":

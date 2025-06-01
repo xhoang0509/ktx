@@ -26,9 +26,12 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
         address: user.address || "",
         faculty_name: user.faculty_name,
         class_code: user.class_code,
+        gender: user.gender,
     });
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>
+    ) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
             ...prev,
@@ -50,6 +53,7 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
                 address: user.address || "",
                 faculty_name: user.faculty_name,
                 class_code: user.class_code,
+                gender: user.gender,
             });
         }
         setIsEditing(!isEditing);
@@ -136,7 +140,19 @@ const UserInfoEdit: React.FC<UserInfoEditProps> = ({
 
                 <div className="space-y-2">
                     <label className="block text-sm text-gray-500">Giới tính</label>
-                    <p className="text-base font-medium">{getGender(user.gender)}</p>
+                    {isEditing ? (
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleInputChange}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        >
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                        </select>
+                    ) : (
+                        <p className="text-base font-medium">{getGender(user.gender)}</p>
+                    )}
                 </div>
 
                 <div className="space-y-2">

@@ -4,6 +4,15 @@ export enum RoomGender {
   OTHER = "other"
 }
 
+export interface Student {
+  id: string;
+  name?: string;
+  full_name?: string;
+  student_id?: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface Room {
   id: string;
   name: string;
@@ -14,6 +23,7 @@ export interface Room {
   building: string;
   note: string;
   base_price: number;
+  students?: Student[];
   createdAt: string;
   updatedAt: string;
 }

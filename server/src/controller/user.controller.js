@@ -209,6 +209,10 @@ const UserController = {
                 updateData.address = updateDto.address
             }
 
+            if (updateDto.gender) {
+                updateData.gender = updateDto.gender
+            }
+
             if (updateDto.avatar) {
                 if (typeof updateDto.avatar === 'string' && updateDto.avatar.includes('base64')) {
                     const newImagePaths = await saveBase64Images([updateDto.avatar], "users");
