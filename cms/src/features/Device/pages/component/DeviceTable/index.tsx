@@ -1,5 +1,5 @@
 import { ROUTE_PATHS } from "@constants/route.const";
-import { EyeIcon, EyeSlashIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { EyeIcon, EyeSlashIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
     Chip,
     Pagination,
@@ -12,6 +12,7 @@ import {
     Tooltip,
 } from "@heroui/react";
 import { useAppDispatch } from "@services/store";
+import { formatDateTime } from "@utils/fomart.util";
 import { useCallback, useMemo } from "react";
 import { useNavigate } from "react-router";
 
@@ -54,6 +55,8 @@ export default function DeviceTable({
         { name: "Năm sản xuất", uid: "year_of_manufacture" },
         { name: "Trạng thái", uid: "status", align: "center" },
         { name: "Tuỳ chọn", uid: "actions", align: "center" },
+        { name: "Ngày tạo", uid: "createdAt", align: "center" },
+        { name: "Ngày cập nhật", uid: "updatedAt", align: "center" },
     ];
     const handleDelete = (id: string) => {
         onDelete(id);
@@ -78,6 +81,10 @@ export default function DeviceTable({
             }
         };
         switch (columnKey) {
+            case "createdAt":
+                return formatDateTime(item.createdAt);
+            case "updatedAt":
+                return formatDateTime(item.updatedAt);
             case "status":
                 return (
                     <Chip

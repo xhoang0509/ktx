@@ -25,7 +25,6 @@ const RoomStatusTable = ({ data }: RoomStatusTableProps) => {
 
     return (
         <div className="h-full">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Tình trạng phòng ở</h3>
             <div className="overflow-auto max-h-80">
                 <Table aria-label="Room status table" className="min-w-full">
                     <TableHeader>

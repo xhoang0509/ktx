@@ -564,7 +564,7 @@ export default function ContractForm({ onDataChange, student, contractData }: Co
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">
-                            Từ ngày (DD/MM/YYYY)
+                            Từ ngày (YYYY-MM-DD)
                         </label>
                         <Controller
                             control={control}
@@ -590,7 +590,7 @@ export default function ContractForm({ onDataChange, student, contractData }: Co
                     </div>
                     <div>
                         <label className="block text-sm font-medium mb-1">
-                            Đến ngày (DD/MM/YYYY)
+                            Đến ngày (YYYY-MM-DD)
                         </label>
                         <Controller
                             control={control}

@@ -1,40 +1,96 @@
 import { SITE_MENU } from "@config/site";
 import { PowerIcon } from "@heroicons/react/24/solid";
-import { Image } from "@heroui/react";
-import React from "react";
-import { useNavigate } from "react-router";
+import { Image, Divider, Tooltip } from "@heroui/react";
+import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router";
 import MenuItem from "./MenuItem";
 import schoolLogo from "@assets/images/school_logo.jpg";
 
 const SideBar: React.FC = () => {
     const navigate = useNavigate();
-    return (
-        <div className="min-w-[260px] p-4 bg-white border-r-1 max-h-[calc(100vh-24px)] overflow-y-auto flex flex-col sticky top-0">
-            <div
-                className="text-primary font-bold text-2xl cursor-pointer flex gap-4 items-center"
-                onClick={() => navigate("/")}
-            >
-                <Image src={schoolLogo} className="w-[50px]" />
-                Room Track
-            </div>
+    const location = useLocation();
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
-            <div className="px-2 mt-8 flex-1">
+    return (
+        <div
+            className={`
+            ${isCollapsed ? "min-w-[80px]" : "min-w-[280px]"} 
+            transition-all duration-300 ease-in-out
+            p-4 bg-gradient-to-b from-white to-gray-50 
+            border-r border-gray-200 
+            max-h-[calc(100vh-60px)] overflow-y-auto 
+            flex flex-col sticky top-0 
+            shadow-sm
+        `}
+        >
+            <button
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="mb-4 p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors self-start"
+            >
+                <div
+                    className={`w-4 h-0.5 bg-gray-600 transition-transform ${
+                        isCollapsed ? "rotate-45" : ""
+                    }`}
+                ></div>
+                <div
+                    className={`w-4 h-0.5 bg-gray-600 my-1 transition-opacity ${
+                        isCollapsed ? "opacity-0" : "opacity-100"
+                    }`}
+                ></div>
+                <div
+                    className={`w-4 h-0.5 bg-gray-600 transition-transform ${
+                        isCollapsed ? "-rotate-45 -mt-1.5" : ""
+                    }`}
+                ></div>
+            </button>
+
+            <div className="flex-1 space-y-1">
+                <div
+                    className={`${
+                        isCollapsed ? "hidden" : "block"
+                    } text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4`}
+                >
+                    Chức năng chính
+                </div>
+
                 {SITE_MENU.map((item, index) => (
-                    <MenuItem item={item} key={`${index}`} />
+                    <div key={`${index}`}>
+                        {isCollapsed ? (
+                            <Tooltip content={item.label} placement="right" delay={500}>
+                                <div>
+                                    <MenuItem item={item} isCollapsed={isCollapsed} />
+                                </div>
+                            </Tooltip>
+                        ) : (
+                            <MenuItem item={item} isCollapsed={isCollapsed} />
+                        )}
+                    </div>
                 ))}
             </div>
-            <div className="">
-                <button
-                    className="w-full flex gap-2 items-center p-1 hover:scale-105 transition-transform transform"
-                    onClick={() => navigate("/logout")}
-                >
-                    <div>
-                        <PowerIcon className="text-danger size-6" />
-                    </div>
-                    <div className={`font-medium text-left text-md flex-1 text-danger`}>
-                        Đăng xuất
-                    </div>
-                </button>
+
+            <Divider className="my-4" />
+
+            <div className="space-y-2">
+                {isCollapsed ? (
+                    <Tooltip content="Đăng xuất" placement="right">
+                        <button
+                            className="w-full flex justify-center items-center p-3 rounded-lg hover:bg-red-50 hover:scale-105 transition-all transform group"
+                            onClick={() => navigate("/logout")}
+                        >
+                            <PowerIcon className="text-red-500 size-5 group-hover:text-red-600" />
+                        </button>
+                    </Tooltip>
+                ) : (
+                    <button
+                        className="w-full flex gap-3 items-center p-3 rounded-lg hover:bg-red-50 hover:scale-105 transition-all transform group"
+                        onClick={() => navigate("/logout")}
+                    >
+                        <PowerIcon className="text-red-500 size-5 group-hover:text-red-600" />
+                        <div className="font-medium text-left text-sm flex-1 text-red-500 group-hover:text-red-600">
+                            Đăng xuất
+                        </div>
+                    </button>
+                )}
             </div>
         </div>
     );

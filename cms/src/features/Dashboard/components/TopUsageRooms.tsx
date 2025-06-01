@@ -24,9 +24,6 @@ const TopUsageRooms = ({ data }: TopUsageRoomsProps) => {
 
     return (
         <div className="h-full">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">
-                Top 10 phòng sử dụng điện nước nhiều nhất
-            </h3>
             <div className="overflow-auto max-h-80">
                 <Table aria-label="Top usage rooms table" className="min-w-full">
                     <TableHeader>

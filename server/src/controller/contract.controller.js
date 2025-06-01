@@ -126,18 +126,6 @@ const ContractController = {
         }
     },
 
-    async transferRoom(req, res) {
-        try {
-            const userId = req.user?.sub;
-            const { newRoomId } = req.body;
-
-            const contract = await ContractService.transferRoom(userId, newRoomId);
-            return res.status(200).json({ message: "Chuyển phòng thành công", contract });
-        } catch (error) {
-            return res.status(400).json({ message: error.message });
-        }
-    },
-
     async approveContract(req, res) {
         try {
             const { id } = req.params;
@@ -216,9 +204,6 @@ const ContractController = {
             }
 
             contract.status = "cancelled";
-            if (contract.room.current_capacity > 0) {
-                contract.room.current_capacity -= 1;
-            }
 
             await ContractModel.save(contract);
             await RoomModel.save(contract.room);
