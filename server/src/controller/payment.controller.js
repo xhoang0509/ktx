@@ -42,7 +42,13 @@ const PaymentController = {
 
     async createPaymentUrl(req, res,) {
         try {
-            const { amount, bankCode, orderDescription, orderType, language } = req.body;
+            let { amount, bankCode, orderDescription, orderType, language } = req.body;
+
+            if (amount < 0) {
+                return res.status(400).json({ status: 400, message: "Số tiền phải lớn hơn 0" });
+            }
+
+            amount = Math.round(amount);
 
             let locale = language;
             let orderInfo = orderDescription;
