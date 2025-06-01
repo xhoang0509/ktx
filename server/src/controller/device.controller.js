@@ -4,7 +4,15 @@ const DeviceService = require("../services/device.service");
 const DeviceController = {
     async create(req, res) {
         try {
-            const device = DeviceModel.create(data);
+            const body = req.body;
+            const result = {
+                name: body.name || "",
+                type: body.type || "",
+                year_of_manufacture: body.year_of_manufacture || 2024,
+                status: body.status || "good",
+            }
+
+            const device = DeviceModel.create(result);
             await DeviceModel.save(device);
 
             res.status(200).send({ status: 200, message: 'Tạo thiết bị thành công', data: device });

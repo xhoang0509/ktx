@@ -227,9 +227,13 @@ const PaymentController = {
             });
 
             for (const bill of bills) {
-                const user = await UserModel.findOne({ where: { id: bill.contract.userId } });
+                const contract = await ContractModel.findOne({ where: { id: bill.contract.id }, relations: { room: true, user: true } });
+                const room = await RoomModel.findOne({ where: { id: contract.room.id } });
+                const user = await UserModel.findOne({ where: { id: contract.user.id } });
                 delete user.password;
                 bill.user = user;
+                bill.room = room;
+                bill.contract = contract;
             }
 
             const totalItems = total;
