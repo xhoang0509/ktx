@@ -40,6 +40,10 @@ const UserController = {
                 student_id: body.student_id,
                 avatar: "",
                 status: "active",
+                class_code: "",
+                faculty_name: "",
+                address: "",
+                birth_date: "",
             }
             const user = await UserService.create(data);
             res.status(200).send({ status: 200, message: 'Tạo tài khoản thành công', data: user });
