@@ -121,7 +121,7 @@ const LoginLayout: FC<Props> = ({
               className="mt-8 text-center"
             >
               <p className="text-sm text-gray-500">
-                © 2024 Room Track - Hệ thống quản lý ký túc xá
+                © 2025 Room Track - Hệ thống quản lý ký túc xá
               </p>
             </motion.div>
           </CardBody>
