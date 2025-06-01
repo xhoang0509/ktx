@@ -12,7 +12,7 @@ const seedAdmin = async () => {
             {
                 username: "admin",
                 password: "123456",
-                role: "admin",
+                role: "superadmin",
             },
         ];
 

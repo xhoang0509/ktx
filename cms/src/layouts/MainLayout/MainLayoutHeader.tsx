@@ -1,30 +1,34 @@
-import React from "react";
+import { AppSelectors } from "@app/slice";
+import defaultAvatar from "@assets/images/default_avatar.jpg";
+import schoolLogo from "@assets/images/school_logo.jpg";
 import {
-    Avatar,
-    Dropdown,
-    DropdownTrigger,
-    DropdownMenu,
-    DropdownItem,
-    Navbar,
-    NavbarContent,
-    NavbarItem,
-    Badge,
-    Button,
-    Image,
-} from "@heroui/react";
-import {
+    ArrowRightOnRectangleIcon,
     BellIcon,
     Cog6ToothIcon,
     UserIcon,
-    ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { useNavigate, useLocation } from "react-router-dom";
-import schoolLogo from "@assets/images/school_logo.jpg";
-import defaultAvatar from "@assets/images/default_avatar.jpg";
+import {
+    Avatar,
+    Badge,
+    Button,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownTrigger,
+    Image,
+    Navbar,
+    NavbarContent,
+    NavbarItem,
+} from "@heroui/react";
+import React from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const MainLayoutHeader: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
+
+    const admin = useSelector(AppSelectors.userInfo);
 
     const getBreadcrumb = () => {
         const pathMap: Record<string, string> = {
@@ -89,8 +93,8 @@ const MainLayoutHeader: React.FC = () => {
                         </DropdownTrigger>
                         <DropdownMenu aria-label="Profile Actions" variant="flat">
                             <DropdownItem key="profile" className="h-14 gap-2">
-                                <p className="font-semibold">Đăng nhập với</p>
-                                <p className="font-semibold">admin@ktx.edu.vn</p>
+                                <span className="font-semibold">Đăng nhập với</span>
+                                <span className="font-semibold"> {admin?.username || "admin"}</span>
                             </DropdownItem>
                             <DropdownItem
                                 key="settings"
