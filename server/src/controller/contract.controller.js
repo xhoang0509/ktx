@@ -270,7 +270,7 @@ const ContractController = {
                 return res.status(400).json({ message: `Phòng ${room.name} chưa có hóa đơn tháng này. Vui lòng thêm hóa đơn trước khi chấm dứt hợp đồng!` });
             }
 
-            const billUsers = await BillUserModel.find({ where: { user: { id: contract.user.id } } });
+            const billUsers = await BillUserModel.find({ where: { user: { id: contract.user.id }, bill: { code: code } } });
 
             const isPaid = billUsers.every(billUser => billUser.status === "paid");
 
