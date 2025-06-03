@@ -1,12 +1,12 @@
+import { Room } from "@features/Room/types";
 import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
-import { Contract } from "../types";
 
 interface TotalAmountProps {
     electricityAmount: number;
     waterAmount: number;
     internetAmount: number;
     cleaningAmount: number;
-    selectedContract: Contract | null;
+    selectedRoom: Room | null;
     totalAmount?: number;
     isEdit?: boolean;
 }
@@ -16,13 +16,11 @@ export default function TotalAmount({
     waterAmount,
     internetAmount,
     cleaningAmount,
-    selectedContract,
+    selectedRoom,
     totalAmount,
     isEdit,
 }: TotalAmountProps) {
-    const roomPrice = selectedContract?.room?.base_price
-        ? parseInt(selectedContract.room.base_price.toString())
-        : 0;
+    const roomPrice = selectedRoom?.base_price ? parseInt(selectedRoom.base_price.toString()) : 0;
 
     const calcTotalAmount =
         roomPrice +

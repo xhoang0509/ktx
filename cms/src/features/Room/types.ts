@@ -14,7 +14,7 @@ export interface Student {
 }
 
 export interface Room {
-  id: string;
+  id: number;
   name: string;
   gender: RoomGender;
   max_capacity: number;

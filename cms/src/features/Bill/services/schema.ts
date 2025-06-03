@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const addBillSchema = yup.object().shape({
-  contractId: yup.string().required("Vui lòng chọn hợp đồng"),
+  roomId: yup.number().required("Vui lòng chọn phòng"),
   electricity: yup.object().shape({
     startReading: yup
       .number()

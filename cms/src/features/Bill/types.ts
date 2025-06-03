@@ -17,7 +17,7 @@ export interface ServiceFee {
 }
 
 export interface BillFormData {
-    contractId: string;
+    roomId: number;
     electricity: {
         startReading: number;
         endReading: number;
@@ -49,7 +49,7 @@ export const defaultServiceFee: ServiceFee = {
 };
 
 export const defaultBillForm: BillForm = {
-    contractId: "",
+    roomId: 0,
     electricity: { ...defaultServiceFee, unitPrice: 3500 },
     water: { ...defaultServiceFee, unitPrice: 30000 },
     internet: 100000,
@@ -58,7 +58,7 @@ export const defaultBillForm: BillForm = {
 };
 
 export const defaultEditForm: any = {
-    contractId: "",
+    roomId: 0,
     electricity: { ...defaultServiceFee, unitPrice: 0 },
     water: { ...defaultServiceFee, unitPrice: 0 },
     internet: 0,

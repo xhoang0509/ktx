@@ -1,59 +1,56 @@
 import AppSelect from "@components/common/AppSelect";
-import { BookingRequestSelectors } from "@features/BookingRequests/services/slice";
-import { BookingRequest } from "@features/BookingRequests/types";
+import { RoomSelectors } from "@features/Room/services/slice";
+import { Room } from "@features/Room/types";
 import { SelectItem } from "@heroui/react";
 import { useAppSelector } from "@services/store";
 import { formatVND } from "@utils/fomart.util";
-import { Control, Controller } from "react-hook-form";
-import { Contract } from "../types";
 import { useEffect, useState } from "react";
+import { Control, Controller } from "react-hook-form";
 
 interface RoomSelectorProps {
     control: Control<any>;
-    onContractSelect: (contract: Contract | null) => void;
+    onRoomSelect: (room: Room | null) => void;
 }
 
-export default function RoomSelectorAdd({ control, onContractSelect }: RoomSelectorProps) {
-    const bookingRequests = useAppSelector(BookingRequestSelectors.bookingRequests);
-    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+export default function RoomSelectorAdd({ control, onRoomSelect }: RoomSelectorProps) {
+    const roomsInContract = useAppSelector(RoomSelectors.roomsInContract);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
     useEffect(() => {
-        onContractSelect(selectedContract);
-    }, [selectedContract, onContractSelect]);
+        onRoomSelect(selectedRoom);
+    }, [selectedRoom, onRoomSelect]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
             <div className="md:col-span-6">
-                <div className="mb-2">Phòng thuê (Hợp đồng)</div>
+                <div className="mb-2">Phòng thuê</div>
                 <Controller
                     control={control}
-                    name="contractId"
+                    name="roomId"
                     render={({ field }) => (
                         <AppSelect
                             selectedKeys={field.value ? [field.value] : []}
                             onSelectionChange={(keys) => {
                                 const selectedKey = Array.from(keys)[0]?.toString() || "";
                                 field.onChange(selectedKey);
-                                const contract = bookingRequests.find(
-                                    (c: BookingRequest) => c.id === parseInt(selectedKey)
+                                const room = roomsInContract.find(
+                                    (c: Room) => c.id === parseInt(selectedKey)
                                 );
-                                setSelectedContract(contract || null);
+                                setSelectedRoom(room || null);
                             }}
                         >
-                            {bookingRequests.map((contract: BookingRequest) => (
-                                <SelectItem key={contract.id}>
-                                    Hợp đồng số: {contract.id} - Phòng: {contract.room.name}
-                                </SelectItem>
+                            {roomsInContract.map((room: Room) => (
+                                <SelectItem key={room.id}>Phòng: {room.name}</SelectItem>
                             ))}
                         </AppSelect>
                     )}
                 />
             </div>
 
-            {selectedContract && (
+            {selectedRoom && (
                 <div className="md:col-span-6 bg-gray-50 p-4 rounded-md">
                     <div className="text-sm text-gray-700 mb-2 font-bold">
-                        Hợp đồng số: {selectedContract.id}
+                        Phòng: {selectedRoom.name}
                     </div>
 
                     <div className="flex justify-between items-center">
@@ -61,23 +58,17 @@ export default function RoomSelectorAdd({ control, onContractSelect }: RoomSelec
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-sm">
                         <div>
-                            <span className="text-gray-500">Tên phòng:</span>
-                            <span className="ml-2 font-medium">{selectedContract?.room?.name}</span>
-                        </div>
-                        <div>
                             <span className="text-gray-500">Tòa nhà:</span>
-                            <span className="ml-2 font-medium">
-                                {selectedContract?.room?.building}
-                            </span>
+                            <span className="ml-2 font-medium">{selectedRoom?.building}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Loại phòng:</span>
-                            <span className="ml-2 font-medium">{selectedContract?.room?.type}</span>
+                            <span className="ml-2 font-medium">{selectedRoom?.type}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Giá phòng:</span>
                             <span className="ml-2 font-medium">
-                                {formatVND(selectedContract?.room?.base_price)}
+                                {formatVND(selectedRoom?.base_price)}
                             </span>
                         </div>
                     </div>

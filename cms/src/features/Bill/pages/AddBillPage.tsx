@@ -15,6 +15,8 @@ import TotalAmount from "../components/TotalAmount";
 import { addBillSchema } from "../services/schema";
 import { BillActions } from "../services/slice";
 import { Contract, defaultBillForm } from "../types";
+import { RoomActions, RoomSelectors } from "@features/Room/services/slice";
+import { Room } from "@features/Room/types";
 
 export default function AddBillPage() {
     const {
@@ -30,7 +32,7 @@ export default function AddBillPage() {
     });
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
     const user = useAppSelector(AppSelectors.userInfo);
     const electricityAmount = watch("electricity.amount") || 0;
     const waterAmount = watch("water.amount") || 0;
@@ -38,8 +40,8 @@ export default function AddBillPage() {
     const cleaningAmount = watch("cleaning");
 
     useEffect(() => {
-        const roomPrice = selectedContract?.room?.base_price
-            ? parseInt(selectedContract.room.base_price.toString())
+        const roomPrice = selectedRoom?.base_price
+            ? parseInt(selectedRoom.base_price.toString())
             : 0;
         const totalAmount =
             Number(roomPrice) +
@@ -48,26 +50,18 @@ export default function AddBillPage() {
             Number(internetAmount) +
             Number(cleaningAmount);
         setValue("totalAmount", totalAmount);
-    }, [
-        electricityAmount,
-        waterAmount,
-        internetAmount,
-        cleaningAmount,
-        selectedContract,
-        setValue,
-    ]);
+    }, [electricityAmount, waterAmount, internetAmount, cleaningAmount, selectedRoom, setValue]);
 
     useEffect(() => {
         dispatch(
-            BookingRequestActions.getBookingRequests({
-                data: { status: "active" },
+            RoomActions.getRoomsInContract({
                 onSuccess: (data: any) => {},
             })
         );
     }, []);
 
-    const handleContractSelect = (contract: Contract | null) => {
-        setSelectedContract(contract);
+    const handleRoomSelect = (room: Room | null) => {
+        setSelectedRoom(room);
     };
 
     const onSubmit = (data: any) => {
@@ -75,7 +69,6 @@ export default function AddBillPage() {
             ...data,
             userId: user?.id,
         };
-
         dispatch(
             BillActions.addBill({
                 body: payload,
@@ -107,11 +100,11 @@ export default function AddBillPage() {
                                     <h3 className="text-lg font-medium mb-4">Phòng thuê</h3>
                                     <RoomSelectorAdd
                                         control={control}
-                                        onContractSelect={handleContractSelect}
+                                        onRoomSelect={handleRoomSelect}
                                     />
-                                    {errors.contractId && (
+                                    {errors.roomId && (
                                         <div className="text-danger text-xs mt-2">
-                                            {errors.contractId?.message as string}
+                                            {errors.roomId?.message as string}
                                         </div>
                                     )}
                                 </div>
@@ -191,7 +184,7 @@ export default function AddBillPage() {
                                         waterAmount={waterAmount}
                                         internetAmount={internetAmount}
                                         cleaningAmount={cleaningAmount}
-                                        selectedContract={selectedContract}
+                                        selectedRoom={selectedRoom}
                                     />
                                 </div>
                             </div>

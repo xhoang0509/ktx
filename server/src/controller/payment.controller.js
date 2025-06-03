@@ -160,9 +160,9 @@ const PaymentController = {
     ,
     async addBill(req, res) {
         try {
-            const { contractId, electricity, water, internet, cleaning, totalAmount } = req.body;
+            const { roomId, electricity, water, internet, cleaning, totalAmount } = req.body;
 
-            if (!contractId || !electricity || !water || !internet || !cleaning || !totalAmount) {
+            if (!roomId || !electricity || !water || !internet || !cleaning || !totalAmount) {
                 return res.status(400).json({ status: 400, message: "Thiếu dữ liệu" });
             }
             if (electricity.startReading > electricity.endReading) {
@@ -181,23 +181,18 @@ const PaymentController = {
                 return res.status(400).json({ status: 400, message: "Tổng tiền phải lớn hơn 0" });
             }
 
-            const contract = await ContractModel.findOne({ where: { id: contractId }, relations: { room: true } });
-            if (!contract) {
-                return res.status(400).json({ status: 400, message: "Hợp đồng không tồn tại" });
-            }
-            const roomId = contract.room.id
+
             const room = await RoomModel.findOne({ where: { id: roomId } });
             if (!room) {
                 return res.status(400).json({ status: 400, message: "Phòng không tồn tại" });
             }
 
-            const code = generateCode(contract);
+            const code = generateCode(room);
             const checkCode = await BillModel.findOne({ where: { code: code } });
             if (checkCode) {
                 return res.status(400).json({ status: 400, message: "Mã hóa đơn đã tồn tại, vui lòng thử lại" });
             }
             const bill = BillModel.create({
-                contract: { id: contractId },
                 room: { id: roomId },
                 electricity: electricity,
                 water: water,
@@ -229,19 +224,22 @@ const PaymentController = {
                 take: limit,
                 skip: skip,
                 order: { id: "DESC" },
-                relations: { contract: true, room: true }
+                relations: { room: true }
             });
 
             for (const bill of bills) {
-                const contract = await ContractModel.findOne({ where: { id: bill.contract.id }, relations: { room: true, user: true } });
-                const room = await RoomModel.findOne({ where: { id: contract.room.id } });
-                const user = await UserModel.findOne({ where: { id: contract.user.id } });
-                delete user.password;
-                bill.user = user;
-                bill.room = room;
-                bill.contract = contract;
+                const room = await RoomModel.findOne({ where: { id: bill.room.id } });
+                if (room) {
+                    const users = await UserModel.find({ where: { room: { id: room.id } } });
+                    if (users.length > 0) {
+                        for (const user of users) {
+                            delete user.password;
+                        }
+                        bill.users = users;
+                    }
+                    bill.room = room;
+                }
             }
-
             const totalItems = total;
             const totalPages = Math.ceil(totalItems / limit);
 
@@ -262,15 +260,23 @@ const PaymentController = {
     async getBillById(req, res) {
         try {
             const { id } = req.params;
-            const bill = await BillModel.findOne({ where: { id: id }, relations: { contract: true, room: true } });
+            const bill = await BillModel.findOne({ where: { id: id }, relations: { room: true } });
             if (!bill) {
                 return res.status(400).json({ status: 400, message: "Hóa đơn không tồn tại" });
             }
-            const contract = await ContractModel.findOne({ where: { id: bill.contract.id }, relations: { room: true } });
-            const user = await UserModel.findOne({ where: { id: bill.contract.userId } });
-            delete user.password;
-            bill.student = user;
-            bill.contract = contract;
+
+            const room = await RoomModel.findOne({ where: { id: bill.room.id } });
+            if (room) {
+                const users = await UserModel.find({ where: { room: { id: room.id } } });
+                if (users.length > 0) {
+                    for (const user of users) {
+                        delete user.password;
+                    }
+                    bill.users = users;
+                }
+                bill.room = room;
+            }
+            
             return res.status(200).json({ status: 200, message: "Lấy hóa đơn thành công", data: bill });
         } catch (error) {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy hóa đơn", error: error.message });

@@ -1,5 +1,5 @@
-const generateCode = (contract) => {
-    const code = `HD_${contract.id}:${new Date().getMonth() + 1}_${new Date().getFullYear()}`;
+const generateCode = (room) => {
+    const code = `HD_${room.id}:${new Date().getMonth() + 1}_${new Date().getFullYear()}`;
     return code;
 }
 

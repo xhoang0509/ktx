@@ -7,6 +7,7 @@ import { RoomActions } from "./slice";
 
 export function* RoomSaga() {
     yield takeLatest(RoomActions.getRooms, getRooms);
+    yield takeLatest(RoomActions.getRoomsInContract, getRoomsInContract);
     yield takeLatest(RoomActions.getDetailRoom, getDetailRoom);
     yield takeLatest(RoomActions.addRoom, addRoom);
     yield takeLatest(RoomActions.editRoom, editRoom);
@@ -46,6 +47,26 @@ export function* getRooms({ payload: { onSuccess, pagination, search } }: any) {
         yield put(AppActions.setIsLoading(false));
         if (rs.status === 200) {
             yield put(RoomActions.setRooms(rs.data.rooms));
+            onSuccess?.(rs.data);
+        } else {
+            throw new Error(rs.message);
+        }
+    } catch (error) {
+        yield put(AppActions.setIsLoading(false));
+    }
+}
+
+export function* getRoomsInContract({ payload: { onSuccess, pagination, search } }: any) {
+    const body = { ...pagination, search };
+    try {
+        yield put(AppActions.setIsLoading(true));
+
+        yield delay(50);
+
+        const rs: { [x: string]: any } = yield SysFetch.get(`/room/list-room-in-contract`);
+        yield put(AppActions.setIsLoading(false));
+        if (rs.status === 200) {
+            yield put(RoomActions.setRoomsInContract(rs.data));
             onSuccess?.(rs.data);
         } else {
             throw new Error(rs.message);

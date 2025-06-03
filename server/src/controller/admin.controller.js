@@ -89,6 +89,7 @@ const AdminController = {
                     room: Not(IsNull())
                 }
             });
+            console.log(result.totalUserInRoom);
             result.totalDevice = await DeviceModel.count();
             let bills = await BillModel.find({ order: { createdAt: 'DESC' }, relations: ['room'] });
 

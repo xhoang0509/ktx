@@ -2,7 +2,7 @@ require("reflect-metadata");
 const { DataSource } = require("typeorm");
 const dotenv = require("dotenv");
 const { Admin } = require("./entities/admin");
-const { Contract } = require("./entities/contracts");
+const { Contract } = require("./entities/contract");
 const { Device } = require("./entities/device");
 const { User } = require("./entities/user");
 const { Room } = require("./entities/room");

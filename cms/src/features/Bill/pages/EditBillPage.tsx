@@ -3,6 +3,7 @@ import AppHeader from "@components/AppHeader";
 import AppNumberInput from "@components/common/AppNumberInput";
 import { ROUTE_PATHS } from "@constants/route.const";
 import { BookingRequestActions } from "@features/BookingRequests/services/slice";
+import { Room } from "@features/Room/types";
 import { Button } from "@heroui/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "@services/store";
@@ -14,7 +15,7 @@ import ServiceFeeInput from "../components/ServiceFeeInput";
 import TotalAmount from "../components/TotalAmount";
 import { addBillSchema } from "../services/schema";
 import { BillActions } from "../services/slice";
-import { Contract, defaultBillForm } from "../types";
+import { defaultBillForm } from "../types";
 
 export default function EditBillPage() {
     const { id } = useParams();
@@ -32,7 +33,7 @@ export default function EditBillPage() {
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [selectedContract, setSelectedContract] = useState<Contract | null>(null);
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
     const user = useAppSelector(AppSelectors.userInfo);
     const electricityAmount = watch("electricity.amount") || 0;
     const waterAmount = watch("water.amount") || 0;
@@ -41,20 +42,13 @@ export default function EditBillPage() {
     const totalAmount = watch("totalAmount");
 
     useEffect(() => {
-        const roomPrice = selectedContract?.room?.base_price
-            ? parseInt(selectedContract.room.base_price.toString())
+        const roomPrice = selectedRoom?.base_price
+            ? parseInt(selectedRoom.base_price.toString())
             : 0;
         const totalAmount =
             roomPrice + electricityAmount + waterAmount + internetAmount + cleaningAmount;
         setValue("totalAmount", totalAmount);
-    }, [
-        electricityAmount,
-        waterAmount,
-        internetAmount,
-        cleaningAmount,
-        selectedContract,
-        setValue,
-    ]);
+    }, [electricityAmount, waterAmount, internetAmount, cleaningAmount, selectedRoom, setValue]);
 
     useEffect(() => {
         if (id) {
@@ -63,8 +57,8 @@ export default function EditBillPage() {
                     id,
                     onSuccess: (data: any) => {
                         reset(data);
-                        setSelectedContract(data.contract);
-                        setValue("contractId", data.contract.id);
+                        setSelectedRoom(data);
+                        setValue("roomId", data.id);
                     },
                 })
             );
@@ -80,8 +74,8 @@ export default function EditBillPage() {
         );
     }, []);
 
-    const handleContractSelect = (contract: Contract | null) => {
-        setSelectedContract(contract);
+    const handleRoomSelect = (room: Room | null) => {
+        setSelectedRoom(room);
     };
 
     const onSubmit = (data: any) => {
@@ -122,12 +116,12 @@ export default function EditBillPage() {
                                     <h3 className="text-lg font-medium mb-4">Phòng thuê</h3>
                                     <RoomSelector
                                         control={control}
-                                        onContractSelect={handleContractSelect}
-                                        selectedContract={selectedContract}
+                                        onRoomSelect={handleRoomSelect}
+                                        selectedRoom={selectedRoom}
                                     />
-                                    {errors.contractId && (
+                                    {errors.roomId && (
                                         <div className="text-danger text-xs mt-2">
-                                            {errors.contractId?.message as string}
+                                            {errors.roomId?.message as string}
                                         </div>
                                     )}
                                 </div>
@@ -207,7 +201,7 @@ export default function EditBillPage() {
                                         waterAmount={waterAmount}
                                         internetAmount={internetAmount}
                                         cleaningAmount={cleaningAmount}
-                                        selectedContract={selectedContract}
+                                        selectedRoom={selectedRoom}
                                         totalAmount={totalAmount}
                                         isEdit={true}
                                     />

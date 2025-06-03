@@ -40,8 +40,7 @@ const saveBase64Images = async (base64Images, folder = 'rooms') => {
             
             // Xác định phần mở rộng file
             const extension = type.split('/')[1];
-            const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif'];
-            
+            const allowedExtensions = ['png', 'jpg', 'jpeg', 'gif', 'webp'];
             if (!allowedExtensions.includes(extension)) {
                 continue;
             }

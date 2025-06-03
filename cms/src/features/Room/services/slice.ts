@@ -7,6 +7,7 @@ interface RoomState {
   total: number;
   limit: number;
   currentRoom: Room | null;
+  roomsInContract: Room[];
 }
 
 const initialState: RoomState = {
@@ -15,6 +16,7 @@ const initialState: RoomState = {
   total: 0,
   limit: 10,
   currentRoom: null,
+  roomsInContract: [],
 };
 
 export const RoomSlice = createSlice({
@@ -22,6 +24,7 @@ export const RoomSlice = createSlice({
   initialState,
   reducers: {
     getRooms: (state, { payload }) => {},
+    getRoomsInContract: (state, { payload }) => {},
     getDetailRoom: (state, { payload }) => {},
     editRoom: (state, { payload }) => {},
     deleteRoom: (state, { payload }) => {},
@@ -34,6 +37,9 @@ export const RoomSlice = createSlice({
       state.page = payload.page;
       state.total = payload.total;
       state.limit = payload.limit;
+    },
+    setRoomsInContract: (state, { payload }) => {
+      state.roomsInContract = payload;
     }
   },
 });
@@ -49,4 +55,5 @@ export const RoomSelectors = {
   page: (state: any) => state.room?.page || 1,
   total: (state: any) => state.room?.total || 0,
   limit: (state: any) => state.room?.limit || 10,
+  roomsInContract: (state: any) => state.room?.roomsInContract || [],
 }; 

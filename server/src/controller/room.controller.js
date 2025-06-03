@@ -1,4 +1,4 @@
-const { RoomModel, UserModel } = require("../models/db");
+const { RoomModel, UserModel, ContractModel, DeviceModel } = require("../models/db");
 const RoomService = require("../services/room.service");
 const { saveBase64Images } = require("../utils/fileUpload");
 
@@ -55,11 +55,59 @@ const RoomController = {
     async list(req, res) {
         try {
             const page = parseInt(req.query.page) || 1;
-            const limit = parseInt(req.query.limit) || 10;
+            const limit = 10000;
             const search = req.query.search || "";
             const response = await RoomService.list(page, limit, search);
 
             res.status(200).send({ status: 200, message: 'Lấy danh sách phòng thành công', data: response });
+        } catch (error) {
+            res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
+        }
+    },
+
+    async listRoomInContract(req, res) {
+        try {
+            let rooms = await RoomModel.find();
+
+            rooms = await Promise.all(rooms.map(async (room) => {
+                room.images = room.images.map(image => `http://localhost:${process.env.PORT}${image}`);
+                if (room.devices && Array.isArray(room.devices)) {
+                    const devices = []
+                    for (const device of room.devices) {
+                        const result = await DeviceModel.findOne({ where: { id: device.deviceId } });
+                        if (result) {
+                            devices.push({
+                                ...device,
+                                ...result,
+                            });
+                        }
+                    }
+                    room.devices = devices;
+                }
+
+                const contracts = await ContractModel.find({ where: { room: { id: room.id } } });
+                if (contracts.length > 0) {
+                    room.contracts = contracts;
+                } else {
+                    room.contracts = [];
+                }
+
+                const users = await UserModel.find({
+                    where: { room: { id: room.id } },
+                    select: ["id", "full_name", "phone", "gender", "student_id", "class_code", "faculty_name"]
+                });
+                if (users.length > 0) {
+                    room.users = users;
+                } else {
+                    room.users = [];
+                }
+
+                return room;
+            }));
+
+            rooms = rooms.filter(room => room.contracts.length > 0);
+
+            res.status(200).send({ status: 200, message: 'Lấy danh sách phòng thành công', data: rooms });
         } catch (error) {
             res.status(500).send({ status: 500, message: 'Có lỗi trong quá trình xử lý', error: error.message });
         }

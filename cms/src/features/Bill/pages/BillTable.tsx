@@ -1,7 +1,14 @@
 import { ROUTE_PATHS } from "@constants/route.const";
 import { Room } from "@features/Room/types";
-import { DocumentIcon, PencilIcon } from "@heroicons/react/24/solid";
 import {
+    ChevronDownIcon,
+    ChevronUpIcon,
+    PencilIcon,
+    UserGroupIcon,
+} from "@heroicons/react/24/solid";
+import {
+    Avatar,
+    Button,
     Chip,
     Pagination,
     Table,
@@ -12,14 +19,30 @@ import {
     TableRow,
     Tooltip,
 } from "@heroui/react";
-import { useAppDispatch } from "@services/store";
-import { formatVND } from "@utils/fomart.util";
-import { useCallback, useMemo } from "react";
+import { formatDate, formatVND } from "@utils/fomart.util";
+import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
-import { Contract } from "../types";
+
+export interface User {
+    id: number;
+    full_name: string;
+    email: string;
+    gender: string;
+    phone: string;
+    student_id: string;
+    avatar: string;
+    status: string;
+    faculty_name: string;
+    class_code: string;
+    birth_date: string;
+    address: string;
+    createdAt: string;
+    updatedAt: string;
+}
 
 export interface Bill {
     id: string;
+    code: string;
     electricity: {
         usage: number;
         amount: number;
@@ -37,10 +60,11 @@ export interface Bill {
     internet: number;
     cleaning: number;
     totalAmount: number;
+    status: string;
     createdAt: string;
     updatedAt: string;
-    contract: Contract;
     room: Room;
+    users: User[];
 }
 
 export interface Pagination {
@@ -58,108 +82,286 @@ export type Props = {
 };
 export default function BillTable({ bills, pagination, onChangePagination, onDelete }: Props) {
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
+    const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+    const [userPaymentStatus, setUserPaymentStatus] = useState<Record<string, boolean>>({});
 
     const columns = [
         { name: "ID", uid: "id", width: "20px" },
         { name: "Mã hóa đơn", uid: "code" },
         { name: "Phòng", uid: "room" },
-        { name: "Họ tên", uid: "full_name" },
-        { name: "Email", uid: "email" },
-        { name: "Mã sinh viên", uid: "student_id" },
-        { name: "Tổng số tiền", uid: "totalAmount" },
-        { name: "Trạng thái", uid: "status", align: "center" },
+        { name: "Thành viên", uid: "members" },
+        { name: "Ngày tạo", uid: "createdAt" },
         { name: "Tuỳ chọn", uid: "actions", align: "center" },
     ];
-    const handleDelete = (id: string) => {
-        onDelete(id);
-    };
-    const renderCell = useCallback((item: any, columnKey: React.Key) => {
-        const roomName = item?.room?.name || "Không có";
-        const fullName = item?.user?.full_name || "Không có";
-        const email = item?.user?.email || "Không có";
-        const studentId = item?.user?.student_id || "Không có";
-        const cellValue = item[columnKey as keyof any];
 
-        const getBillStatus = (status: string) => {
-            switch (status) {
-                case "pending":
-                    return "Chưa thanh toán";
-                case "paid":
-                    return "Đã thanh toán";
-                case "overdue":
-                    return "Quá hạn";
-                default:
-                    return "Chưa thanh toán";
-            }
-        };
-        switch (columnKey) {
-            case "room":
-                return <div>{roomName}</div>;
-            case "full_name":
-                return <div>{fullName}</div>;
-            case "email":
-                return <div>{email}</div>;
-            case "student_id":
-                return <div>{studentId}</div>;
-            case "totalAmount":
-                return <div>{formatVND(cellValue)}</div>;
-            case "status":
-                return (
-                    <Chip
-                        color={
-                            item.status == "pending"
-                                ? "warning"
-                                : item.status == "paid"
-                                ? "success"
-                                : item.status == "overdue"
-                                ? "danger"
-                                : "danger"
-                        }
-                        size="sm"
-                        variant="bordered"
-                    >
-                        {getBillStatus(item.status)}
-                    </Chip>
-                );
-
-            case "actions":
-                return (
-                    <div className="relative flex items-center gap-2 justify-center">
-                        {/* <Tooltip content="Xuất hóa đơn">
-                            <span
-                                onClick={() => navigate(`/${ROUTE_PATHS.BILL}/contract/${item.id}`)}
-                                className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                            >
-                                <DocumentIcon className="size-4 text-yellow-700" />
-                            </span>
-                        </Tooltip> */}
-                        {["pending"].includes(item.status) && (
-                            <Tooltip content="Sửa">
-                                <span
-                                    onClick={() => navigate(`/${ROUTE_PATHS.BILL}/edit/${item.id}`)}
-                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                >
-                                    <PencilIcon className="size-4 text-blue-500" />
-                                </span>
-                            </Tooltip>
-                        )}
-                        {/* {["pending"].includes(item.status) && (
-                            <Tooltip content="Xóa">
-                                <span
-                                    onClick={() => handleDelete(item.id)}
-                                    className="text-lg text-default-400 cursor-pointer active:opacity-50"
-                                >
-                                    <TrashIcon className="size-4 text-red-500" />
-                                </span>
-                            </Tooltip>
-                        )} */}
-                    </div>
-                );
-            default:
-                return typeof cellValue === "object" ? "" : cellValue;
+    const toggleRowExpansion = (billId: string) => {
+        const newExpanded = new Set(expandedRows);
+        if (newExpanded.has(billId)) {
+            newExpanded.delete(billId);
+        } else {
+            newExpanded.add(billId);
         }
-    }, []);
+        setExpandedRows(newExpanded);
+    };
+
+    const toggleUserPaymentStatus = (billId: string, userId: number) => {
+        const key = `${billId}-${userId}`;
+        setUserPaymentStatus((prev) => ({
+            ...prev,
+            [key]: !prev[key],
+        }));
+    };
+
+    const getUserPaymentStatus = (billId: string, userId: number): boolean => {
+        const key = `${billId}-${userId}`;
+        return userPaymentStatus[key] || false;
+    };
+
+    const getPaymentSummary = (billId: string, users: User[]) => {
+        const paidUsers = users.filter((user) => getUserPaymentStatus(billId, user.id));
+        return {
+            paidCount: paidUsers.length,
+            totalCount: users.length,
+            isPaidAll: paidUsers.length === users.length,
+            isPaidPartial: paidUsers.length > 0 && paidUsers.length < users.length,
+            isPaidNone: paidUsers.length === 0,
+        };
+    };
+
+    const renderMembersCell = (item: any) => {
+        const users = item?.users || [];
+        const isExpanded = expandedRows.has(item.id);
+        const paymentSummary = getPaymentSummary(item.id, users);
+
+        if (users.length === 0) {
+            return <div className="text-gray-500">Không có thành viên</div>;
+        }
+
+        return (
+            <div className="w-full">
+                <Button
+                    variant="light"
+                    size="sm"
+                    onClick={() => toggleRowExpansion(item.id)}
+                    className="flex items-center gap-2 p-2"
+                >
+                    <UserGroupIcon className="size-4" />
+                    <span>{users.length} thành viên</span>
+                    <Chip
+                        size="sm"
+                        color={
+                            paymentSummary.isPaidAll
+                                ? "success"
+                                : paymentSummary.isPaidPartial
+                                ? "warning"
+                                : "default"
+                        }
+                        variant="flat"
+                    >
+                        {paymentSummary.paidCount}/{paymentSummary.totalCount}
+                    </Chip>
+                    {isExpanded ? (
+                        <ChevronUpIcon className="size-3" />
+                    ) : (
+                        <ChevronDownIcon className="size-3" />
+                    )}
+                </Button>
+
+                {isExpanded && (
+                    <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                        <div className="flex justify-between items-center mb-3">
+                            <h4 className="font-medium text-gray-700">Danh sách thành viên</h4>
+                        </div>
+                        <div className="space-y-2">
+                            {users.map((user: User) => {
+                                const isPaid = getUserPaymentStatus(item.id, user.id);
+                                return (
+                                    <div
+                                        key={user.id}
+                                        className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
+                                            isPaid
+                                                ? "bg-green-50 border-green-200"
+                                                : "bg-white border-gray-200"
+                                        }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <div className="relative">
+                                                <Avatar
+                                                    src={`${import.meta.env.VITE_BASE_SERVER}${user.avatar}`}
+                                                    name={user.full_name}
+                                                    size="sm"
+                                                />
+                                                {isPaid && (
+                                                    <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                                        <svg
+                                                            className="w-2 h-2 text-white"
+                                                            fill="currentColor"
+                                                            viewBox="0 0 20 20"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="font-medium text-sm">
+                                                    {user.full_name}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    MSSV: {user.student_id}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    {user.email}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-3">
+                                            <div className="text-right">
+                                                <div className="text-sm font-medium">
+                                                    {formatVND(
+                                                        Math.floor(item.totalAmount / users.length)
+                                                    )}
+                                                </div>
+                                                <div className="text-xs text-gray-500">
+                                                    Phần chia
+                                                </div>
+                                            </div>
+                                            <Chip
+                                                color={isPaid ? "success" : "warning"}
+                                                size="sm"
+                                                variant="flat"
+                                            >
+                                                {isPaid ? "Đã thanh toán" : "Chưa thanh toán"}
+                                            </Chip>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                        <div className="mt-4 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                            <div className="grid grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <span className="font-medium text-gray-700">
+                                        Tổng tiền hóa đơn:
+                                    </span>
+                                    <div className="text-lg font-bold text-blue-600">
+                                        {formatVND(item.totalAmount)}
+                                    </div>
+                                </div>
+                                <div>
+                                    <span className="font-medium text-gray-700">
+                                        Tiền mỗi người:
+                                    </span>
+                                    <div className="text-lg font-bold text-purple-600">
+                                        {formatVND(Math.floor(item.totalAmount / users.length))}
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4 text-sm mt-2 pt-2 border-t border-blue-200">
+                                <div>
+                                    <span className="text-green-600 font-medium">Đã thu:</span>
+                                    <div className="text-lg font-bold text-green-600">
+                                        {formatVND(
+                                            Math.floor(item.totalAmount / users.length) *
+                                                paymentSummary.paidCount
+                                        )}
+                                    </div>
+                                </div>
+                                <div>
+                                    <span className="text-orange-600 font-medium">Còn lại:</span>
+                                    <div className="text-lg font-bold text-orange-600">
+                                        {formatVND(
+                                            Math.floor(item.totalAmount / users.length) *
+                                                (users.length - paymentSummary.paidCount)
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+    };
+
+    const renderCell = useCallback(
+        (item: any, columnKey: React.Key) => {
+            const roomName = item?.room?.name || "Không có";
+            const cellValue = item[columnKey as keyof any];
+
+            const getBillStatus = (item: any) => {
+                const users = item?.users || [];
+                if (users.length === 0) return "Không có thành viên";
+
+                const paymentSummary = getPaymentSummary(item.id, users);
+
+                if (paymentSummary.isPaidAll) {
+                    return "Đã thanh toán đầy đủ";
+                } else if (paymentSummary.isPaidPartial) {
+                    return "Thanh toán một phần";
+                } else {
+                    return "Chưa thanh toán";
+                }
+            };
+
+            const getBillStatusColor = (item: any) => {
+                const users = item?.users || [];
+                if (users.length === 0) return "default";
+
+                const paymentSummary = getPaymentSummary(item.id, users);
+
+                if (paymentSummary.isPaidAll) {
+                    return "success";
+                } else if (paymentSummary.isPaidPartial) {
+                    return "warning";
+                } else {
+                    return "danger";
+                }
+            };
+
+            switch (columnKey) {
+                case "createdAt":
+                    return <div>{formatDate(cellValue)}</div>;
+                case "room":
+                    return <div>{roomName}</div>;
+                case "members":
+                    return renderMembersCell(item);
+                case "totalAmount":
+                    return <div>{formatVND(cellValue)}</div>;
+                case "status":
+                    return (
+                        <Chip color={getBillStatusColor(item)} size="sm" variant="bordered">
+                            {getBillStatus(item)}
+                        </Chip>
+                    );
+
+                case "actions":
+                    return (
+                        <div className="relative flex items-center gap-2 justify-center">
+                            {["pending"].includes(item.status) && (
+                                <Tooltip content="Sửa">
+                                    <span
+                                        onClick={() =>
+                                            navigate(`/${ROUTE_PATHS.BILL}/edit/${item.id}`)
+                                        }
+                                        className="text-lg text-default-400 cursor-pointer active:opacity-50"
+                                    >
+                                        <PencilIcon className="size-4 text-blue-500" />
+                                    </span>
+                                </Tooltip>
+                            )}
+                        </div>
+                    );
+                default:
+                    return typeof cellValue === "object" ? "" : cellValue;
+            }
+        },
+        [expandedRows, userPaymentStatus]
+    );
 
     const renderPagination = useMemo(() => {
         return (

@@ -13,7 +13,7 @@ router.put("/admin-bill/:id", PaymentController.editBill);
 //Sinh viên
 router.post("/student-my-payments", authMiddleware, PaymentController.getStudentPayments);
 
-router.post('/vnpay-create', PaymentController.createPaymentUrl);
-router.get('/ipn-url', PaymentController.getCodeIpnUrl);
+router.post("/vnpay-create", PaymentController.createPaymentUrl);
+router.get("/ipn-url", PaymentController.getCodeIpnUrl);
 
-module.exports = router; 
+module.exports = router;
