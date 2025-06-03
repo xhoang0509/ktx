@@ -52,8 +52,6 @@ const ContractController = {
                     user: true,
                     room: true
                 },
-                take: limit,
-                skip: skip,
                 order: {
                     createdAt: "DESC"
                 }
