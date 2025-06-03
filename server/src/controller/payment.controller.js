@@ -211,7 +211,6 @@ const PaymentController = {
                 return res.status(400).json({ status: 400, message: `Phòng ${room.name} đã có hóa đơn tháng này. Vui lòng chọn phòng khác!` });
             }
 
-
             const bill = BillModel.create({
                 room: { id: roomId },
                 electricity: electricity,

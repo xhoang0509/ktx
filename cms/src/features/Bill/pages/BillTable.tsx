@@ -18,7 +18,6 @@ import {
     TableHeader,
     TableRow,
     Tooltip,
-    user,
 } from "@heroui/react";
 import { formatDate, formatVND } from "@utils/fomart.util";
 import { useCallback, useMemo, useState } from "react";
@@ -90,10 +89,9 @@ export type Props = {
     onChangePagination: (page: number) => void;
     onDelete: (id: string) => void;
 };
-export default function BillTable({ bills, pagination, onChangePagination, onDelete }: Props) {
+export default function BillTable({ bills=[], pagination, onChangePagination, onDelete }: Props) {
     const navigate = useNavigate();
     const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-    const [userPaymentStatus, setUserPaymentStatus] = useState<Record<string, boolean>>({});
 
     const columns = [
         { name: "ID", uid: "id", width: "20px" },
@@ -367,7 +365,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                     return typeof cellValue === "object" ? "" : cellValue;
             }
         },
-        [expandedRows, userPaymentStatus]
+        [expandedRows]
     );
 
     const renderPagination = useMemo(() => {
@@ -418,7 +416,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                     }
                 >
                     {(item: any) => (
-                        <TableRow key={item?.id}>
+                        <TableRow key={Math.random()}>
                             {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}

@@ -69,6 +69,7 @@ export default function AddBillPage() {
             ...data,
             userId: user?.id,
         };
+        
         dispatch(
             BillActions.addBill({
                 body: payload,
