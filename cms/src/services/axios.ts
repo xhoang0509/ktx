@@ -53,7 +53,6 @@ AxiosClient.interceptors.response.use(
             if (description === "Request failed with status code 404") {
                 description = "Không tìm thấy dữ liệu";
             }
-            console.log({description})
             addToast({
                 title: "Lỗi",
                 description: description,

@@ -18,7 +18,6 @@ export default function ContactForm() {
 
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        console.log("Form submitted:", formData);
         alert("Đã gửi liên hệ!");
 
         // Reset form after submission

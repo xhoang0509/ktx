@@ -51,7 +51,6 @@ export default function ViewUserPage() {
             if (rs.data) {
                 reset(rs.data);
             }
-            console.log(rs);
         }
     };
 

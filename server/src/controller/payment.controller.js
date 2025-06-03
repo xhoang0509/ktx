@@ -1,6 +1,6 @@
 const crypto = require('crypto');
 const querystring = require('qs');
-const { UserModel, ContractModel, BillModel, RoomModel } = require('../models/db');
+const { UserModel, BillModel, RoomModel, BillUserModel } = require('../models/db');
 const { Like } = require('typeorm');
 const { generateCode } = require('../utils/random');
 const { error } = require('../logger');
@@ -10,23 +10,23 @@ const { vnp_Version, vnp_Url, vnp_TmnCode, vnp_HashSecret } = process.env;
 const secretKey = vnp_HashSecret;
 
 const PaymentController = {
-    //Sinh viên
+    // Sinh viên
     async getStudentPayments(req, res) {
         try {
             const userId = req.user?.sub;
-            const bills = await BillModel.find({
+
+            const bills = await BillUserModel.find({
                 where: {
-                    contract: {
-                        user: {
-                            id: userId,
-                        }
+                    user: {
+                        id: userId,
                     }
                 },
                 order: {
                     id: "DESC"
                 },
-                relations: ["room"],
+                relations: ["bill", "bill.room", "user"],
             });
+
             const user = await UserModel.findOne({
                 where: {
                     id: userId,
@@ -34,7 +34,11 @@ const PaymentController = {
             });
             delete user.password;
 
-            return res.status(200).json({ status: 200, message: "Lấy danh sách hóa đơn thành công", data: { bills, user } });
+            return res.status(200).json({
+                status: 200,
+                message: "Lấy danh sách hóa đơn thành công",
+                data: { bills, user }
+            });
         } catch (error) {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy danh sách hóa đơn", error: error.message });
         }
@@ -51,7 +55,7 @@ const PaymentController = {
             amount = Math.round(amount);
 
             let locale = language;
-            let orderInfo = orderDescription;
+            let orderInfo = JSON.stringify(orderDescription);
             var ipAddr = "1.55.210.67" ||
                 req.headers['x-forwarded-for'] ||
                 req.connection.remoteAddress ||
@@ -129,20 +133,27 @@ const PaymentController = {
             if (secureHash === signed) {
                 const orderId = vnp_Params['vnp_TxnRef'];
                 const rspCode = vnp_Params['vnp_ResponseCode'];
-                let billdCode = vnp_Params['vnp_OrderInfo'];
-                billdCode = decodeURIComponent(billdCode);
-
+                let orderInfo = vnp_Params['vnp_OrderInfo'];
+                orderInfo = decodeURIComponent(orderInfo);
+                orderInfo = JSON.parse(orderInfo);
+                const { billCode, userId } = orderInfo;
+                // thanh toán thành công
                 if (rspCode === '00') {
-                    const bill = await BillModel.findOne({ where: { code: billdCode } });
-                    if (!bill) {
-                        return res.status(200).json({ RspCode: '97', Message: 'Bill not found' });
+                    const billUser = await BillUserModel.findOne({
+                        where: {
+                            bill: { code: billCode },
+                            user: { id: userId }
+                        },
+                        relations: ['bill', 'user']
+                    });
+
+                    if (!billUser) {
+                        return res.status(200).json({ RspCode: '97', Message: 'Bill user not found' });
                     }
-                    if (bill.status === 'paid') {
-                        return res.status(200).json({ RspCode: '97', Message: 'Bill already paid' });
-                    }
-                    await BillModel.update({ id: bill.id }, { status: 'paid' });
+
+                    await BillUserModel.update({ id: billUser.id }, { status: 'paid' });
                 } else {
-                    console.log(`Giao dịch thất bại: ${orderId} - ${rspCode} - ${billdCode}`)
+                    console.log(`Giao dịch thất bại: ${orderId} - ${rspCode} - ${orderInfo}`)
                 }
                 return res.redirect(`${process.env.CLIENT_URL}/payment`);
             } else {
@@ -156,8 +167,8 @@ const PaymentController = {
                 message: e.message,
             });
         }
-    }
-    ,
+    },
+
     async addBill(req, res) {
         try {
             const { roomId, electricity, water, internet, cleaning, totalAmount } = req.body;
@@ -181,17 +192,26 @@ const PaymentController = {
                 return res.status(400).json({ status: 400, message: "Tổng tiền phải lớn hơn 0" });
             }
 
-
             const room = await RoomModel.findOne({ where: { id: roomId } });
             if (!room) {
                 return res.status(400).json({ status: 400, message: "Phòng không tồn tại" });
             }
 
+            const usersInRoom = await UserModel.find({
+                where: { room: { id: roomId }, status: 'active' }
+            });
+
+            if (usersInRoom.length === 0) {
+                return res.status(400).json({ status: 400, message: "Phòng này chưa có sinh viên nào" });
+            }
+
             const code = generateCode(room);
             const checkCode = await BillModel.findOne({ where: { code: code } });
             if (checkCode) {
-                return res.status(400).json({ status: 400, message: "Mã hóa đơn đã tồn tại, vui lòng thử lại" });
+                return res.status(400).json({ status: 400, message: `Phòng ${room.name} đã có hóa đơn tháng này. Vui lòng chọn phòng khác!` });
             }
+
+
             const bill = BillModel.create({
                 room: { id: roomId },
                 electricity: electricity,
@@ -202,11 +222,30 @@ const PaymentController = {
                 code: code,
             });
             await BillModel.save(bill);
-            return res.status(200).json({ status: 200, message: "Thêm hóa đơn thành công", data: bill });
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json({ status: 500, message: "Lỗi khi thêm hóa đơn", error: error.message });
 
+            const amountPerUser = Math.round(totalAmount / usersInRoom.length);
+
+            for (const user of usersInRoom) {
+                const billUser = BillUserModel.create({
+                    bill: { id: bill.id },
+                    user: { id: user.id },
+                    amount: amountPerUser,
+                    status: 'pending'
+                });
+                await BillUserModel.save(billUser);
+            }
+
+            return res.status(200).json({
+                status: 200,
+                message: "Thêm hóa đơn thành công",
+                data: {
+                    bill,
+                    totalUsers: usersInRoom.length,
+                    amountPerUser
+                }
+            });
+        } catch (error) {
+            return res.status(500).json({ status: 500, message: "Lỗi khi thêm hóa đơn", error: error.message });
         }
     },
 
@@ -224,22 +263,26 @@ const PaymentController = {
                 take: limit,
                 skip: skip,
                 order: { id: "DESC" },
-                relations: { room: true }
+                relations: { room: true, billUsers: { user: true } }
             });
 
             for (const bill of bills) {
                 const room = await RoomModel.findOne({ where: { id: bill.room.id } });
+
                 if (room) {
-                    const users = await UserModel.find({ where: { room: { id: room.id } } });
-                    if (users.length > 0) {
-                        for (const user of users) {
-                            delete user.password;
-                        }
-                        bill.users = users;
-                    }
                     bill.room = room;
                 }
+
+                if (bill.billUsers) {
+                    for (const billUser of bill.billUsers) {
+                        if (billUser.user && billUser.user.password) {
+                            delete billUser.user.password;
+                        }
+                    }
+
+                }
             }
+
             const totalItems = total;
             const totalPages = Math.ceil(totalItems / limit);
 
@@ -260,23 +303,27 @@ const PaymentController = {
     async getBillById(req, res) {
         try {
             const { id } = req.params;
-            const bill = await BillModel.findOne({ where: { id: id }, relations: { room: true } });
+            const bill = await BillModel.findOne({
+                where: { id: id },
+                relations: { room: true, billUsers: { user: true } }
+            });
             if (!bill) {
                 return res.status(400).json({ status: 400, message: "Hóa đơn không tồn tại" });
             }
 
             const room = await RoomModel.findOne({ where: { id: bill.room.id } });
             if (room) {
-                const users = await UserModel.find({ where: { room: { id: room.id } } });
-                if (users.length > 0) {
-                    for (const user of users) {
-                        delete user.password;
-                    }
-                    bill.users = users;
-                }
                 bill.room = room;
             }
-            
+
+            if (bill.billUsers) {
+                for (const billUser of bill.billUsers) {
+                    if (billUser.user && billUser.user.password) {
+                        delete billUser.user.password;
+                    }
+                }
+            }
+
             return res.status(200).json({ status: 200, message: "Lấy hóa đơn thành công", data: bill });
         } catch (error) {
             return res.status(500).json({ status: 500, message: "Lỗi khi lấy hóa đơn", error: error.message });
@@ -287,16 +334,48 @@ const PaymentController = {
         try {
             const { id } = req.params;
             const { electricity, water, internet, cleaning, totalAmount } = req.body;
-            const bill = await BillModel.findOne({ where: { id: id } });
+
+            const bill = await BillModel.findOne({
+                where: { id: id },
+                relations: { billUsers: true }
+            });
             if (!bill) {
                 return res.status(400).json({ status: 400, message: "Hóa đơn không tồn tại" });
             }
-            await BillModel.update({ id: id }, { electricity: electricity, water: water, internet: internet, cleaning: cleaning, totalAmount: totalAmount });
-            return res.status(200).json({ status: 200, message: "Sửa hóa đơn thành công", data: bill });
+
+            await BillModel.update({ id: id }, {
+                electricity: electricity,
+                water: water,
+                internet: internet,
+                cleaning: cleaning,
+                totalAmount: totalAmount
+            });
+
+            if (bill.billUsers && bill.billUsers.length > 0) {
+                const newAmountPerUser = Math.round(totalAmount / bill.billUsers.length);
+
+                for (const billUser of bill.billUsers) {
+                    await BillUserModel.update({ id: billUser.id }, { amount: newAmountPerUser });
+                }
+            }
+
+            return res.status(200).json({
+                status: 200,
+                message: "Sửa hóa đơn thành công",
+                data: {
+                    ...bill,
+                    electricity,
+                    water,
+                    internet,
+                    cleaning,
+                    totalAmount
+                }
+            });
         } catch (error) {
             return res.status(500).json({ status: 500, message: "Lỗi khi sửa hóa đơn", error: error.message });
         }
-    }
+    },
+
 
 }
 

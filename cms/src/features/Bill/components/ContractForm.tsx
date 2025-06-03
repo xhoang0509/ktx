@@ -53,7 +53,6 @@ export default function ContractForm({ onDataChange, student, contractData }: Co
 
     const [data, setData] = useState<ContractData>(initData);
 
-    console.log(initData);
     const {
         control,
         handleSubmit,

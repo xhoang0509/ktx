@@ -30,7 +30,6 @@ const ContractCard: React.FC<ContractCardProps> = ({ contract, setIsRefetch }) =
 
     const handleCancelContract = () => {
         onOpen();
-        console.log("cancel contract");
     };
 
     const handleConfirmCancelContract = async () => {

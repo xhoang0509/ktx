@@ -1,10 +1,10 @@
 import BillService from "@services/bill.service";
 import { useEffect, useState } from "react";
-import BillCard from "../components/BillCard";
-import { Bill, User } from "../types";
+import BillCard, { BillUser } from "../components/BillCard";
+import { User } from "../types";
 
 export default function PaymentPage() {
-    const [bills, setBills] = useState<Bill[]>([]);
+    const [bills, setBills] = useState<BillUser[]>([]);
     const [user, setUser] = useState<User | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -82,8 +82,8 @@ export default function PaymentPage() {
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {bills.map((bill) => (
-                            <BillCard key={bill.id} bill={bill} user={user} />
+                        {bills.map((bill: BillUser) => (
+                            <BillCard key={bill.id} billUser={bill} user={user} />
                         ))}
                     </div>
                 )}

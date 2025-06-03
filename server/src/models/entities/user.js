@@ -75,6 +75,11 @@ const User = new EntitySchema({
             target: "Contract",
             inverseSide: "user"
         },
+        billUsers: {
+            type: "one-to-many",
+            target: "BillUser",
+            inverseSide: "user"
+        }
     }
 });
 

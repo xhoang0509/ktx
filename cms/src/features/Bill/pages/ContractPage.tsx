@@ -23,7 +23,6 @@ export default function ContractPage() {
             BillActions.getBillDetail({
                 id: id,
                 onSuccess: (data: any) => {
-                    console.log(data)
                     setContractData({
                         ...defaultContractData,
                         ...data,

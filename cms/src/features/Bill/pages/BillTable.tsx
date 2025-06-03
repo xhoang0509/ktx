@@ -18,6 +18,7 @@ import {
     TableHeader,
     TableRow,
     Tooltip,
+    user,
 } from "@heroui/react";
 import { formatDate, formatVND } from "@utils/fomart.util";
 import { useCallback, useMemo, useState } from "react";
@@ -64,7 +65,16 @@ export interface Bill {
     createdAt: string;
     updatedAt: string;
     room: Room;
-    users: User[];
+    billUsers: BillUser[];
+}
+
+export interface BillUser {
+    id: number;
+    billId: number;
+    userId: number;
+    amount: number;
+    status: string;
+    user: User;
 }
 
 export interface Pagination {
@@ -91,6 +101,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
         { name: "Phòng", uid: "room" },
         { name: "Thành viên", uid: "members" },
         { name: "Ngày tạo", uid: "createdAt" },
+        { name: "Trạng thái", uid: "status" },
         { name: "Tuỳ chọn", uid: "actions", align: "center" },
     ];
 
@@ -104,36 +115,27 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
         setExpandedRows(newExpanded);
     };
 
-    const toggleUserPaymentStatus = (billId: string, userId: number) => {
-        const key = `${billId}-${userId}`;
-        setUserPaymentStatus((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }));
+    const getUserPaymentStatus = (billUser: BillUser): boolean => {
+        return billUser.status === "paid";
     };
 
-    const getUserPaymentStatus = (billId: string, userId: number): boolean => {
-        const key = `${billId}-${userId}`;
-        return userPaymentStatus[key] || false;
-    };
-
-    const getPaymentSummary = (billId: string, users: User[]) => {
-        const paidUsers = users.filter((user) => getUserPaymentStatus(billId, user.id));
+    const getPaymentSummary = (billUsers: BillUser[]) => {
+        const paidUsers = billUsers.filter((billUser) => getUserPaymentStatus(billUser));
         return {
             paidCount: paidUsers.length,
-            totalCount: users.length,
-            isPaidAll: paidUsers.length === users.length,
-            isPaidPartial: paidUsers.length > 0 && paidUsers.length < users.length,
+            totalCount: billUsers.length,
+            isPaidAll: paidUsers.length === billUsers.length,
+            isPaidPartial: paidUsers.length > 0 && paidUsers.length < billUsers.length,
             isPaidNone: paidUsers.length === 0,
         };
     };
 
     const renderMembersCell = (item: any) => {
-        const users = item?.users || [];
+        const billUsers = item?.billUsers || [];
         const isExpanded = expandedRows.has(item.id);
-        const paymentSummary = getPaymentSummary(item.id, users);
+        const paymentSummary = getPaymentSummary(billUsers);
 
-        if (users.length === 0) {
+        if (billUsers.length === 0) {
             return <div className="text-gray-500">Không có thành viên</div>;
         }
 
@@ -146,7 +148,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                     className="flex items-center gap-2 p-2"
                 >
                     <UserGroupIcon className="size-4" />
-                    <span>{users.length} thành viên</span>
+                    <span>{billUsers.length} thành viên</span>
                     <Chip
                         size="sm"
                         color={
@@ -173,11 +175,12 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                             <h4 className="font-medium text-gray-700">Danh sách thành viên</h4>
                         </div>
                         <div className="space-y-2">
-                            {users.map((user: User) => {
-                                const isPaid = getUserPaymentStatus(item.id, user.id);
+                            {billUsers.map((billUser: BillUser) => {
+                                const isPaid = getUserPaymentStatus(billUser);
+                                const user = billUser.user;
                                 return (
                                     <div
-                                        key={user.id}
+                                        key={billUser.id}
                                         className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
                                             isPaid
                                                 ? "bg-green-50 border-green-200"
@@ -187,7 +190,9 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                         <div className="flex items-center gap-3">
                                             <div className="relative">
                                                 <Avatar
-                                                    src={`${import.meta.env.VITE_BASE_SERVER}${user.avatar}`}
+                                                    src={`${import.meta.env.VITE_BASE_SERVER}${
+                                                        user.avatar
+                                                    }`}
                                                     name={user.full_name}
                                                     size="sm"
                                                 />
@@ -223,7 +228,9 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                             <div className="text-right">
                                                 <div className="text-sm font-medium">
                                                     {formatVND(
-                                                        Math.floor(item.totalAmount / users.length)
+                                                        Math.floor(
+                                                            item.totalAmount / billUsers.length
+                                                        )
                                                     )}
                                                 </div>
                                                 <div className="text-xs text-gray-500">
@@ -257,7 +264,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                         Tiền mỗi người:
                                     </span>
                                     <div className="text-lg font-bold text-purple-600">
-                                        {formatVND(Math.floor(item.totalAmount / users.length))}
+                                        {formatVND(Math.floor(item.totalAmount / billUsers.length))}
                                     </div>
                                 </div>
                             </div>
@@ -266,7 +273,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                     <span className="text-green-600 font-medium">Đã thu:</span>
                                     <div className="text-lg font-bold text-green-600">
                                         {formatVND(
-                                            Math.floor(item.totalAmount / users.length) *
+                                            Math.floor(item.totalAmount / billUsers.length) *
                                                 paymentSummary.paidCount
                                         )}
                                     </div>
@@ -275,8 +282,8 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                                     <span className="text-orange-600 font-medium">Còn lại:</span>
                                     <div className="text-lg font-bold text-orange-600">
                                         {formatVND(
-                                            Math.floor(item.totalAmount / users.length) *
-                                                (users.length - paymentSummary.paidCount)
+                                            Math.floor(item.totalAmount / billUsers.length) *
+                                                (billUsers.length - paymentSummary.paidCount)
                                         )}
                                     </div>
                                 </div>
@@ -294,10 +301,10 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
             const cellValue = item[columnKey as keyof any];
 
             const getBillStatus = (item: any) => {
-                const users = item?.users || [];
+                const users = item?.billUsers || [];
                 if (users.length === 0) return "Không có thành viên";
 
-                const paymentSummary = getPaymentSummary(item.id, users);
+                const paymentSummary = getPaymentSummary(users);
 
                 if (paymentSummary.isPaidAll) {
                     return "Đã thanh toán đầy đủ";
@@ -309,10 +316,10 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
             };
 
             const getBillStatusColor = (item: any) => {
-                const users = item?.users || [];
+                const users = item?.billUsers || [];
                 if (users.length === 0) return "default";
 
-                const paymentSummary = getPaymentSummary(item.id, users);
+                const paymentSummary = getPaymentSummary(users);
 
                 if (paymentSummary.isPaidAll) {
                     return "success";
@@ -342,7 +349,7 @@ export default function BillTable({ bills, pagination, onChangePagination, onDel
                 case "actions":
                     return (
                         <div className="relative flex items-center gap-2 justify-center">
-                            {["pending"].includes(item.status) && (
+                            {getBillStatus(item) === "Chưa thanh toán" && (
                                 <Tooltip content="Sửa">
                                     <span
                                         onClick={() =>

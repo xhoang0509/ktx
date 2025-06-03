@@ -7,6 +7,7 @@ const { Device } = require("./entities/device");
 const { User } = require("./entities/user");
 const { Room } = require("./entities/room");
 const { Bill } = require("./entities/bill");
+const { BillUser } = require("./entities/billUser");
 
 dotenv.config();
 
@@ -26,7 +27,8 @@ const AppDataSource = new DataSource({
         Device,
         Room,
         User,
-        Bill
+        Bill,
+        BillUser
     ],
     migrations: ["./migrations/*.js"],
     subscribers: [],
@@ -41,4 +43,5 @@ module.exports = {
     RoomModel: AppDataSource.getRepository(Room),
     UserModel: AppDataSource.getRepository(User),
     BillModel: AppDataSource.getRepository(Bill),
+    BillUserModel: AppDataSource.getRepository(BillUser),
 }

@@ -19,18 +19,26 @@ import { format } from "date-fns";
 import { Fragment, useState } from "react";
 import { Bill, User } from "../types";
 
-interface BillCardProps {
+export interface BillUser {
+    id: number;
+    amount: number;
+    status: string;
     bill: Bill;
-    user: User | any;
+}
+interface BillCardProps {
+    billUser: BillUser;
+    user: User | null;
 }
 
-export default function BillCard({ bill, user }: BillCardProps) {
+export default function BillCard({ billUser, user }: BillCardProps) {
     const [isOpen, setIsOpen] = useState(false);
 
+    const room = billUser?.bill?.room;
+    const bill = billUser?.bill;
     const currentCapacity =
-        Number(bill?.room?.current_capacity) >= 1 ? Number(bill?.room?.current_capacity) : 1;
+        Number(room?.current_capacity) >= 1 ? Number(room?.current_capacity) : 1;
     const monthlyPaymentPerStudent = bill.totalAmount / currentCapacity;
-    const roomBasePrice = parseFloat(bill.room.base_price);
+    const roomBasePrice = parseFloat(room.base_price);
 
     function closeModal() {
         setIsOpen(false);
@@ -56,7 +64,10 @@ export default function BillCard({ bill, user }: BillCardProps) {
             const payload = {
                 amount: monthlyPaymentPerStudent,
                 bankCode: "",
-                orderDescription: bill.code,
+                orderDescription: {
+                    billCode: bill.code,
+                    userId: user?.id,
+                },
                 orderType: "other",
                 language: "vn",
             };
@@ -105,8 +116,8 @@ export default function BillCard({ bill, user }: BillCardProps) {
                                 <CreditCardIcon className="w-5 h-5 text-blue-600" />
                                 <h3 className="text-lg font-bold text-gray-900">{bill.code}</h3>
                             </div>
-                            <Chip color={getStatusColor(bill.status)} variant="flat" size="sm">
-                                {getStatusText(bill.status)}
+                            <Chip color={getStatusColor(billUser.status)} variant="flat" size="sm">
+                                {getStatusText(billUser.status)}
                             </Chip>
                         </div>
                         <div className="text-right">
@@ -222,8 +233,8 @@ export default function BillCard({ bill, user }: BillCardProps) {
                         {/* Payment Button */}
                         <Button
                             onClick={openModal}
-                            color={bill.status === "paid" ? "default" : "primary"}
-                            disabled={bill.status === "paid"}
+                            color={billUser.status === "paid" ? "default" : "primary"}
+                            disabled={billUser.status === "paid"}
                             className="w-full"
                             size="lg"
                         >

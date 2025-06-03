@@ -54,7 +54,6 @@ const UserController = {
     },
 
     async uploadAvatar(req, res) {
-        console.log('run upload avatar')
         try {
             const userId = req.user?.sub;
             const file = req.file;

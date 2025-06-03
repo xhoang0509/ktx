@@ -83,7 +83,6 @@ export default function EditBillPage() {
             ...data,
             userId: user?.id,
         };
-        console.log(91, payload);
         dispatch(
             BillActions.editBill({
                 id,

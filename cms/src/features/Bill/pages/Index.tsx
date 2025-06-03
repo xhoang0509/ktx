@@ -46,7 +46,6 @@ export default function BillPage() {
     }, [search, pagination.page]);
 
     const onDelete = (id: string) => {
-        console.log("first");
         dispatch(DeviceActions.deleteDevice({ id }));
     };
 

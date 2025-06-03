@@ -89,20 +89,23 @@ const AdminController = {
                     room: Not(IsNull())
                 }
             });
-            console.log(result.totalUserInRoom);
+
             result.totalDevice = await DeviceModel.count();
-            let bills = await BillModel.find({ order: { createdAt: 'DESC' }, relations: ['room'] });
+            let bills = await BillModel.find({ order: { createdAt: 'DESC' }, relations: ['room', 'billUsers'] });
 
 
             let billMostElectricAndWater = []
+            let totalAmount = 0
             bills.forEach(bill => {
                 result.totalPriceElectric += bill.electricity.amount;
                 result.totalPriceWater += bill.water.amount;
-                if (bill.status === 'paid') {
-                    result.totalPaid += bill.totalAmount;
-                } else {
-                    result.totalUnpaid += bill.totalAmount;
-                }
+
+                bill.billUsers.forEach(billUser => {
+                    if (billUser.status === 'paid') {
+                        result.totalPaid += billUser.amount;
+                    }
+                })
+                totalAmount += bill.totalAmount
 
                 // get bill most electric and water
                 billMostElectricAndWater.push({
@@ -110,6 +113,8 @@ const AdminController = {
                     totalWaterAndElectric: bill.water.amount + bill.electricity.amount
                 })
             });
+
+            result.totalUnpaid = totalAmount - result.totalPaid
 
             billMostElectricAndWater.sort((a, b) => b.totalWaterAndElectric - a.totalWaterAndElectric);
 

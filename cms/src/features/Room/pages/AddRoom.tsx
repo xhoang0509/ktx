@@ -56,8 +56,6 @@ export default function AddRoom() {
         append({ deviceId: 0, quantity: 1 });
     };
 
-    console.log(devices);
-
     return (
         <div className="h-full flex flex-col">
             <form onSubmit={handleSubmit(onSubmit)}>

@@ -31,11 +31,6 @@ const Bill = new EntitySchema({
             type: "int",
             nullable: true
         },
-        status: {
-            type: "enum",
-            enum: ["pending", "paid", "overdue"],
-            default: "pending"
-        },
         createdAt: {
             type: "datetime",
             default: () => "CURRENT_TIMESTAMP"
@@ -55,6 +50,11 @@ const Bill = new EntitySchema({
             type: "many-to-one",
             target: "Contract",
             inverseSide: "id"
+        },
+        billUsers: {
+            type: "one-to-many",
+            target: "BillUser",
+            inverseSide: "bill"
         }
     }
 });

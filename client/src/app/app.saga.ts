@@ -13,7 +13,6 @@ export function* AppSaga() {
 
 export function* getUserInfo({ payload: { onSuccess } }: any) {
     const token: [string: any] = yield getAccessToken();
-    console.log("token", token);
     if (token) {
         try {
             yield put(AppActions.setIsLoading(true));
@@ -25,7 +24,7 @@ export function* getUserInfo({ payload: { onSuccess } }: any) {
                     Authorization: `Bearer ${token}`,
                 }
             );
-            console.log("rs", rs);
+            
             yield put(AppActions.setIsLoading(false));
             if (rs.status === 200) {
                 const userInfo = {
