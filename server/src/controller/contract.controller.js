@@ -1,5 +1,5 @@
 const { Like } = require("typeorm");
-const { ContractModel, RoomModel, UserModel, BillModel } = require("../models/db");
+const { ContractModel, RoomModel, UserModel, BillModel, BillUserModel } = require("../models/db");
 const ContractService = require("../services/contract.service");
 const { generateCode } = require("../utils/random");
 const fs = require("fs");
@@ -258,14 +258,23 @@ const ContractController = {
                 throw new Error("Hợp đồng không đang hoạt động");
             }
 
-            const code = generateCode(contract);
+            const room = await RoomModel.findOne({ where: { id: contract.room.id } });
+            if (!room) {
+                return res.status(400).json({ message: `Phòng ${contract.room.name} không tồn tại` })
+            }
+
+            const code = generateCode(room);
             const checkCode = await BillModel.findOne({ where: { code: code } });
 
             if (!checkCode) {
-                return res.status(400).json({ message: `Hợp đồng ${contract.id} chưa có hóa đơn tháng này. Vui lòng thêm hóa đơn trước khi chấm dứt hợp đồng!` });
+                return res.status(400).json({ message: `Phòng ${room.name} chưa có hóa đơn tháng này. Vui lòng thêm hóa đơn trước khi chấm dứt hợp đồng!` });
             }
 
-            if (checkCode.status !== "paid") {
+            const billUsers = await BillUserModel.find({ where: { user: { id: contract.user.id } } });
+
+            const isPaid = billUsers.every(billUser => billUser.status === "paid");
+
+            if (!isPaid) {
                 return res.status(400).json({ message: `Hóa đơn ${checkCode.id} chưa được thanh toán. Vui lòng thanh toán hóa đơn trước khi chấm dứt hợp đồng!` });
             }
 
