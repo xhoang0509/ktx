@@ -97,20 +97,20 @@ const AdminController = {
             let billMostElectricAndWater = []
             let totalAmount = 0
             bills.forEach(bill => {
-                result.totalPriceElectric += bill.electricity.amount;
-                result.totalPriceWater += bill.water.amount;
+                result.totalPriceElectric += parseInt(bill.electricity.amount);
+                result.totalPriceWater += parseInt(bill.water.amount);
 
                 bill.billUsers.forEach(billUser => {
                     if (billUser.status === 'paid') {
-                        result.totalPaid += billUser.amount;
+                        result.totalPaid += parseInt(billUser.amount);
                     }
                 })
-                totalAmount += bill.totalAmount
+                totalAmount += parseInt(bill.totalAmount)
 
                 // get bill most electric and water
                 billMostElectricAndWater.push({
                     ...bill,
-                    totalWaterAndElectric: bill.water.amount + bill.electricity.amount
+                    totalWaterAndElectric: parseInt(bill.water.amount) + parseInt(bill.electricity.amount)
                 })
             });
 
