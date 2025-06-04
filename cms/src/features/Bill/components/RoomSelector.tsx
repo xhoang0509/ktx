@@ -11,9 +11,10 @@ interface RoomSelectorProps {
     control: Control<any>;
     onRoomSelect: (room: Room | null) => void;
     selectedRoom: Room | null;
+    disabled?: boolean;
 }
 
-export default function RoomSelector({ control, onRoomSelect, selectedRoom }: RoomSelectorProps) {
+export default function RoomSelector({ control, onRoomSelect, selectedRoom, disabled }: RoomSelectorProps) {
     const roomsInContract = useAppSelector(RoomSelectors.roomsInContract);
 
     // useEffect(() => {
@@ -38,6 +39,7 @@ export default function RoomSelector({ control, onRoomSelect, selectedRoom }: Ro
                                 );
                                 onRoomSelect(room || null);
                             }}
+                            disabled={disabled}
                         >
                             {roomsInContract.map((room: Room) => (
                                 <SelectItem key={room.id}>

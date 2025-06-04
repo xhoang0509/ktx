@@ -117,6 +117,7 @@ export default function EditBillPage() {
                                         control={control}
                                         onRoomSelect={handleRoomSelect}
                                         selectedRoom={selectedRoom}
+                                        disabled={true}
                                     />
                                     {errors.roomId && (
                                         <div className="text-danger text-xs mt-2">
