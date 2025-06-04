@@ -16,6 +16,7 @@ import TotalAmount from "../components/TotalAmount";
 import { addBillSchema } from "../services/schema";
 import { BillActions } from "../services/slice";
 import { defaultBillForm } from "../types";
+import { RoomActions } from "@features/Room/services/slice";
 
 export default function EditBillPage() {
     const { id } = useParams();
@@ -57,7 +58,7 @@ export default function EditBillPage() {
                     id,
                     onSuccess: (data: any) => {
                         reset(data);
-                        setSelectedRoom(data);
+                        setSelectedRoom(data.room);
                         setValue("roomId", data.id);
                     },
                 })
@@ -72,6 +73,7 @@ export default function EditBillPage() {
                 onSuccess: (data: any) => {},
             })
         );
+        dispatch(RoomActions.getRoomsInContract({}));
     }, []);
 
     const handleRoomSelect = (room: Room | null) => {

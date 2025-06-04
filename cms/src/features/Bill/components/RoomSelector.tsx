@@ -14,12 +14,16 @@ interface RoomSelectorProps {
     disabled?: boolean;
 }
 
-export default function RoomSelector({ control, onRoomSelect, selectedRoom, disabled }: RoomSelectorProps) {
+export default function RoomSelector({
+    control,
+    onRoomSelect,
+    selectedRoom,
+    disabled,
+}: RoomSelectorProps) {
     const roomsInContract = useAppSelector(RoomSelectors.roomsInContract);
-
     // useEffect(() => {
-    //     onRoom(selectedContract);
-    // }, [selectedContract, onRoom]);
+    //     onRoomSelect(selectedRoom);
+    // }, [selectedRoom, onRoomSelect]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
@@ -32,19 +36,18 @@ export default function RoomSelector({ control, onRoomSelect, selectedRoom, disa
                         <AppSelect
                             selectedKeys={field.value ? [field.value] : []}
                             onSelectionChange={(keys) => {
+                                if (disabled) return;
                                 const selectedKey = Array.from(keys)[0]?.toString() || "";
                                 field.onChange(selectedKey);
                                 const room = roomsInContract.find(
                                     (c: BookingRequest) => c.id === parseInt(selectedKey)
                                 );
+                                console.log(43, room);
                                 onRoomSelect(room || null);
                             }}
-                            disabled={disabled}
                         >
                             {roomsInContract.map((room: Room) => (
-                                <SelectItem key={room.id}>
-                                    Phòng: {room.name}
-                                </SelectItem>
+                                <SelectItem key={room.id}>Phòng: {room.name}</SelectItem>
                             ))}
                         </AppSelect>
                     )}
@@ -67,9 +70,7 @@ export default function RoomSelector({ control, onRoomSelect, selectedRoom, disa
                         </div>
                         <div>
                             <span className="text-gray-500">Tòa nhà:</span>
-                            <span className="ml-2 font-medium">
-                                {selectedRoom.building}
-                            </span>
+                            <span className="ml-2 font-medium">{selectedRoom.building}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Loại phòng:</span>
