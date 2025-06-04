@@ -53,6 +53,8 @@ export const formatStatus = (status: BookingRequestStatus) => {
             return "Đã chấm dứt";
         case BookingRequestStatus.CANCELLED:
             return "Đã hủy";
+        case BookingRequestStatus.EXPIRED:
+            return "Hết hạn";
         default:
             return "Không xác định";
     }
@@ -67,6 +69,8 @@ export function getColorStatus(status: BookingRequestStatus) {
         case BookingRequestStatus.TERMINATED:
             return "danger";
         case BookingRequestStatus.CANCELLED:
+            return "danger";
+        case BookingRequestStatus.EXPIRED:
             return "danger";
         default:
             return "default";
