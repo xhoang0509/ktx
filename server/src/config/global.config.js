@@ -1,5 +1,5 @@
 const GLOBAL_CONFIG = {
-    IS_TEST: true,
+    IS_TEST: false,
 };
 
 module.exports = GLOBAL_CONFIG;

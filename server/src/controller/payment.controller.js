@@ -5,6 +5,7 @@ const { Like } = require('typeorm');
 const { generateCode } = require('../utils/random');
 const { error } = require('../logger');
 const sortObject = require('../utils/sortObject');
+const GLOBAL_CONFIG = require('../config/global.config');
 const { vnp_Version, vnp_Url, vnp_TmnCode, vnp_HashSecret } = process.env;
 
 const secretKey = vnp_HashSecret;
@@ -171,6 +172,14 @@ const PaymentController = {
 
     async addBill(req, res) {
         try {
+            if (!GLOBAL_CONFIG.IS_TEST) {
+                const today = new Date();
+                const day = today.getDate();
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+                if (day < 28) {
+                    return res.status(400).json({ status: 400, message: `Hóa đơn chỉ được tạo trong khoảng thời gian từ ngày 28 đến ngày ${lastDayOfMonth} của tháng` });
+                }
+            }
             const { roomId, electricity, water, internet, cleaning, totalAmount } = req.body;
 
             if (!roomId || !electricity || !water || !internet || !cleaning || !totalAmount) {

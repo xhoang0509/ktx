@@ -7,14 +7,23 @@ const path = require("path");
 const { sendEmail } = require("../services/email.service");
 const { formatVND } = require("../utils/format");
 const { isValidDate } = require("../utils/checkdate");
+const GLOBAL_CONFIG = require("../config/global.config");
 
 const ContractController = {
     async create(req, res) {
         try {
+            const today = new Date();
+            const day = today.getDate();
+
+            if (!GLOBAL_CONFIG.IS_TEST) {
+                if (day < 1 || day > 5) {
+                    return res.status(400).json({ message: "Hợp đồng chỉ được tạo trong khoảng thời gian từ ngày 1 đến ngày 5 của tháng" });
+                }
+            }
             const userId = req.user?.sub;
 
             const response = await ContractService.create(userId, req.body);
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise(resolve => setTimeout(resolve, 1000));
             res.status(200).send({ status: 200, message: 'Tạo hợp đồng thành công', data: response });
         } catch (error) {
             console.log(error)
@@ -244,6 +253,14 @@ const ContractController = {
 
     async terminateContract(req, res) {
         try {
+            if (!GLOBAL_CONFIG.IS_TEST) {
+                const today = new Date();
+                const day = today.getDate();
+                const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+                if (day < 28) {
+                    return res.status(400).json({ status: 400, message: `Hợp đồng chỉ được chấm dứt trong khoảng thời gian từ ngày 28 đến ngày ${lastDayOfMonth} của tháng` });
+                }
+            }
             const { id } = req.params;
             const contract = await ContractModel.findOne({
                 where: { id: id },
