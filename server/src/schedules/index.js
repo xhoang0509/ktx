@@ -78,6 +78,7 @@ const checkContractExpired = async () => {
                         emailTemplate
                     );
 
+                    console.log(`Hợp đồng ${contract.id} còn ${daysDiff} ngày`);
                     console.log(`✅ Đã gửi email nhắc nhở cho ${contract.user.full_name} (${contract.user.email}) - Còn ${daysDiff} ngày`);
                 } catch (emailError) {
                     console.error(`❌ Lỗi gửi email cho hợp đồng #${contract.id}:`, emailError.message);
