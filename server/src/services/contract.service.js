@@ -39,9 +39,9 @@ const ContractService = {
             }
         });
 
-        if (contracts.length > 0) {
-            throw new Error("Bạn đang trong 1 hợp đồng khác, không thể tạo mới!");
-        }
+        // if (contracts.length > 0) {
+        //     throw new Error("Bạn đang trong 1 hợp đồng khác, không thể tạo mới!");
+        // }
 
         if (room.current_capacity >= room.max_capacity) {
             throw new Error("Phòng đã đầy");
@@ -85,7 +85,7 @@ const ContractService = {
             .replace(/\${contract\.room\.floor}/g, contract.room.floor)
 
         await sendEmail(
-            contract.user.email,
+            'xhoang0509@gmail.com', //contract.user.email,
             "Xác nhận đặt phòng KTX",
             "",
             emailTemplate
