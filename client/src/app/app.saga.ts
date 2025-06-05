@@ -85,6 +85,11 @@ export function* login({ payload: { onSuccess, body, onError } }: any) {
             onError?.();
         }
     } catch (error) {
+        addToast({
+            title: "Đăng nhập thất bại",
+            description: "Vui lòng kiểm tra lại thông tin",
+            color: "danger",
+        });
         yield put(AppActions.setIsLoading(false));
         onError?.();
     }
