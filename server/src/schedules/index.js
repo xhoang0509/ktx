@@ -51,7 +51,7 @@ const checkContractExpired = async () => {
             const dateDiff = expiredDate.getTime() - currentDate.getTime();
             const daysDiff = Math.ceil(dateDiff / (1000 * 60 * 60 * 24));
 
-            if (GLOBAL_CONFIG.IS_CONTRACT_EXPIRED && daysDiff <= 5 && daysDiff > 0) {
+            if (GLOBAL_CONFIG.IS_CONTRACT_EXPIRED || daysDiff <= 5 && daysDiff > 0) {
                 try {
                     const templatePath = path.join(__dirname, "../templates/remid-contract-expired.html");
                     let emailTemplate = fs.readFileSync(templatePath, "utf8");
