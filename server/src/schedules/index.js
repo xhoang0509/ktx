@@ -3,12 +3,15 @@ const { ContractModel } = require('../models/db');
 const { sendEmail } = require('../services/email.service');
 const fs = require('fs');
 const path = require('path');
+const GLOBAL_CONFIG = require('../config/global.config');
 
 const Schedule = {
     initial: async () => {
         try {
             schedule.scheduleJob('0 0 * * *', checkContractExpired);
-            // checkContractExpired()
+            if (GLOBAL_CONFIG.IS_CONTRACT_EXPIRED) {
+                checkContractExpired()
+            }
         } catch (error) {
             console.error('Schedule Error: ', error);
         }
@@ -48,7 +51,7 @@ const checkContractExpired = async () => {
             const dateDiff = expiredDate.getTime() - currentDate.getTime();
             const daysDiff = Math.ceil(dateDiff / (1000 * 60 * 60 * 24));
 
-            if (daysDiff <= 5 && daysDiff > 0) {
+            if (GLOBAL_CONFIG.IS_CONTRACT_EXPIRED && daysDiff <= 5 && daysDiff > 0) {
                 try {
                     const templatePath = path.join(__dirname, "../templates/remid-contract-expired.html");
                     let emailTemplate = fs.readFileSync(templatePath, "utf8");
