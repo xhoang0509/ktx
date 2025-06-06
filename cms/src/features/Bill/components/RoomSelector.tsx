@@ -42,7 +42,6 @@ export default function RoomSelector({
                                 const room = roomsInContract.find(
                                     (c: BookingRequest) => c.id === parseInt(selectedKey)
                                 );
-                                console.log(43, room);
                                 onRoomSelect(room || null);
                             }}
                         >
@@ -75,6 +74,10 @@ export default function RoomSelector({
                         <div>
                             <span className="text-gray-500">Loại phòng:</span>
                             <span className="ml-2 font-medium">{selectedRoom.type}</span>
+                        </div>
+                        <div>
+                            <span className="text-gray-500">Tầng:</span>
+                            <span className="ml-2 font-medium">{selectedRoom.floor}</span>
                         </div>
                         <div>
                             <span className="text-gray-500">Giá phòng:</span>

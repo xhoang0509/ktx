@@ -6,6 +6,7 @@ const { generateCode } = require('../utils/random');
 const { error } = require('../logger');
 const sortObject = require('../utils/sortObject');
 const GLOBAL_CONFIG = require('../config/global.config');
+require('dotenv').config();
 const { vnp_Version, vnp_Url, vnp_TmnCode, vnp_HashSecret } = process.env;
 
 const secretKey = vnp_HashSecret;

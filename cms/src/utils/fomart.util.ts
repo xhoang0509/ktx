@@ -16,7 +16,8 @@ export function formatVND(amount: number | any): string {
     if (typeof amount === "string") {
         amount = parseFloat(amount);
     }
-    return amount.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+    const rounded = Math.round(amount / 1000) * 1000;
+    return rounded.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 }
 
 export function formatCompactNumber(num: number, locale = "en-US") {

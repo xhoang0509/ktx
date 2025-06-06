@@ -18,7 +18,8 @@ interface SummaryCardsProps {
 
 const SummaryCards = ({ data }: SummaryCardsProps) => {
     const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat("vi-VN").format(amount);
+        const rounded = Math.round(amount / 1000) * 1000;
+        return new Intl.NumberFormat("vi-VN").format(rounded);
     };
 
     const summaryItems = [

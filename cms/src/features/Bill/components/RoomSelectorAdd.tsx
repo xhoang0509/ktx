@@ -66,6 +66,10 @@ export default function RoomSelectorAdd({ control, onRoomSelect }: RoomSelectorP
                             <span className="ml-2 font-medium">{selectedRoom?.type}</span>
                         </div>
                         <div>
+                            <span className="text-gray-500">Tầng:</span>
+                            <span className="ml-2 font-medium">{selectedRoom?.floor}</span>
+                        </div>
+                        <div>
                             <span className="text-gray-500">Giá phòng:</span>
                             <span className="ml-2 font-medium">
                                 {formatVND(selectedRoom?.base_price)}

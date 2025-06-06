@@ -37,7 +37,7 @@ export default function BillCard({ billUser, user }: BillCardProps) {
     const bill = billUser?.bill;
     const currentCapacity =
         Number(room?.current_capacity) >= 1 ? Number(room?.current_capacity) : 1;
-    const monthlyPaymentPerStudent = bill.totalAmount / currentCapacity;
+    const monthlyPaymentPerStudent = Math.round(bill.totalAmount / currentCapacity / 1000) * 1000;
     const roomBasePrice = parseFloat(room.base_price);
 
     function closeModal() {
@@ -49,10 +49,11 @@ export default function BillCard({ billUser, user }: BillCardProps) {
     }
 
     const formatCurrency = (value: number) => {
+        const rounded = Math.round(value / 1000) * 1000;
         return new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-        }).format(value);
+        }).format(rounded);
     };
 
     const formattedDate = (dateString: string) => {

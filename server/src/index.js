@@ -1,13 +1,11 @@
 const express = require('express');
-const dotenv = require('dotenv');
+require('dotenv').config();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const router = require('./routes');
-const { AppDataSource, RoomModel } = require('./models/db');
+const { AppDataSource } = require('./models/db');
 const Schedule = require('./schedules');
-
-dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;

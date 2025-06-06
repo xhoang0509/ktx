@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const { UserModel } = require("../models/db");
 const { error } = require("../logger");
 const { saveBase64Images } = require("../utils/fileUpload");
+require('dotenv').config();
 
 const UserController = {
 
@@ -188,6 +189,10 @@ const UserController = {
             const user = await UserModel.findOne({ where: { id: id } });
             if (!user || !id) {
                 return res.status(404).send({ status: 404, message: 'Không tìm thấy tài khoản' });
+            }
+
+            if (user.avatar) {
+                user.avatar = user.avatar.replace(process.env.SERVER_URL, '');
             }
 
             const updateData = {}

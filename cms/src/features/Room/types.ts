@@ -22,6 +22,7 @@ export interface Room {
   type: string;
   building: string;
   note: string;
+  floor: number;
   base_price: number;
   students?: Student[];
   createdAt: string;

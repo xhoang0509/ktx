@@ -1,6 +1,7 @@
 const { RoomModel, UserModel, DeviceModel } = require("../models/db");
 const { Like, Not } = require("typeorm");
 const { saveBase64Images } = require("../utils/fileUpload");
+require('dotenv').config();
 
 const RoomService = {
     async create(data) {
@@ -36,25 +37,38 @@ const RoomService = {
             throw 'Không thấy phòng';
         }
 
+        if (room.images && Array.isArray(room.images) && room.images.length > 0) {
+            const processImage = room.images.map(img => {
+                if (img.includes(process.env.SERVER_URL)) {
+                    return img.replace(process.env.SERVER_URL, '');
+                }
+                return img;
+            });
+            room.images = processImage;
+        }
+
         if (data.images && Array.isArray(data.images) && data.images.length > 0) {
             const newBase64Images = data.images.filter(img => typeof img === 'string' && img.includes('base64'));
-
             const existingImages = data.images.filter(img => typeof img === 'string' && !img.includes('base64'));
 
             if (newBase64Images.length > 0) {
                 const newImagePaths = await saveBase64Images(newBase64Images);
-                data.images = [...existingImages, ...newImagePaths];
-            } else {
                 const processImage = existingImages.map(img => {
                     if (img.includes(process.env.SERVER_URL)) {
                         return img.replace(process.env.SERVER_URL, '');
                     }
                     return img;
                 });
+
+                data.images = [...processImage, ...newImagePaths];
+            } else {
+                const processImage = existingImages.map(img => {
+                    const newImg = img.replace(process.env.SERVER_URL, '');
+                    return newImg;
+                });
                 data.images = processImage;
             }
         }
-
         if (data.devices && Array.isArray(data.devices) && data.devices.length > 0) {
             const devices = data.devices.map(device => {
                 return {
@@ -69,6 +83,7 @@ const RoomService = {
             ...room,
             ...data
         }
+
         const updateRoom = await RoomModel.save(update);
         if (!updateRoom) {
             throw 'Không thể cập nhập';

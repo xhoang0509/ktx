@@ -1,6 +1,7 @@
 const { RoomModel, UserModel, ContractModel, DeviceModel } = require("../models/db");
 const RoomService = require("../services/room.service");
 const { saveBase64Images } = require("../utils/fileUpload");
+require('dotenv').config();
 
 const RoomController = {
     async create(req, res) {
