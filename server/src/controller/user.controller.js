@@ -228,10 +228,6 @@ const UserController = {
                 }
             }
 
-            if (!updateData.avatar) {
-                updateData.avatar = "";
-            }
-            
             if (updateDto.status) {
                 updateData.status = updateDto.status
             }
